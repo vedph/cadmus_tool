@@ -73,7 +73,7 @@ namespace CadmusTool.Services
             repository.Configure(new MongoCadmusRepositoryOptions
             {
                 ConnectionString = string.Format(
-                    _configuration.GetConnectionString("Default"), database)
+                    _configuration.GetConnectionString("Mongo"), database)
             });
 
             return repository;
