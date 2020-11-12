@@ -1,35 +1,54 @@
 # Cadmus Tool
 
-Cadmus configuration and utility tools.
+Cadmus configuration and utility tool.
 
-This is a [cross-platform console app](https://opensource.com/article/17/5/cross-platform-console-apps). Currently we target Win10, Linux, and MacOSX (see the .csproj file under `Runtimeidentifiers`; [Runtime IDs catalog](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)).
+Publishing: see https://stackoverflow.com/questions/44074121/build-net-core-console-application-to-output-an-exe (NET 5).
+
+## Index Database Command
+
+- **command**: `index <dbname> <json-profile-path> [-c]` where `-c`=clean (used for existing target databases).
+- **purpose**: index the specified Cadmus database into a MySql database.
+
+Sample:
+
+```bash
+./cadmus-tool index cadmus /documents/cadmus-profile.json
+```
+
+If the MySql database does not exist, it will be created.
 
 ## Seed Database Command
 
-This command is used to create a new Cadmus MongoDB database (if the specified database does not already exists), and seed it with a specified number of random items.
-
-This command relies on plugins in the `Plugins` folder, so be sure to run the `UpdatePlugins` batch, or manually update the plugins before executing it.
+- **command**: `seed <dbname> <json-profile-path> [-c count] [-d] [-h]` where:
+  - `-c N` or `--count N`: the number of items to be seeded. Default is 100.
+  - `-d` or `--dry`: dry run, i.e. create the items and parts, but do not create the database nor store anything into it. This is used to test for seeder issues before actually running it.
+  - `-h` or `--history`: add history items and parts together with the seeded items and parts. Default is `false`. In a real-world database you should set this to `true`.
+- **purpose**: create a new Cadmus MongoDB database (if the specified database does not already exists), and seed it with a specified number of random items.
 
 For a sample seed profile see `Assets/SeedProfile.json`.
 
-Syntax:
+## SQL Command
 
-```ps1
-./cadmus-tool.exe seed <MongoDBName> <SeedProfileFilePath> [-c ItemCount] [-d] [-h]
+- **command**: `sql <dbtype> [-q query]`.
+- **purpose**: build SQL code for querying the Cadmus index database, once or interactively.
+
+Sample:
+
+```bash
+./cadmus-tool sql mysql
 ```
 
-where:
+This allows you to interactively build SQL code. Otherwise, add your query after a `-q` option, e.g.:
 
-- `MongoDBName` is the name of the MongoDB database to be seeded (and created, if it does not exist).
-- `SeedProfileFilePath` is the path to the seed profile JSON file.
+```bash
+./cadmus-tool sql mysql [dsc*=even]
+```
 
-Options:
-
-- `-c N` or `--count N`: the number of items to be seeded. Default is 100.
-- `-d` or `--dry`: dry run, i.e. create the items and parts, but do not create the database nor store anything into it. This is used to test for seeder issues before actually running it.
-- `-h` or `--history`: add history items and parts together with the seeded items and parts. Default is `false`. In a real-world database you should set this to `true`.
+Here `mysql` is the index database type, which is currently MySql.
 
 ## Legacy Commands
+
+These commands are obsolete, but we keep their documentation here for reference.
 
 ### Import LEX
 

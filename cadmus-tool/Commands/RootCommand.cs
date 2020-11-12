@@ -22,7 +22,7 @@ namespace CadmusTool.Commands
             //    c => ImportLexiconCommand.Configure(c, options));
             app.Command("index",
                 c => IndexDatabaseCommand.Configure(c, options));
-            app.Command("build-index-sql",
+            app.Command("sql",
                 c => BuildIndexQueryCommand.Configure(c, options));
 
             app.OnExecute(() =>

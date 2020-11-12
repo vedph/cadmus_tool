@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": " index mqdq E:\\Work\\mqdqc\\mqdq-profile.json"
+      "commandLineArgs": "build-index-sql mysql"
     }
   }
 }
