@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": "build-index-sql mysql"
+      "commandLineArgs": "sql mysql"
     }
   }
 }
