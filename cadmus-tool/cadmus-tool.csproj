@@ -27,19 +27,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="32.0.1" />
-    <PackageReference Include="Cadmus.Core" Version="2.3.1" />
-    <PackageReference Include="Cadmus.Index.Sql" Version="1.1.4" />
-    <PackageReference Include="Cadmus.Mongo" Version="2.3.4" />
-    <PackageReference Include="Cadmus.Parts" Version="2.3.1" />
-    <PackageReference Include="Cadmus.Philology.Parts" Version="2.3.1" />
-    <PackageReference Include="Cadmus.Seed" Version="1.1.2" />
-    <PackageReference Include="Cadmus.Seed.Parts" Version="1.1.2" />
-    <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="1.1.2" />
-    <PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="1.0.2" />
-    <PackageReference Include="Fusi.Text" Version="1.1.12" />
-    <PackageReference Include="Fusi.Tools" Version="1.1.15" />
-    <PackageReference Include="Fusi.Tools.Config" Version="1.0.17" />
+    <PackageReference Include="Bogus" Version="32.0.2" />
+    <PackageReference Include="Cadmus.Core" Version="2.3.5" />
+    <PackageReference Include="Cadmus.Index.Sql" Version="1.1.8" />
+    <PackageReference Include="Cadmus.Mongo" Version="2.3.8" />
+    <PackageReference Include="Cadmus.Parts" Version="2.3.8" />
+    <PackageReference Include="Cadmus.Philology.Parts" Version="2.3.6" />
+    <PackageReference Include="Cadmus.Seed" Version="1.1.7" />
+    <PackageReference Include="Cadmus.Seed.Parts" Version="1.1.10" />
+    <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="1.1.8" />
+    <PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="1.0.3" />
+    <PackageReference Include="Fusi.Text" Version="1.1.13" />
+    <PackageReference Include="Fusi.Tools" Version="1.1.16" />
+    <PackageReference Include="Fusi.Tools.Config" Version="1.0.18" />
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
