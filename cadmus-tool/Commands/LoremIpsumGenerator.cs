@@ -62,7 +62,8 @@ namespace CadmusTool.Commands
             {
                 sb.Append(tokens[i]);
                 sb.Append(' ');
-                if (i > 0 && paragraphLength > 0 && i % paragraphLength == 0) sb.AppendLine();
+                if (i > 0 && paragraphLength > 0 && i % paragraphLength == 0)
+                    sb.AppendLine();
             }
 
             return sb.ToString().TrimEnd() + ".";

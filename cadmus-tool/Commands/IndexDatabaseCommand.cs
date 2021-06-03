@@ -93,7 +93,8 @@ namespace CadmusTool.Commands
                 {
                     ProgressCharacter = '.',
                     ProgressBarOnBottom = true,
-                    DisplayTimeInRealTime = false
+                    DisplayTimeInRealTime = false,
+                    EnableTaskBarProgress = true
                 }))
             {
                 ItemIndexer indexer = new ItemIndexer(writer);
