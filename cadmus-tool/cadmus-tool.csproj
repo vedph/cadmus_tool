@@ -38,6 +38,8 @@
     <PackageReference Include="Cadmus.Seed" Version="1.1.10" />
     <PackageReference Include="Cadmus.Seed.Parts" Version="1.1.14" />
     <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="1.1.11" />
+    <PackageReference Include="Cadmus.Seed.Tgr.Parts" Version="1.0.19" />
+    <PackageReference Include="Cadmus.Tgr.Parts" Version="1.0.18" />
     <PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="1.0.3" />
     <PackageReference Include="Fusi.Text" Version="1.1.13" />
     <PackageReference Include="Fusi.Tools" Version="1.1.16" />

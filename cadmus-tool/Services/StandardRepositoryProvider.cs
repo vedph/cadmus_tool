@@ -6,6 +6,7 @@ using Cadmus.Core.Storage;
 using Cadmus.Mongo;
 using Cadmus.Parts.General;
 using Cadmus.Philology.Parts.Layers;
+using Cadmus.Tgr.Parts.Grammar;
 using Microsoft.Extensions.Configuration;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
@@ -38,7 +39,9 @@ namespace CadmusTool.Services
                 // Cadmus.Lexicon.Parts
                 // typeof(WordFormPart).GetTypeInfo().Assembly,
                 // Cadmus.Philology.Parts
-                typeof(ApparatusLayerFragment).GetTypeInfo().Assembly
+                typeof(ApparatusLayerFragment).GetTypeInfo().Assembly,
+                // Cadmus.Tgr.Parts
+                typeof(LingTagsLayerFragment).GetTypeInfo().Assembly
             });
 
             _partTypeProvider = new StandardPartTypeProvider(_map);
