@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using ShellProgressBar;
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -88,14 +89,22 @@ namespace CadmusTool.Commands
                 new StandardItemIndexFactoryProvider(cs);
             ItemIndexFactory factory = provider.GetFactory(profileContent);
             IItemIndexWriter writer = factory.GetItemIndexWriter();
-            using (var bar = new ProgressBar(100, "Indexing...",
-                new ProgressBarOptions
+            var options = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? new ProgressBarOptions
                 {
                     ProgressCharacter = '.',
                     ProgressBarOnBottom = true,
                     DisplayTimeInRealTime = false,
                     EnableTaskBarProgress = true
-                }))
+                }
+                : new ProgressBarOptions
+                {
+                    ProgressCharacter = '.',
+                    ProgressBarOnBottom = true,
+                    DisplayTimeInRealTime = false
+                };
+
+            using (var bar = new ProgressBar(100, "Indexing...", options))
             {
                 ItemIndexer indexer = new ItemIndexer(writer);
                 if (_clear) await indexer.Clear();
