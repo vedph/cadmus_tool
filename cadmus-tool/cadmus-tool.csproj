@@ -32,10 +32,12 @@
     <PackageReference Include="Bogus" Version="33.0.2" />
     <PackageReference Include="Cadmus.Core" Version="2.3.8" />
     <PackageReference Include="Cadmus.Index.Sql" Version="1.1.16" />
+    <PackageReference Include="Cadmus.Itinera.Parts" Version="1.1.17" />
     <PackageReference Include="Cadmus.Mongo" Version="2.3.12" />
     <PackageReference Include="Cadmus.Parts" Version="2.3.12" />
     <PackageReference Include="Cadmus.Philology.Parts" Version="2.3.9" />
     <PackageReference Include="Cadmus.Seed" Version="1.1.10" />
+    <PackageReference Include="Cadmus.Seed.Itinera.Parts" Version="1.1.19" />
     <PackageReference Include="Cadmus.Seed.Parts" Version="1.1.14" />
     <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="1.1.11" />
     <PackageReference Include="Cadmus.Seed.Tgr.Parts" Version="1.0.19" />

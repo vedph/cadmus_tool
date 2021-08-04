@@ -1,5 +1,6 @@
 ﻿using Cadmus.Core.Config;
 using Cadmus.Seed;
+using Cadmus.Seed.Itinera.Parts.Codicology;
 using Cadmus.Seed.Parts.General;
 using Cadmus.Seed.Philology.Parts.Layers;
 using Cadmus.Seed.Tgr.Parts.Grammar;
@@ -34,6 +35,8 @@ namespace CadmusTool.Services
                 typeof(NotePartSeeder).Assembly,
                 // Cadmus.Seed.Philology.Parts
                 typeof(ApparatusLayerFragmentSeeder).Assembly,
+                // Cadmus.Seed.Itinera.Parts
+                typeof(MsCatchwordsPartSeeder).Assembly,
                 // Cadmus.Seed.Tgr.Parts
                 typeof(LingTagsLayerFragmentSeeder).Assembly
             };
