@@ -1,4 +1,6 @@
-﻿using Cadmus.Index.Sql;
+﻿using Cadmus.Index.MsSql;
+using Cadmus.Index.MySql;
+using Cadmus.Index.Sql;
 using Fusi.Tools.Data;
 using Microsoft.Extensions.CommandLineUtils;
 using System;

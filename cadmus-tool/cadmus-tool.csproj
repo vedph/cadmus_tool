@@ -29,23 +29,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="33.0.2" />
-    <PackageReference Include="Cadmus.Core" Version="2.3.8" />
-    <PackageReference Include="Cadmus.Index.Sql" Version="1.1.16" />
+    <PackageReference Include="Bogus" Version="33.1.1" />
+    <PackageReference Include="Cadmus.Core" Version="2.3.10" />
+    <PackageReference Include="Cadmus.Index.MsSql" Version="1.0.0" />
+    <PackageReference Include="Cadmus.Index.MySql" Version="1.0.0" />
+    <PackageReference Include="Cadmus.Index.Sql" Version="1.1.19" />
     <PackageReference Include="Cadmus.Itinera.Parts" Version="1.1.17" />
-    <PackageReference Include="Cadmus.Mongo" Version="2.3.12" />
-    <PackageReference Include="Cadmus.Parts" Version="2.3.12" />
-    <PackageReference Include="Cadmus.Philology.Parts" Version="2.3.9" />
-    <PackageReference Include="Cadmus.Seed" Version="1.1.10" />
+    <PackageReference Include="Cadmus.Mongo" Version="2.3.14" />
+    <PackageReference Include="Cadmus.Parts" Version="2.3.15" />
+    <PackageReference Include="Cadmus.Philology.Parts" Version="2.3.11" />
+    <PackageReference Include="Cadmus.Seed" Version="1.1.12" />
     <PackageReference Include="Cadmus.Seed.Itinera.Parts" Version="1.1.19" />
-    <PackageReference Include="Cadmus.Seed.Parts" Version="1.1.14" />
-    <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="1.1.11" />
-    <PackageReference Include="Cadmus.Seed.Tgr.Parts" Version="1.0.19" />
-    <PackageReference Include="Cadmus.Tgr.Parts" Version="1.0.18" />
+    <PackageReference Include="Cadmus.Seed.Parts" Version="1.1.17" />
+    <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="1.1.13" />
+    <PackageReference Include="Cadmus.Seed.Tgr.Parts" Version="1.0.21" />
+    <PackageReference Include="Cadmus.Tgr.Parts" Version="1.0.20" />
     <PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="1.0.3" />
     <PackageReference Include="Fusi.Text" Version="1.1.13" />
-    <PackageReference Include="Fusi.Tools" Version="1.1.16" />
-    <PackageReference Include="Fusi.Tools.Config" Version="1.0.18" />
+    <PackageReference Include="Fusi.Tools" Version="1.1.17" />
+    <PackageReference Include="Fusi.Tools.Config" Version="1.0.19" />
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />

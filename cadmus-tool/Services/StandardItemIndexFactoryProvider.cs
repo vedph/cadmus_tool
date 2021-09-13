@@ -1,5 +1,5 @@
 ﻿using Cadmus.Index.Config;
-using Cadmus.Index.Sql;
+using Cadmus.Index.MySql;
 using Fusi.Microsoft.Extensions.Configuration.InMemoryJson;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
@@ -43,7 +43,7 @@ namespace CadmusTool.Services
             // build the container for seeders
             Assembly[] indexAssemblies = new[]
             {
-                // Cadmus.Index.Sql
+                // Cadmus.Index.MySql
                 typeof(MySqlItemIndexWriter).Assembly
             };
 
