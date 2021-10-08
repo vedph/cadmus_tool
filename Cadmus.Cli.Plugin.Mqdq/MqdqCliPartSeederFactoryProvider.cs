@@ -1,29 +1,21 @@
-﻿/*
+﻿using Cadmus.Cli.Core;
 using Cadmus.Core.Config;
 using Cadmus.Seed;
-using Cadmus.Seed.Itinera.Parts.Codicology;
 using Cadmus.Seed.Parts.General;
 using Cadmus.Seed.Philology.Parts.Layers;
-using Cadmus.Seed.Tgr.Parts.Grammar;
 using Fusi.Microsoft.Extensions.Configuration.InMemoryJson;
+using Fusi.Tools.Config;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
 using System;
 using System.Reflection;
 
-namespace CadmusTool.Services
+namespace Cadmus.Cli.Plugin.Mqdq
 {
-    /// <summary>
-    /// Standard seeders service.
-    /// </summary>
-    public sealed class StandardPartSeederFactoryProvider : IPartSeederFactoryProvider
+    [Tag("part-seeder-factory-provider.mqdq")]
+    public sealed class MqdqCliPartSeederFactoryProvider :
+        ICliPartSeederFactoryProvider
     {
-        /// <summary>
-        /// Gets the part/fragment seeders factory.
-        /// </summary>
-        /// <param name="profile">The profile.</param>
-        /// <returns>Factory.</returns>
-        /// <exception cref="ArgumentNullException">profile</exception>
         public PartSeederFactory GetFactory(string profile)
         {
             if (profile == null)
@@ -35,11 +27,7 @@ namespace CadmusTool.Services
                 // Cadmus.Seed.Parts
                 typeof(NotePartSeeder).Assembly,
                 // Cadmus.Seed.Philology.Parts
-                typeof(ApparatusLayerFragmentSeeder).Assembly,
-                // Cadmus.Seed.Itinera.Parts
-                typeof(MsCatchwordsPartSeeder).Assembly,
-                // Cadmus.Seed.Tgr.Parts
-                typeof(LingTagsLayerFragmentSeeder).Assembly
+                typeof(ApparatusLayerFragmentSeeder).Assembly
             };
             TagAttributeToTypeMap map = new TagAttributeToTypeMap();
             map.Add(seedAssemblies);
@@ -62,4 +50,3 @@ namespace CadmusTool.Services
         }
     }
 }
-*/

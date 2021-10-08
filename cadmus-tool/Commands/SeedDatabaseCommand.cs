@@ -1,4 +1,5 @@
-﻿using Cadmus.Core;
+﻿using Cadmus.Cli.Core;
+using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
 using Cadmus.Mongo;
@@ -15,28 +16,11 @@ namespace CadmusTool.Commands
 {
     public sealed class SeedDatabaseCommand : ICommand
     {
-        private readonly IConfiguration _config;
-        private readonly IRepositoryProvider _repositoryProvider;
-        private readonly IPartSeederFactoryProvider _seederFactoryProvider;
-        private readonly string _database;
-        private readonly string _profilePath;
-        private readonly int _count;
-        private readonly bool _dry;
-        private readonly bool _history;
+        private readonly SeedDatabaseCommandOptions _options;
 
-        public SeedDatabaseCommand(AppOptions options, string database,
-            string profilePath, int count, bool dry, bool history)
+        public SeedDatabaseCommand(SeedDatabaseCommandOptions options)
         {
-            _config = options.Configuration;
-            _repositoryProvider = new StandardRepositoryProvider(_config);
-            _seederFactoryProvider = new StandardPartSeederFactoryProvider();
-            _database = database
-                ?? throw new ArgumentNullException(nameof(database));
-            _profilePath = profilePath
-                ?? throw new ArgumentNullException(nameof(profilePath));
-            _count = count;
-            _dry = dry;
-            _history = history;
+            _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
         public static void Configure(CommandLineApplication command,
@@ -51,6 +35,12 @@ namespace CadmusTool.Commands
 
             CommandArgument profileArgument = command.Argument("[profile]",
                 "The seed profile JSON file path");
+
+            CommandArgument repositoryTagArgument = command.Argument("[tag]",
+                "The repository factory provider plugin tag.");
+
+            CommandArgument seederTagArgument = command.Argument("[tag]",
+                "The parts seeder factory provider plugin tag.");
 
             CommandOption countOption = command.Option("-c|--count",
                 "Items count (default=100)",
@@ -71,12 +61,18 @@ namespace CadmusTool.Commands
                     int.TryParse(countOption.Value(), out count);
                 }
 
-                options.Command = new SeedDatabaseCommand(options,
-                    databaseArgument.Value,
-                    profileArgument.Value,
-                    count,
-                    dryOption.HasValue(),
-                    historyOption.HasValue());
+                options.Command = new SeedDatabaseCommand(
+                    new SeedDatabaseCommandOptions
+                    {
+                        AppOptions = options,
+                        DatabaseName = databaseArgument.Value,
+                        ProfilePath = profileArgument.Value,
+                        RepositoryPluginTag = repositoryTagArgument.Value,
+                        SeederPluginTag = seederTagArgument.Value,
+                        Count = count,
+                        IsDryRun = dryOption.HasValue(),
+                        HasHistory = historyOption.HasValue()
+                    });
                 return 0;
             });
         }
@@ -93,35 +89,41 @@ namespace CadmusTool.Commands
             Console.WriteLine("SEED DATABASE\n");
             Console.ResetColor();
 
-            Console.WriteLine($"Database: {_database}\n" +
-                              $"Profile file: {_profilePath}\n" +
-                              $"Count: {_count}\n" +
-                              $"Dry run: {_dry}\n" +
-                              $"History: {_history}\n");
+            Console.WriteLine($"Database: {_options.DatabaseName}\n" +
+                              $"Profile file: {_options.ProfilePath}\n" +
+                              $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
+                              $"Seeders plugin tag: {_options.SeederPluginTag}\n" +
+                              $"Count: {_options.Count}\n" +
+                              $"Dry run: {_options.IsDryRun}\n" +
+                              $"History: {_options.HasHistory}\n");
             Serilog.Log.Information("SEED DATABASE: " +
-                         $"Database: {_database}, " +
-                         $"Profile file: {_profilePath}, " +
-                         $"Count: {_count}, " +
-                         $"Dry: {_dry}, " +
-                         $"History: {_history}");
+                         $"Database: {_options.DatabaseName}, " +
+                         $"Profile file: {_options.ProfilePath}, " +
+                         $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
+                         $"Seeders plugin tag: {_options.SeederPluginTag}\n" +
+                         $"Count: {_options.Count}, " +
+                         $"Dry: {_options.IsDryRun}, " +
+                         $"History: {_options.HasHistory}");
 
-            if (!_dry)
+            // profile
+            string profileContent = LoadProfile(_options.ProfilePath);
+
+            if (!_options.IsDryRun)
             {
                 // create database if not exists
                 string connection = string.Format(CultureInfo.InvariantCulture,
-                    _config.GetConnectionString("Mongo"),
-                    _database);
+                    _options.AppOptions.Configuration.GetConnectionString("Mongo"),
+                    _options.DatabaseName);
 
                 IDatabaseManager manager = new MongoDatabaseManager();
-
-                string profileContent = LoadProfile(_profilePath);
                 IDataProfileSerializer serializer = new JsonDataProfileSerializer();
                 DataProfile profile = serializer.Read(profileContent);
 
                 if (!manager.DatabaseExists(connection))
                 {
                     Console.WriteLine("Creating database...");
-                    Serilog.Log.Information($"Creating database {_database}...");
+                    Serilog.Log.Information(
+                        $"Creating database {_options.DatabaseName}...");
 
                     manager.CreateDatabase(connection, profile);
 
@@ -130,24 +132,52 @@ namespace CadmusTool.Commands
                 }
             }
 
+            // repository
             Console.WriteLine("Creating repository...");
             Serilog.Log.Information("Creating repository...");
 
-            ICadmusRepository repository = _dry
-                ? null : _repositoryProvider.CreateRepository(_database);
+            var repositoryProvider = PluginFactoryProvider
+                .GetFromTag<ICliRepositoryFactoryProvider>(
+                _options.RepositoryPluginTag);
+            if (repositoryProvider == null)
+            {
+                throw new FileNotFoundException(
+                    "The requested repository provider tag " +
+                    _options.RepositoryPluginTag +
+                    " was not found among plugins in " +
+                    PluginFactoryProvider.GetPluginsDir());
+            }
+            repositoryProvider.ConnectionString = _options.AppOptions
+                .Configuration.GetConnectionString("Mongo");
+            ICadmusRepository repository = _options.IsDryRun
+                ? null : repositoryProvider.CreateRepository(_options.DatabaseName);
+
+            // seeder
+            var seederProvider = PluginFactoryProvider
+                .GetFromTag<ICliPartSeederFactoryProvider>(
+                _options.SeederPluginTag);
+            if (seederProvider == null)
+            {
+                throw new FileNotFoundException(
+                    "The requested part seeders provider tag " +
+                    _options.SeederPluginTag +
+                    " was not found among plugins in " +
+                    PluginFactoryProvider.GetPluginsDir());
+            }
 
             Console.WriteLine("Seeding items");
-            PartSeederFactory factory = _seederFactoryProvider.GetFactory(_profilePath);
+            PartSeederFactory factory = seederProvider.GetFactory(
+                profileContent);
             CadmusSeeder seeder = new CadmusSeeder(factory);
-            foreach (IItem item in seeder.GetItems(_count))
+            foreach (IItem item in seeder.GetItems(_options.Count))
             {
                 Console.WriteLine($"{item}: {item.Parts.Count} parts");
-                if (!_dry)
+                if (!_options.IsDryRun)
                 {
-                    repository.AddItem(item, _history);
+                    repository.AddItem(item,_options.HasHistory);
                     foreach (IPart part in item.Parts)
                     {
-                        repository.AddPart(part, _history);
+                        repository.AddPart(part, _options.HasHistory);
                     }
                 }
             }
@@ -155,5 +185,16 @@ namespace CadmusTool.Commands
 
             return Task.CompletedTask;
         }
+    }
+
+    public class SeedDatabaseCommandOptions : CommandOptions
+    {
+        public string DatabaseName { get; set; }
+        public string ProfilePath { get; set; }
+        public int Count { get; set; }
+        public bool IsDryRun { get; set; }
+        public bool HasHistory { get; set; }
+        public string RepositoryPluginTag { get; set; }
+        public string SeederPluginTag { get; set; }
     }
 }

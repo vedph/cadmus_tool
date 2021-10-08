@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": "sql mysql"
+      "commandLineArgs": "index cadmus-test c:\\users\\dfusi\\desktop\\cadmus.json part-seeder-factory-provider.mqdq"
     }
   }
 }

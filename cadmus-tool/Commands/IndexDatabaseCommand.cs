@@ -1,4 +1,4 @@
-﻿using Cadmus.Core;
+﻿using Cadmus.Cli.Core;
 using Cadmus.Core.Storage;
 using Cadmus.Index;
 using Cadmus.Index.Config;
@@ -17,22 +17,11 @@ namespace CadmusTool.Commands
 {
     public sealed class IndexDatabaseCommand : ICommand
     {
-        private readonly IConfiguration _config;
-        private readonly IRepositoryProvider _repositoryProvider;
-        private readonly string _database;
-        private readonly string _profilePath;
-        private readonly bool _clear;
+        private readonly IndexDatabaseCommandOptions _options;
 
-        public IndexDatabaseCommand(AppOptions options, string database,
-            string profilePath, bool clear)
+        public IndexDatabaseCommand(IndexDatabaseCommandOptions options)
         {
-            _config = options.Configuration;
-            _repositoryProvider = new StandardRepositoryProvider(_config);
-            _database = database
-                ?? throw new ArgumentNullException(nameof(database));
-            _profilePath = profilePath
-                ?? throw new ArgumentNullException(nameof(profilePath));
-            _clear = clear;
+            _options = options;
         }
 
         public static void Configure(CommandLineApplication command,
@@ -48,15 +37,22 @@ namespace CadmusTool.Commands
             CommandArgument profileArgument = command.Argument("[profile]",
                 "The indexer profile JSON file path");
 
+            CommandArgument repositoryTagArgument = command.Argument("[tag]",
+                "The repository factory provider plugin tag.");
+
             CommandOption clearOption = command.Option("-c|--clear",
                 "Clear before indexing", CommandOptionType.NoValue);
 
             command.OnExecute(() =>
             {
-                options.Command = new IndexDatabaseCommand(options,
-                    databaseArgument.Value,
-                    profileArgument.Value,
-                    clearOption.HasValue());
+            options.Command = new IndexDatabaseCommand(
+                new IndexDatabaseCommandOptions
+                {
+                    AppOptions = options,
+                    DatabaseName = databaseArgument.Value,
+                    ProfilePath = profileArgument.Value,
+                    ClearDatabase = clearOption.HasValue()
+                });
                 return 0;
             });
         }
@@ -73,22 +69,25 @@ namespace CadmusTool.Commands
             Console.WriteLine("INDEX DATABASE\n");
             Console.ResetColor();
 
-            Console.WriteLine($"Database: {_database}\n" +
-                              $"Profile file: {_profilePath}\n" +
-                              $"Clear: {_clear}\n");
+            Console.WriteLine($"Database: {_options.DatabaseName}\n" +
+                              $"Profile file: {_options.ProfilePath}\n" +
+                              $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
+                              $"Clear: {_options.ClearDatabase}\n");
             Serilog.Log.Information("INDEX DATABASE: " +
-                         $"Database: {_database}, " +
-                         $"Profile file: {_profilePath}, " +
-                         $"Clear: {_clear}");
+                         $"Database: {_options.DatabaseName}, " +
+                         $"Profile file: {_options.ProfilePath}, " +
+                         $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
+                         $"Clear: {_options.ClearDatabase}");
 
-            string profileContent = LoadProfile(_profilePath);
+            string profileContent = LoadProfile(_options.ProfilePath);
 
-            string cs = string.Format(_config.GetConnectionString("Index"),
-                _database);
+            string cs = string.Format(_options.AppOptions.Configuration
+                .GetConnectionString("Index"), _options.DatabaseName);
             IItemIndexFactoryProvider provider =
                 new StandardItemIndexFactoryProvider(cs);
             ItemIndexFactory factory = provider.GetFactory(profileContent);
             IItemIndexWriter writer = factory.GetItemIndexWriter();
+
             var options = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
                 ? new ProgressBarOptions
                 {
@@ -104,20 +103,46 @@ namespace CadmusTool.Commands
                     DisplayTimeInRealTime = false
                 };
 
+            // repository
+            Console.WriteLine("Creating repository...");
+            Serilog.Log.Information("Creating repository...");
+
+            var repositoryProvider = PluginFactoryProvider
+                .GetFromTag<ICliRepositoryFactoryProvider>(
+                _options.RepositoryPluginTag);
+            if (repositoryProvider == null)
+            {
+                throw new FileNotFoundException(
+                    "The requested repository provider tag " +
+                    _options.RepositoryPluginTag +
+                    " was not found among plugins in " +
+                    PluginFactoryProvider.GetPluginsDir());
+            }
+            repositoryProvider.ConnectionString = _options.AppOptions.Configuration
+                .GetConnectionString("Mongo");
+            ICadmusRepository repository = repositoryProvider.CreateRepository(
+                _options.DatabaseName);
+
             using (var bar = new ProgressBar(100, "Indexing...", options))
             {
                 ItemIndexer indexer = new ItemIndexer(writer);
-                if (_clear) await indexer.Clear();
+                if (_options.ClearDatabase) await indexer.Clear();
 
-                indexer.Build(
-                    _repositoryProvider.CreateRepository(_database),
-                    new ItemFilter(),
+                indexer.Build(repository, new ItemFilter(),
                     CancellationToken.None,
                     new Progress<ProgressReport>(
                         r => bar.Tick(r.Percent, r.Message)));
             }
             writer.Close();
         }
+    }
+
+    public class IndexDatabaseCommandOptions : CommandOptions
+    {
+        public string DatabaseName { get; set; }
+        public string ProfilePath { get; set; }
+        public string RepositoryPluginTag { get; set; }
+        public bool ClearDatabase { get; set; }
     }
 }
 

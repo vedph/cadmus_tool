@@ -2,49 +2,67 @@
 
 Cadmus configuration and utility tool.
 
-Publishing: see https://stackoverflow.com/questions/44074121/build-net-core-console-application-to-output-an-exe (NET 5).
+This tool requires plugin providers under its `plugins` folder.
+
+Plugins are used to get Cadmus factory providers. A Cadmus factory provider plugin acts as a hub entry point for all the components to be packed in the CLI tool for a specific project.
+
+Place your own plugins in a subfolder of this folder, naming each subfolder after the DLL plugin filename.
+
+For instance, plugin `Cadmus.Cli.Plugin.Mqdq.dll` should be placed in a subfolder of the `plugins` folder named `Cadmus.Cli.Plugin.Mqdq`.
+
+Plugins are not found in this solution. They can be found in a corresponding CLI project in the respective Cadmus backend solutions.
 
 ## Index Database Command
 
-- **command**: `index <dbname> <json-profile-path> [-c]` where `-c`=clean (used for existing target databases).
-- **purpose**: index the specified Cadmus database into a MySql database.
+Index the specified Cadmus database into a MySql database. If the MySql database does not exist, it will be created; if it exists, it will be cleared if requested.
+
+This requires a plugin with providers for the repository factory and the parts seeders factory. Each project has its own plugin, which must be placed in a subfolder of the tool's `plugins` folder.
+
+```ps1
+./cadmus-tool index <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag> [-c]
+```
+
+- `-c`=clear the target database when it exists.
 
 Sample:
 
 ```bash
-./cadmus-tool index cadmus /documents/cadmus-profile.json
+./cadmus-tool index cadmus c:\users\dfusi\desktop\cadmus-profile.json repository-factory-provider.mqdq
 ```
-
-If the MySql database does not exist, it will be created.
 
 ## Seed Database Command
 
-- **command**: `seed <dbname> <json-profile-path> [-c count] [-d] [-h]` where:
-  - `-c N` or `--count N`: the number of items to be seeded. Default is 100.
-  - `-d` or `--dry`: dry run, i.e. create the items and parts, but do not create the database nor store anything into it. This is used to test for seeder issues before actually running it.
-  - `-h` or `--history`: add history items and parts together with the seeded items and parts. Default is `false`. In a real-world database you should set this to `true`.
-- **purpose**: create a new Cadmus MongoDB database (if the specified database does not already exists), and seed it with a specified number of random items.
+Create a new Cadmus MongoDB database (if the specified database does not already exists), and seed it with a specified number of random items.
+
+```ps1
+./cadmus-tool seed <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag> <SeedersFactoryProviderTag> [-c count] [-d] [-h]
+```
+
+- `-c N`: the number of items to be seeded. Default is 100.
+- `-d`: dry run, i.e. create the items and parts, but do not create the database nor store anything into it. This is used to test for seeder issues before actually running it.
+- `-h`: add history items and parts together with the seeded items and parts. Default is `false`. In a real-world database you should set this to `true`.
 
 For a sample seed profile see `Assets/SeedProfile.json`.
 
-## SQL Command
+## Build SQL Command
 
-- **command**: `sql <dbtype> [-q query]`.
-- **purpose**: build SQL code for querying the Cadmus index database, once or interactively.
+Build SQL code for querying the Cadmus index database, once or interactively.
 
-Sample:
-
-```bash
-./cadmus-tool sql mysql
+```ps1
+./cadmus-tool build-sql <DatabaseType> [-q query]
 ```
+
+The database type can be `mysql` or `mssql`. Anyway, the current Cadmus implementation uses MySql.
+
+- `-q`: the query (for non-interactive mode).
 
 This allows you to interactively build SQL code. Otherwise, add your query after a `-q` option, e.g.:
 
 ```bash
-./cadmus-tool sql mysql [dsc*=even]
+./cadmus-tool build-sql mysql [dsc*=even]
 ```
 
-Here `mysql` is the index database type, which is currently MySql.
+where `mysql` is the index database type, which is currently MySql.
 
 ## Legacy Commands
 

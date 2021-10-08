@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Cli.Plugin.Mqdq", "Cadmus.Cli.Plugin.Mqdq\Cadmus.Cli.Plugin.Mqdq.csproj", "{CC555432-5CFB-4CE7-9C6B-4C8DB74F239A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadmus.Cli.Core", "Cadmus.Cli.Core\Cadmus.Cli.Core.csproj", "{51D1A6A7-6B58-4E7B-B173-015E98052879}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +24,14 @@ Global
 		{09EE8F76-0F14-431E-8955-8C3210E0298C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09EE8F76-0F14-431E-8955-8C3210E0298C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09EE8F76-0F14-431E-8955-8C3210E0298C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC555432-5CFB-4CE7-9C6B-4C8DB74F239A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC555432-5CFB-4CE7-9C6B-4C8DB74F239A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC555432-5CFB-4CE7-9C6B-4C8DB74F239A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC555432-5CFB-4CE7-9C6B-4C8DB74F239A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51D1A6A7-6B58-4E7B-B173-015E98052879}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51D1A6A7-6B58-4E7B-B173-015E98052879}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51D1A6A7-6B58-4E7B-B173-015E98052879}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51D1A6A7-6B58-4E7B-B173-015E98052879}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

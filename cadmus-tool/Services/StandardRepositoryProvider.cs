@@ -1,4 +1,5 @@
-﻿using System;
+﻿/*
+using System;
 using System.Reflection;
 using Cadmus.Core;
 using Cadmus.Core.Config;
@@ -23,7 +24,8 @@ namespace CadmusTool.Services
         private readonly IPartTypeProvider _partTypeProvider;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StandardRepositoryProvider"/> class.
+        /// Initializes a new instance of the <see cref="StandardRepositoryProvider"/>
+        /// class.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <exception cref="ArgumentNullException">configuration</exception>
@@ -86,3 +88,4 @@ namespace CadmusTool.Services
         }
     }
 }
+*/
