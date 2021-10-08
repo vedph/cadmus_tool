@@ -6,7 +6,7 @@ using System.Linq;
 
 // https://github.com/natemcmaster/DotNetCorePlugins
 
-namespace CadmusTool.Services
+namespace Cadmus.Cli.Core
 {
     /// <summary>
     /// Plugins-based provider for Cadmus factory providers. This is used to

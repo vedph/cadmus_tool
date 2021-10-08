@@ -7,6 +7,6 @@ set target=.\cadmus-tool\bin\Debug\net5.0\plugins\
 md %target%
 del %target%*.* /q
 
-xcopy .\Cadmus.Cli.Plugin.Mqdq\bin\Debug\netstandard2.1\*.* %target%Cadmus.Cli.Plugin.Mqdq\ /y
+xcopy .\Cadmus.Cli.Plugin.Mqdq\bin\Debug\net5.0\*.* %target%Cadmus.Cli.Plugin.Mqdq\ /y
 
 pause
