@@ -11,7 +11,7 @@
 	  <Copyright>by Daniele Fusi</Copyright>
 	  <NeutralLanguage>en-US</NeutralLanguage>
 	  <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-	  <Version>1.0.2</Version>
+	  <Version>2.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="33.1.1" />
+    <PackageReference Include="Cadmus.Cli.Core" Version="1.0.0" />
     <PackageReference Include="Cadmus.Core" Version="2.4.0" />
     <PackageReference Include="Cadmus.Index.MsSql" Version="1.1.0" />
     <PackageReference Include="Cadmus.Index.MySql" Version="1.1.0" />
@@ -61,10 +62,6 @@
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="ShellProgressBar" Version="5.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Cadmus.Cli.Core\Cadmus.Cli.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

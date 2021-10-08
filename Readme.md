@@ -2,15 +2,15 @@
 
 Cadmus configuration and utility tool.
 
-This tool requires plugin providers under its `plugins` folder.
+Since version 2, this tool requires plugin providers under its `plugins` folder. The plugin architecture is a planned upgrade to avoid the tool being dependent on Cadmus projects, each having its own models. Otherwise, every Cadmus project should be included as a dependency in the CLI tool, defeating the purpose of a generic and universal tool. Plugins are used to get Cadmus factory providers. A Cadmus factory provider plugin acts as a hub entry point for all the components to be packed in the CLI tool for a specific project.
 
-Plugins are used to get Cadmus factory providers. A Cadmus factory provider plugin acts as a hub entry point for all the components to be packed in the CLI tool for a specific project.
+The tool has now become more like an empty shell, where project-dependent components are demanded to plugins under its `plugins` folder. The commands requiring plugins are those used to build a full Cadmus MySql index from its Mongo database, or to seed a Mongo Cadmus database with mock data. To this end, the CLI tool requires two factory objects: one for the repository, acting as the hub for all its parts and fragments; and another for the part and fragment seeders.
 
-Place your own plugins in a subfolder of this folder, naming each subfolder after the DLL plugin filename.
+These providers glue together the composable Cadmus parts, and as such are surface components laid on top of each Cadmus solution, just like services in the web APIs. A similar service is also required for these two functions of the CLI tool, for each Cadmus soluition. So, each solution will provide its plugin. Plugins are an easy solution for the CLI tool because runtime binding via reflection there is a viable option, which instead is not the case for the API backend (this gets packed into a different Docker image for each solution).
 
-For instance, plugin `Cadmus.Cli.Plugin.Mqdq.dll` should be placed in a subfolder of the `plugins` folder named `Cadmus.Cli.Plugin.Mqdq`.
+Consequently, plugins are not found in this CLI solution. They can be found in a corresponding CLI project in the respective Cadmus backend solutions.
 
-Plugins are not found in this solution. They can be found in a corresponding CLI project in the respective Cadmus backend solutions.
+To use a plugin, place its files (the library and its dependencies) in a subfolder of this folder, naming each subfolder after the DLL plugin filename. For instance, plugin `Cadmus.Cli.Plugin.Mqdq.dll` should be placed in a subfolder of the `plugins` folder named `Cadmus.Cli.Plugin.Mqdq`.
 
 ## Index Database Command
 
