@@ -2,6 +2,8 @@
 using CadmusTool.Commands;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Serilog.Extensions.Logging;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace CadmusTool
@@ -10,6 +12,7 @@ namespace CadmusTool
     {
         public ICommand Command { get; set; }
         public IConfiguration Configuration { get; private set; }
+        public ILogger Logger { get; private set; }
 
         public AppOptions()
         {
@@ -23,6 +26,9 @@ namespace CadmusTool
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables()
                 .Build();
+
+            Logger = new SerilogLoggerProvider(Serilog.Log.Logger)
+                .CreateLogger(nameof(Program));
         }
 
         public static AppOptions Parse(string[] args)
