@@ -44,6 +44,25 @@ Create a new Cadmus MongoDB database (if the specified database does not already
 
 For a sample seed profile see `Assets/SeedProfile.json`.
 
+## Graph One Command
+
+Map a single item/part into graph.
+
+```ps1
+./cadmus-tool graph <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag> <IdArgument> [-p] [-d]
+```
+
+- `-p`: the ID refers to a part rather than to an item.
+- `-d`: the ID refers to an item/part which was deleted.
+
+## Graph Many Command
+
+Map all the items into graph.
+
+```ps1
+./cadmus-tool graph <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag>
+```
+
 ## Build SQL Command
 
 Build SQL code for querying the Cadmus index database, once or interactively.

@@ -1,25 +1,24 @@
 ﻿using Cadmus.Cli.Core;
+using Cadmus.Core;
 using Cadmus.Core.Storage;
 using Cadmus.Index;
 using Cadmus.Index.Config;
 using CadmusTool.Services;
-using Fusi.Tools;
+using Fusi.Tools.Data;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
 using ShellProgressBar;
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace CadmusTool.Commands
 {
-    public sealed class IndexDatabaseCommand : ICommand
+    public sealed class GraphManyCommand : ICommand
     {
-        private readonly IndexDatabaseCommandOptions _options;
+        private readonly GraphCommandOptions _options;
 
-        public IndexDatabaseCommand(IndexDatabaseCommandOptions options)
+        public GraphManyCommand(GraphCommandOptions options)
         {
             _options = options;
         }
@@ -27,8 +26,9 @@ namespace CadmusTool.Commands
         public static void Configure(CommandLineApplication command,
             AppOptions options)
         {
-            command.Description = "Index a Cadmus MongoDB database " +
-                                  "from the specified indexer profile.";
+            command.Description = "Map all the items into the graph " +
+                "from a Cadmus MongoDB database, using the specified " +
+                "indexer profile.";
             command.HelpOption("-?|-h|--help");
 
             CommandArgument databaseArgument = command.Argument("[database]",
@@ -40,55 +40,39 @@ namespace CadmusTool.Commands
             CommandArgument repositoryTagArgument = command.Argument("[tag]",
                 "The repository factory provider plugin tag.");
 
-            CommandOption clearOption = command.Option("-c|--clear",
-                "Clear before indexing", CommandOptionType.NoValue);
-
             command.OnExecute(() =>
             {
-            options.Command = new IndexDatabaseCommand(
-                new IndexDatabaseCommandOptions
-                {
-                    AppOptions = options,
-                    DatabaseName = databaseArgument.Value,
-                    ProfilePath = profileArgument.Value,
-                    ClearDatabase = clearOption.HasValue()
-                });
+                options.Command = new GraphManyCommand(
+                    new GraphCommandOptions
+                    {
+                        AppOptions = options,
+                        DatabaseName = databaseArgument.Value,
+                        ProfilePath = profileArgument.Value
+                    });
                 return 0;
             });
-        }
-
-        private static string LoadProfile(string path)
-        {
-            using StreamReader reader = File.OpenText(path);
-            return reader.ReadToEnd();
         }
 
         public async Task Run()
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("INDEX DATABASE\n");
+            Console.WriteLine("MAP ITEMS TO GRAPH\n");
             Console.ResetColor();
 
             Console.WriteLine($"Database: {_options.DatabaseName}\n" +
                               $"Profile file: {_options.ProfilePath}\n" +
-                              $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
-                              $"Clear: {_options.ClearDatabase}\n");
-            Serilog.Log.Information("INDEX DATABASE: " +
+                              $"Repository plugin tag: {_options.RepositoryPluginTag}\n");
+            Serilog.Log.Information("MAP TO GRAPH: " +
                          $"Database: {_options.DatabaseName}, " +
                          $"Profile file: {_options.ProfilePath}, " +
-                         $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
-                         $"Clear: {_options.ClearDatabase}");
+                         $"Repository plugin tag: {_options.RepositoryPluginTag}\n");
 
-            string profileContent = LoadProfile(_options.ProfilePath);
+            string profileContent = GraphHelper.LoadProfile(_options.ProfilePath);
 
             string cs = string.Format(_options.AppOptions.Configuration
                 .GetConnectionString("Index"), _options.DatabaseName);
             IItemIndexFactoryProvider provider =
                 new StandardItemIndexFactoryProvider(cs);
-            ItemIndexFactory factory = provider.GetFactory(profileContent);
-            IItemIndexWriter writer = factory.GetItemIndexWriter();
-
-            var options = CliHelper.GetProgressBarOptions();
 
             // repository
             Console.WriteLine("Creating repository...");
@@ -110,26 +94,53 @@ namespace CadmusTool.Commands
             ICadmusRepository repository = repositoryProvider.CreateRepository(
                 _options.DatabaseName);
 
-            using (var bar = new ProgressBar(100, "Indexing...", options))
-            {
-                ItemIndexer indexer = new ItemIndexer(writer);
-                if (_options.ClearDatabase) await indexer.Clear();
+            ProgressBarOptions options = CliHelper.GetProgressBarOptions();
+            using var bar = new ProgressBar(100, "Indexing...", options);
 
-                indexer.Build(repository, new ItemFilter(),
-                    CancellationToken.None,
-                    new Progress<ProgressReport>(
-                        r => bar.Tick(r.Percent, r.Message)));
-            }
+            // first page
+            int oldPercent = 0;
+            ItemFilter filter = new ItemFilter { PageSize = 100 };
+            DataPage<ItemInfo> page = repository.GetItems(filter);
+            if (page.Total == 0) return;
+
+            ItemIndexFactory factory = provider.GetFactory(profileContent);
+            IItemIndexWriter writer = factory.GetItemIndexWriter(true);
+            do
+            {
+                foreach (ItemInfo info in page.Items)
+                {
+                    IItem item = repository.GetItem(info.Id, false);
+                    if (item == null) continue;
+                    if (item == null)
+                    {
+                        Console.WriteLine("Item not found");
+                        return;
+                    }
+                    await writer.WriteItem(item);
+                    // update graph for item
+                    GraphHelper.UpdateGraph(item, _options);
+                }
+
+                // progress
+                int percent = filter.PageNumber * 100 / page.PageCount;
+                if (percent != oldPercent)
+                {
+                    bar.Tick(percent);
+                    oldPercent = percent;
+                }
+
+                // next page
+                if (++filter.PageNumber > page.PageCount) break;
+                page = repository.GetItems(filter);
+            } while (page.Items.Count != 0);
             writer.Close();
         }
     }
 
-    public class IndexDatabaseCommandOptions : CommandOptions
+    public class GraphCommandOptions : CommandOptions
     {
         public string DatabaseName { get; set; }
         public string ProfilePath { get; set; }
         public string RepositoryPluginTag { get; set; }
-        public bool ClearDatabase { get; set; }
     }
 }
-

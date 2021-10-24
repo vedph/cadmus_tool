@@ -24,8 +24,10 @@ namespace CadmusTool.Commands
                 c => IndexDatabaseCommand.Configure(c, options));
             app.Command("build-sql",
                 c => BuildIndexQueryCommand.Configure(c, options));
-            app.Command("map-graph",
-                c => MapToGraphCommand.Configure(c, options));
+            app.Command("graph-one",
+                c => GraphOneCommand.Configure(c, options));
+            app.Command("graph-many",
+                c => GraphManyCommand.Configure(c, options));
 
             app.OnExecute(() =>
             {
