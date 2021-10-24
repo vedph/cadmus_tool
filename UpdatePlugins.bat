@@ -1,12 +1,12 @@
 @echo off
 REM This batch is used in my workstation to collect plugins from several Cadmus solutions.
 echo UPDATE PLUGINS
-
-set target=.\cadmus-tool\bin\Debug\net5.0\plugins\
+set target=.\cadmus-tool\bin\Debug\net5.0\plugins
 
 md %target%
-del %target%*.* /q
+del %target%\*.* /q
 
-xcopy .\Cadmus.Cli.Plugin.Mqdq\bin\Debug\net5.0\*.* %target%Cadmus.Cli.Plugin.Mqdq\ /y
-
+xcopy ..\Mqdq\CadmusMqdq\Cadmus.Cli.Plugin.Mqdq\bin\Debug\net5.0\*.* %target%\Cadmus.Cli.Plugin.Mqdq\ /y
+pause
+xcopy ..\Pura\CadmusPura\Cadmus.Cli.Plugin.Pura\bin\Debug\net5.0\*.* %target%\Cadmus.Cli.Plugin.Pura\ /y
 pause
