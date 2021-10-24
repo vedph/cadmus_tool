@@ -42,7 +42,11 @@ Create a new Cadmus MongoDB database (if the specified database does not already
 - `-d`: dry run, i.e. create the items and parts, but do not create the database nor store anything into it. This is used to test for seeder issues before actually running it.
 - `-h`: add history items and parts together with the seeded items and parts. Default is `false`. In a real-world database you should set this to `true`.
 
-For a sample seed profile see `Assets/SeedProfile.json`.
+Sample:
+
+```ps1
+./cadmus-tool seed cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura part-seeder-factory-provider.pura -c 10 -d
+```
 
 ## Graph One Command
 

@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": "index cadmus-test c:\\users\\dfusi\\desktop\\cadmus.json part-seeder-factory-provider.mqdq"
+      "commandLineArgs": "seed cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura part-seeder-factory-provider.pura -c 10 -d"
     }
   }
 }
