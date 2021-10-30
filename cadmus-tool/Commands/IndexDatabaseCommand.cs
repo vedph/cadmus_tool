@@ -51,6 +51,7 @@ namespace CadmusTool.Commands
                     AppOptions = options,
                     DatabaseName = databaseArgument.Value,
                     ProfilePath = profileArgument.Value,
+                    RepositoryPluginTag = repositoryTagArgument.Value,
                     ClearDatabase = clearOption.HasValue()
                 });
                 return 0;

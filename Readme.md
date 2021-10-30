@@ -27,7 +27,7 @@ This requires a plugin with providers for the repository factory and the parts s
 Sample:
 
 ```bash
-./cadmus-tool index cadmus c:\users\dfusi\desktop\cadmus-profile.json repository-factory-provider.mqdq
+./cadmus-tool index cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura
 ```
 
 ## Seed Database Command
@@ -53,18 +53,30 @@ Sample:
 Map a single item/part into graph.
 
 ```ps1
-./cadmus-tool graph <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag> <IdArgument> [-p] [-d]
+./cadmus-tool graph-one <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag> <IdArgument> [-p] [-d]
 ```
 
 - `-p`: the ID refers to a part rather than to an item.
 - `-d`: the ID refers to an item/part which was deleted.
+
+Sample:
+
+```ps1
+./cadmus-tool graph cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura a47e233b-b50c-4110-af5b-343e12decdac
+```
 
 ## Graph Many Command
 
 Map all the items into graph.
 
 ```ps1
-./cadmus-tool graph <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag>
+./cadmus-tool graph-many <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag>
+```
+
+Sample:
+
+```ps1
+./cadmus-tool graph cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura
 ```
 
 ## Build SQL Command
