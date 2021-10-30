@@ -79,6 +79,22 @@ Sample:
 ./cadmus-tool graph-many cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura
 ```
 
+## Add Graph Presets Command
+
+Add preset nodes or node mappings into graph.
+
+```ps1
+./cadmus-tool graph-add <JsonFilePath> <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag>
+```
+
+- `-m`: source contains mappings instead of nodes.
+
+Sample:
+
+```ps1
+./cadmus-tool graph-add /users/dfusi/desktop/nodes.json cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura
+```
+
 ## Build SQL Command
 
 Build SQL code for querying the Cadmus index database, once or interactively.
