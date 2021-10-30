@@ -62,7 +62,7 @@ Map a single item/part into graph.
 Sample:
 
 ```ps1
-./cadmus-tool graph cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura a47e233b-b50c-4110-af5b-343e12decdac
+./cadmus-tool graph-one cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura a47e233b-b50c-4110-af5b-343e12decdac
 ```
 
 ## Graph Many Command
@@ -76,7 +76,7 @@ Map all the items into graph.
 Sample:
 
 ```ps1
-./cadmus-tool graph cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura
+./cadmus-tool graph-many cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura
 ```
 
 ## Build SQL Command
