@@ -36,9 +36,9 @@
     <PackageReference Include="Bogus" Version="33.1.1" />
     <PackageReference Include="Cadmus.Cli.Core" Version="1.0.0" />
     <PackageReference Include="Cadmus.Core" Version="2.4.0" />
-    <PackageReference Include="Cadmus.Index.MsSql" Version="1.1.1" />
-    <PackageReference Include="Cadmus.Index.MySql" Version="1.1.1" />
-    <PackageReference Include="Cadmus.Index.Sql" Version="1.2.1" />
+    <PackageReference Include="Cadmus.Index.MsSql" Version="1.1.2" />
+    <PackageReference Include="Cadmus.Index.MySql" Version="1.1.2" />
+    <PackageReference Include="Cadmus.Index.Sql" Version="1.2.2" />
     <PackageReference Include="Cadmus.Itinera.Parts" Version="1.1.18" />
     <PackageReference Include="Cadmus.Mongo" Version="2.4.1" />
     <PackageReference Include="Cadmus.Parts" Version="2.5.2" />
