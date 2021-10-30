@@ -1,4 +1,5 @@
 ﻿using Cadmus.Index.Graph;
+using Cadmus.Index.MySql;
 using Microsoft.Extensions.CommandLineUtils;
 using System;
 using System.IO;
@@ -42,6 +43,10 @@ namespace CadmusTool.Commands
                 "Source has node mappings instead of nodes",
                 CommandOptionType.NoValue);
 
+            CommandOption dryOption = command.Option("-d|--dry",
+                "Dry mode - don't write to database",
+                CommandOptionType.NoValue);
+
             command.OnExecute(() =>
             {
                 options.Command = new AddGraphPresetsCommand(
@@ -52,7 +57,8 @@ namespace CadmusTool.Commands
                         DatabaseName = databaseArgument.Value,
                         ProfilePath = profileArgument.Value,
                         RepositoryPluginTag = repositoryTagArgument.Value,
-                        Mappings = mappingsOption.HasValue()
+                        Mappings = mappingsOption.HasValue(),
+                        IsDry = dryOption.HasValue()
                     });
                 return 0;
             });
@@ -74,15 +80,19 @@ namespace CadmusTool.Commands
                     await reader.ReadMappingsAsync(source))
                 {
                     Console.WriteLine(mapping);
-                    graphRepository.AddMapping(mapping);
+                    if (!_options.IsDry) graphRepository.AddMapping(mapping);
                 }
             }
             else
             {
-                foreach (Node node in await reader.ReadNodesAsync(source))
+                foreach (UriNode node in await reader.ReadNodesAsync(source))
                 {
                     Console.WriteLine(node);
-                    graphRepository.AddNode(node);
+                    if (!_options.IsDry)
+                    {
+                        node.Id = graphRepository.AddUri(node.Uri);
+                        graphRepository.AddNode(node);
+                    }
                 }
             }
         }
@@ -92,5 +102,6 @@ namespace CadmusTool.Commands
     {
         public string Source { get; set; }
         public bool Mappings { get; set; }
+        public bool IsDry { get; set; }
     }
 }

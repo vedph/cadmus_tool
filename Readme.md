@@ -88,6 +88,7 @@ Add preset nodes or node mappings into graph.
 ```
 
 - `-m`: source contains mappings instead of nodes.
+- `-d`: dry mode - don't write to database.
 
 Sample:
 
