@@ -1,7 +1,7 @@
 ﻿using Cadmus.Index.Graph;
-using Cadmus.Index.MySql;
 using Microsoft.Extensions.CommandLineUtils;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -66,6 +66,18 @@ namespace CadmusTool.Commands
 
         public async Task Run()
         {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("ADD PRESET DATA TO GRAPH\n");
+            Console.ResetColor();
+
+            Console.WriteLine(
+                $"Source: {_options.Source}\n" +
+                $"Mappings: {(_options.Mappings ? "yes" : "no")}\n" +
+                $"Database: {_options.DatabaseName}\n" +
+                $"Profile file: {_options.ProfilePath}\n" +
+                $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
+                $"Dry mode: {(_options.IsDry ? "yes" : "no")}\n");
+
             IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
                 _options);
             if (graphRepository == null) return;
@@ -76,28 +88,44 @@ namespace CadmusTool.Commands
             JsonGraphPresetReader reader = new();
             if (_options.Mappings)
             {
+                // source id : graph id
+                Dictionary<int, int> ids = new Dictionary<int, int>();
+
                 foreach (NodeMapping mapping in
                     await reader.ReadMappingsAsync(source))
                 {
                     Console.WriteLine(mapping);
-                    if (!_options.IsDry) graphRepository.AddMapping(mapping);
+                    if (!_options.IsDry)
+                    {
+                        // adjust IDs
+                        int sourceId = mapping.Id;
+                        mapping.Id = 0;
+                        if (mapping.ParentId != 0)
+                            mapping.ParentId = ids[mapping.ParentId];
+                        graphRepository.AddMapping(mapping);
+                        ids[sourceId] = mapping.Id;
+                    }
                 }
             }
             else
             {
                 foreach (UriNode node in await reader.ReadNodesAsync(source))
                 {
-                    Console.WriteLine(node);
                     if (!_options.IsDry)
                     {
                         node.Id = graphRepository.AddUri(node.Uri);
+                        Console.WriteLine(node);
                         graphRepository.AddNode(node);
                     }
+                    else Console.WriteLine(node);
                 }
             }
         }
     }
 
+    /// <summary>
+    /// Options for <see cref="AddGraphPresetsCommand"/>
+    /// </summary>
     public class AddGraphPresetsCommandOptions : GraphCommandOptions
     {
         public string Source { get; set; }
