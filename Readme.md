@@ -98,6 +98,72 @@ Sample:
 ./cadmus-tool graph-add /users/dfusi/desktop/nodes.json cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura
 ```
 
+All data files are JSON documents, having their root element as an objects array. Samples for each type follow.
+
+**Nodes** (omit all the properties you don't need):
+
+```json
+[
+  {
+    "uri": "x:alpha",
+    "isClass": true,
+    "tag": null,
+    "label": "Alpha"
+  }
+]
+```
+
+**Mappings** (omit all the properties you don't need):
+
+```json
+[
+  {
+    "id": 3,
+    "parentId": 2,
+    "name": "A child mapping",
+    "ordinal": 0,
+    "facetFilter": null,
+    "groupFilter": null,
+    "flagsFilter": 0,
+    "titleFilter": null,
+    "partType": null,
+    "partRole": null,
+    "pinName": null,
+    "prefix": null,
+    "labelTemplate": null,
+    "tripleS": null,
+    "tripleP": null,
+    "tripleO": null,
+    "tripleOPrefix": null,
+    "isReversed": false,
+    "slot": null,
+    "description": null
+  }
+]
+```
+
+Note that mappings have a numeric ID which is used to allow children mappings reference their parent. Yet, each mapping will get a new ID when injected in the database.
+
+**Thesauri**:
+
+```json
+[
+  {
+    "id": "languages@en",
+    "entries": [
+      {
+        "id": "eng",
+        "value": "English"
+      },
+      {
+        "id": "fre",
+        "value": "French"
+      }
+    ]
+  }
+]
+```
+
 ## Build SQL Command
 
 Build SQL code for querying the Cadmus index database, once or interactively.
@@ -126,20 +192,28 @@ These commands are obsolete, but we keep their documentation here for reference.
 
 Import into a Cadmus database an essential subset of roughly filtered data to be used as seed data. This is a very minimal conversion from Zingarelli LEX files, just to have some fake data to work with.
 
-	cadmus-tool import-lex <lexDirectory> <databaseName> <profileXmlFilePath> [-p|--preflight]
+```ps1
+./cadmus-tool import-lex <lexDirectory> <databaseName> <profileXmlFilePath> [-p|--preflight]
+```
 
 The profile JSON file defines items facets and flags. You can find a sample in `cadmus-tool/Assets/Profile-lex.json`. Note that this profile is used only to provide a better editing experience, and does not reflect a real limitation for allowed parts in the database.
 
-	cadmus-tool import-lex c:\users\dfusi\desktop\lex cadmuslex c:\users\dfusi\desktop\Profile.json -p
+```ps1
+./cadmus-tool import-lex c:\users\dfusi\desktop\lex cadmuslex c:\users\dfusi\desktop\Profile.json -p
+```
 
 ### Legacy Seed
 
 Seed a Cadmus database (creating it if it does not exist) with a specified number of random items with their parts.
 
-	cadmus-tool seed <databaseName> <profileXmlFilePath> <facetsCsvList> [-c|--count itemCount]
+```ps1
+./cadmus-tool seed <databaseName> <profileXmlFilePath> <facetsCsvList> [-c|--count itemCount]
+```
 
 The profile JSON file defines items facets and flags. You can find a sample in `cadmus-tool/Assets/Profile.json`. Note that this profile is used only to provide a better editing experience, and does not reflect a real limitation for allowed parts in the database.
 
 The items count defaults to 100. Example:
 
-	.\cadmus-tool.exe seed cadmus \Projects\Core20\CadmusApi\cadmus-tool\Assets\Profile.json facet-default -c 100
+```ps1
+./cadmus-tool seed cadmus \Projects\Core20\CadmusApi\cadmus-tool\Assets\Profile.json facet-default -c 100
+```
