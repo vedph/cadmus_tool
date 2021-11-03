@@ -30,6 +30,8 @@ namespace CadmusTool.Commands
                 c => GraphManyCommand.Configure(c, options));
             app.Command("graph-add",
                 c => AddGraphPresetsCommand.Configure(c, options));
+            app.Command("graph-cls",
+                c => UpdateGraphClassesCommand.Configure(c, options));
 
             app.OnExecute(() =>
             {

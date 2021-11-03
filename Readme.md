@@ -1,5 +1,17 @@
 # Cadmus Tool
 
+- [Cadmus Tool](#cadmus-tool)
+  - [Index Database Command](#index-database-command)
+  - [Seed Database Command](#seed-database-command)
+  - [Graph One Command](#graph-one-command)
+  - [Graph Many Command](#graph-many-command)
+  - [Add Graph Presets Command](#add-graph-presets-command)
+  - [Update Node Classes Command](#update-node-classes-command)
+  - [Build SQL Command](#build-sql-command)
+  - [Legacy Commands](#legacy-commands)
+    - [Import LEX](#import-lex)
+    - [Legacy Seed](#legacy-seed)
+
 Cadmus configuration and utility tool.
 
 Since version 2, this tool requires plugin providers under its `plugins` folder. The plugin architecture is a planned upgrade to avoid the tool being dependent on Cadmus projects, each having its own models. Otherwise, every Cadmus project should be included as a dependency in the CLI tool, defeating the purpose of a generic and universal tool. Plugins are used to get Cadmus factory providers. A Cadmus factory provider plugin acts as a hub entry point for all the components to be packed in the CLI tool for a specific project.
@@ -162,6 +174,20 @@ Note that mappings have a numeric ID which is used to allow children mappings re
     ]
   }
 ]
+```
+
+## Update Node Classes Command
+
+Update the index of nodes classes in the index database. This is a potentially long task, depending on the number of nodes and the depth of class hierarchies.
+
+```ps1
+./cadmus-tool graph-cls <DatabaseName> <ProfilePath>
+```
+
+Sample:
+
+```ps1
+./cadmus-tool cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json
 ```
 
 ## Build SQL Command
