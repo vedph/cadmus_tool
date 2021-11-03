@@ -81,13 +81,15 @@ Sample:
 
 ## Add Graph Presets Command
 
-Add preset nodes or node mappings into graph.
+Add preset nodes, node mappings, or thesauri class nodes into graph.
 
 ```ps1
-./cadmus-tool graph-add <JsonFilePath> <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag>
+./cadmus-tool graph-add <JsonFilePath> <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag> [-t] [-d] [-r] [-p <Prefix>]
 ```
 
-- `-m`: source contains mappings instead of nodes.
+- `-t`: data type: `n`odes (default), `m`appings, `t`hesauri.
+- `-r`: when importing thesauri, make the thesaurus' ID the root class node.
+- `-p <Prefix>`: when importing thesauri, set the prefix to be added to each class node.
 - `-d`: dry mode - don't write to database.
 
 Sample:
@@ -141,15 +143,3 @@ The profile JSON file defines items facets and flags. You can find a sample in `
 The items count defaults to 100. Example:
 
 	.\cadmus-tool.exe seed cadmus \Projects\Core20\CadmusApi\cadmus-tool\Assets\Profile.json facet-default -c 100
-
-### Import LEX
-
-Create and seed a Cadmus MongoDB database with the specified profile, importing LEX files from a folder.
-
-	cadmus-tool import-lex inputDirectory databaseName profilePath [-p]
-
-Option `-p` = preflight, i.e. do not touch the target database.
-
-Example:
-
-	dotnet .\cadmus-tool.dll import-lex c:\users\dfusi\desktop\lex cadmuslex c:\users\dfusi\desktop\Profile.json -p

@@ -1,8 +1,11 @@
-﻿using Cadmus.Index.Graph;
+﻿using Cadmus.Core.Config;
+using Cadmus.Index.Graph;
 using Microsoft.Extensions.CommandLineUtils;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CadmusTool.Commands
@@ -39,9 +42,17 @@ namespace CadmusTool.Commands
             CommandArgument repositoryTagArgument = command.Argument("[tag]",
                 "The repository factory provider plugin tag.");
 
-            CommandOption mappingsOption = command.Option("-m|--mappings",
-                "Source has node mappings instead of nodes",
+            CommandOption typeOption = command.Option("-t|--type",
+                "The type of data to import: [N]odes, [M]appings, [T]hesauri",
                 CommandOptionType.NoValue);
+
+            CommandOption thesIdAsRootOption = command.Option("-r|--root",
+                "Add the thesaurus' ID as the root class node",
+                CommandOptionType.NoValue);
+
+            CommandOption thesIdPrefix = command.Option("-p|--prefix",
+                "Set the prefix to add to each thesaurus' class node",
+                CommandOptionType.SingleValue);
 
             CommandOption dryOption = command.Option("-d|--dry",
                 "Dry mode - don't write to database",
@@ -57,11 +68,70 @@ namespace CadmusTool.Commands
                         DatabaseName = databaseArgument.Value,
                         ProfilePath = profileArgument.Value,
                         RepositoryPluginTag = repositoryTagArgument.Value,
-                        Mappings = mappingsOption.HasValue(),
+                        Type = typeOption.HasValue() && typeOption.Value().Length == 1?
+                            'N' : char.ToUpperInvariant(typeOption.Value()[0]),
+                        ThesaurusIdAsRoot = thesIdAsRootOption.HasValue(),
+                        ThesaurusIdPrefix = thesIdPrefix.Value(),
                         IsDry = dryOption.HasValue()
                     });
                 return 0;
             });
+        }
+
+        private async Task ImportMappings(Stream source,
+            IGraphRepository repository)
+        {
+            // source id : graph id
+            Dictionary<int, int> ids = new Dictionary<int, int>();
+
+            JsonGraphPresetReader reader = new();
+            foreach (NodeMapping mapping in
+                await reader.ReadMappingsAsync(source))
+            {
+                Console.WriteLine(mapping);
+                if (!_options.IsDry)
+                {
+                    // adjust IDs
+                    int sourceId = mapping.Id;
+                    mapping.Id = 0;
+                    if (mapping.ParentId != 0)
+                        mapping.ParentId = ids[mapping.ParentId];
+                    repository.AddMapping(mapping);
+                    ids[sourceId] = mapping.Id;
+                }
+            }
+        }
+
+        private async Task ImportNodes(Stream source, IGraphRepository repository)
+        {
+            JsonGraphPresetReader reader = new();
+
+            foreach (UriNode node in await reader.ReadNodesAsync(source))
+            {
+                if (!_options.IsDry)
+                {
+                    node.Id = repository.AddUri(node.Uri);
+                    Console.WriteLine(node);
+                    repository.AddNode(node);
+                }
+                else Console.WriteLine(node);
+            }
+        }
+
+        private void ImportThesauri(Stream source, IGraphRepository repository)
+        {
+            string json = new StreamReader(source, Encoding.UTF8).ReadToEnd();
+            Thesaurus[] thesauri = JsonSerializer.Deserialize<Thesaurus[]>(json);
+            foreach (Thesaurus thesaurus in thesauri)
+            {
+                if (!_options.IsDry)
+                {
+                    repository.AddThesaurus(thesaurus,
+                        _options.ThesaurusIdAsRoot,
+                        _options.ThesaurusIdPrefix);
+                }
+                Console.WriteLine(thesaurus);
+            }
         }
 
         public async Task Run()
@@ -72,53 +142,38 @@ namespace CadmusTool.Commands
 
             Console.WriteLine(
                 $"Source: {_options.Source}\n" +
-                $"Mappings: {(_options.Mappings ? "yes" : "no")}\n" +
+                $"Type: {_options.Type}\n" +
                 $"Database: {_options.DatabaseName}\n" +
                 $"Profile file: {_options.ProfilePath}\n" +
                 $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
                 $"Dry mode: {(_options.IsDry ? "yes" : "no")}\n");
 
-            IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
+            if (_options.Type == 'T')
+            {
+                Console.WriteLine(
+                    "Thesaurus ID as root" + (_options.ThesaurusIdAsRoot ? "yes" : "no"));
+                Console.WriteLine(
+                    $"\nThesaurus ID prefix {_options.ThesaurusIdPrefix}\n");
+            }
+
+            IGraphRepository repository = GraphHelper.GetGraphRepository(
                 _options);
-            if (graphRepository == null) return;
+            if (repository == null) return;
 
             using Stream source = new FileStream(_options.Source, FileMode.Open,
                 FileAccess.Read, FileShare.Read);
 
-            JsonGraphPresetReader reader = new();
-            if (_options.Mappings)
+            switch (_options.Type)
             {
-                // source id : graph id
-                Dictionary<int, int> ids = new Dictionary<int, int>();
-
-                foreach (NodeMapping mapping in
-                    await reader.ReadMappingsAsync(source))
-                {
-                    Console.WriteLine(mapping);
-                    if (!_options.IsDry)
-                    {
-                        // adjust IDs
-                        int sourceId = mapping.Id;
-                        mapping.Id = 0;
-                        if (mapping.ParentId != 0)
-                            mapping.ParentId = ids[mapping.ParentId];
-                        graphRepository.AddMapping(mapping);
-                        ids[sourceId] = mapping.Id;
-                    }
-                }
-            }
-            else
-            {
-                foreach (UriNode node in await reader.ReadNodesAsync(source))
-                {
-                    if (!_options.IsDry)
-                    {
-                        node.Id = graphRepository.AddUri(node.Uri);
-                        Console.WriteLine(node);
-                        graphRepository.AddNode(node);
-                    }
-                    else Console.WriteLine(node);
-                }
+                case 'M':
+                    await ImportMappings(source, repository);
+                    break;
+                case 'T':
+                    ImportThesauri(source, repository);
+                    break;
+                default:
+                    await ImportNodes(source, repository);
+                    break;
             }
         }
     }
@@ -129,7 +184,9 @@ namespace CadmusTool.Commands
     public class AddGraphPresetsCommandOptions : GraphCommandOptions
     {
         public string Source { get; set; }
-        public bool Mappings { get; set; }
+        public char Type { get; set; }
         public bool IsDry { get; set; }
+        public bool ThesaurusIdAsRoot { get; set; }
+        public string ThesaurusIdPrefix { get; set; }
     }
 }
