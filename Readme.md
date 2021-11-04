@@ -187,7 +187,7 @@ Update the index of nodes classes in the index database. This is a potentially l
 Sample:
 
 ```ps1
-./cadmus-tool cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json
+./cadmus-tool graph-cls cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json
 ```
 
 ## Build SQL Command

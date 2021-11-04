@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": "graph-many cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura"
+      "commandLineArgs": "graph-cls cadmus-index-test ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json"
     }
   }
 }
