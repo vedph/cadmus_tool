@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using ShellProgressBar;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CadmusTool.Commands
@@ -110,7 +111,7 @@ namespace CadmusTool.Commands
             {
                 foreach (ItemInfo info in page.Items)
                 {
-                    IItem item = repository.GetItem(info.Id, false);
+                    IItem item = repository.GetItem(info.Id, true);
                     if (item == null) continue;
                     if (item == null)
                     {
@@ -120,6 +121,16 @@ namespace CadmusTool.Commands
                     await writer.WriteItem(item);
                     // update graph for item
                     GraphHelper.UpdateGraph(item, _options);
+
+                    // update graph for its parts
+                    foreach (IPart part in item.Parts)
+                    {
+                        GraphHelper.UpdateGraph(item, part,
+                            part.GetDataPins()
+                                .Select(p => Tuple.Create(p.Name, p.Value))
+                                .ToArray(),
+                            _options);
+                    }
                 }
 
                 // progress
