@@ -44,7 +44,7 @@ namespace CadmusTool.Commands
 
             CommandOption typeOption = command.Option("-t|--type",
                 "The type of data to import: [N]odes, [M]appings, [T]hesauri",
-                CommandOptionType.NoValue);
+                CommandOptionType.SingleValue);
 
             CommandOption thesIdAsRootOption = command.Option("-r|--root",
                 "Add the thesaurus' ID as the root class node",
@@ -60,6 +60,10 @@ namespace CadmusTool.Commands
 
             command.OnExecute(() =>
             {
+                char type = 'N';
+                if (typeOption.HasValue() && typeOption.Value().Length == 1)
+                    type = char.ToUpperInvariant(typeOption.Value()[0]);
+
                 options.Command = new AddGraphPresetsCommand(
                     new AddGraphPresetsCommandOptions
                     {
@@ -68,8 +72,7 @@ namespace CadmusTool.Commands
                         DatabaseName = databaseArgument.Value,
                         ProfilePath = profileArgument.Value,
                         RepositoryPluginTag = repositoryTagArgument.Value,
-                        Type = typeOption.HasValue() && typeOption.Value().Length == 1?
-                            'N' : char.ToUpperInvariant(typeOption.Value()[0]),
+                        Type = type,
                         ThesaurusIdAsRoot = thesIdAsRootOption.HasValue(),
                         ThesaurusIdPrefix = thesIdPrefix.Value(),
                         IsDry = dryOption.HasValue()

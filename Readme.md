@@ -107,7 +107,7 @@ Add preset nodes, node mappings, or thesauri class nodes into graph.
 Sample:
 
 ```ps1
-./cadmus-tool graph-add /users/dfusi/desktop/nodes.json cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura
+./cadmus-tool graph-add c:/users/dfusi/desktop/nodes.json cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura
 ```
 
 All data files are JSON documents, having their root element as an objects array. Samples for each type follow.
