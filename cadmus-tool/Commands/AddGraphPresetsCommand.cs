@@ -124,7 +124,12 @@ namespace CadmusTool.Commands
         private void ImportThesauri(Stream source, IGraphRepository repository)
         {
             string json = new StreamReader(source, Encoding.UTF8).ReadToEnd();
-            Thesaurus[] thesauri = JsonSerializer.Deserialize<Thesaurus[]>(json);
+            Thesaurus[] thesauri = JsonSerializer.Deserialize<Thesaurus[]>(json,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    AllowTrailingCommas = true
+                });
             foreach (Thesaurus thesaurus in thesauri)
             {
                 if (!_options.IsDry)

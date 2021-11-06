@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": "graph-add c:/users/dfusi/desktop/presetmappings.json cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura -t M"
+      "commandLineArgs": "graph-add c:/users/dfusi/desktop/thesauri.json cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura -t T"
     }
   }
 }
