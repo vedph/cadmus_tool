@@ -81,15 +81,14 @@ namespace CadmusTool.Commands
             });
         }
 
-        private async Task ImportMappings(Stream source,
-            IGraphRepository repository)
+        private void ImportMappings(Stream source, IGraphRepository repository)
         {
             // source id : graph id
             Dictionary<int, int> ids = new Dictionary<int, int>();
 
             JsonGraphPresetReader reader = new();
             foreach (NodeMapping mapping in
-                await reader.ReadMappingsAsync(source))
+                reader.ReadMappings(source))
             {
                 Console.WriteLine(mapping);
                 if (!_options.IsDry)
@@ -105,11 +104,11 @@ namespace CadmusTool.Commands
             }
         }
 
-        private async Task ImportNodes(Stream source, IGraphRepository repository)
+        private void ImportNodes(Stream source, IGraphRepository repository)
         {
             JsonGraphPresetReader reader = new();
 
-            foreach (UriNode node in await reader.ReadNodesAsync(source))
+            foreach (UriNode node in reader.ReadNodes(source))
             {
                 if (!_options.IsDry)
                 {
@@ -142,7 +141,7 @@ namespace CadmusTool.Commands
             }
         }
 
-        public async Task Run()
+        public Task Run()
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("ADD PRESET DATA TO GRAPH\n");
@@ -159,30 +158,34 @@ namespace CadmusTool.Commands
             if (_options.Type == 'T')
             {
                 Console.WriteLine(
-                    "Thesaurus ID as root" + (_options.ThesaurusIdAsRoot ? "yes" : "no"));
+                    "Thesaurus ID as root" + 
+                    (_options.ThesaurusIdAsRoot ? "yes" : "no"));
                 Console.WriteLine(
                     $"\nThesaurus ID prefix {_options.ThesaurusIdPrefix}\n");
             }
 
             IGraphRepository repository = GraphHelper.GetGraphRepository(
                 _options);
-            if (repository == null) return;
-
-            using Stream source = new FileStream(_options.Source, FileMode.Open,
-                FileAccess.Read, FileShare.Read);
-
-            switch (_options.Type)
+            if (repository != null)
             {
-                case 'M':
-                    await ImportMappings(source, repository);
-                    break;
-                case 'T':
-                    ImportThesauri(source, repository);
-                    break;
-                default:
-                    await ImportNodes(source, repository);
-                    break;
+                using Stream source = new FileStream(_options.Source, FileMode.Open,
+                    FileAccess.Read, FileShare.Read);
+
+                switch (_options.Type)
+                {
+                    case 'M':
+                        ImportMappings(source, repository);
+                        break;
+                    case 'T':
+                        ImportThesauri(source, repository);
+                        break;
+                    default:
+                        ImportNodes(source, repository);
+                        break;
+                }
             }
+
+            return Task.CompletedTask;
         }
     }
 
