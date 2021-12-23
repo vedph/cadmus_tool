@@ -49,15 +49,14 @@ namespace CadmusTool.Commands
             if (graphRepository == null) return;
 
             options.AppOptions.Logger.LogInformation("Mapping " + item);
-            NodeMapper mapper = new NodeMapper(graphRepository)
+            NodeMapper mapper = new(graphRepository)
             {
                 Logger = options.AppOptions.Logger
             };
             GraphSet set = mapper.MapItem(item);
 
             options.AppOptions.Logger.LogInformation("Updating graph " + set);
-            GraphUpdater updater = new GraphUpdater(graphRepository);
-            updater.Update(set);
+            graphRepository.UpdateGraph(set);
         }
 
         public static void UpdateGraph(IItem item, IPart part,
@@ -83,8 +82,7 @@ namespace CadmusTool.Commands
             GraphSet set = mapper.MapPins(item, part, pins);
 
             options.AppOptions.Logger.LogInformation("Updating graph " + set);
-            GraphUpdater updater = new GraphUpdater(graphRepository);
-            updater.Update(set);
+            graphRepository.UpdateGraph(set);
         }
 
         public static void UpdateGraphForDeletion(string id,
@@ -99,8 +97,7 @@ namespace CadmusTool.Commands
 
             options.AppOptions.Logger.LogInformation(
                 "Updating graph for deleted " + id);
-            GraphUpdater updater = new GraphUpdater(graphRepository);
-            updater.Delete(id);
+            graphRepository.DeleteGraphSet(id);
         }
     }
 }
