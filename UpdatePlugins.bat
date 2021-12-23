@@ -2,14 +2,16 @@
 REM This batch is used in my workstation to collect plugins and profiles
 REM from several Cadmus solutions.
 echo UPDATE PLUGINS
-set target=.\cadmus-tool\bin\Debug\net5.0\plugins
+set target=.\cadmus-tool\bin\Debug\net6.0\plugins
 
 md %target%
 del %target%\*.* /q
-
-xcopy ..\Mqdq\CadmusMqdq\Cadmus.Cli.Plugin.Mqdq\bin\Debug\net5.0\*.* %target%\Cadmus.Cli.Plugin.Mqdq\ /y
+REM Mqdq
+xcopy ..\Mqdq\CadmusMqdq\Cadmus.Cli.Plugin.Mqdq\bin\Debug\net6.0\*.* %target%\Cadmus.Cli.Plugin.Mqdq\ /y
 xcopy ..\Mqdq\CadmusMqdqApi\CadmusMqdqApi\wwwroot\seed-profile.json %target%\Cadmus.Cli.Plugin.Mqdq\ /y
 pause
-xcopy ..\Pura\CadmusPura\Cadmus.Cli.Plugin.Pura\bin\Debug\net5.0\*.* %target%\Cadmus.Cli.Plugin.Pura\ /y
+REM Pura
+xcopy ..\Pura\CadmusPura\Cadmus.Cli.Plugin.Pura\bin\Debug\net6.0\*.* %target%\Cadmus.Cli.Plugin.Pura\ /y
 xcopy ..\Pura\CadmusPuraApi\CadmusPuraApi\wwwroot\seed-profile.json %target%\Cadmus.Cli.Plugin.Pura\ /y
+xcopy ..\Tgr\CadmusTgr\Cadmus.Seed.Tgr.Parts\bin\Debug\netstandard2.0\ %target%\Cadmus.Cli.Plugin.Pura\ /y
 pause
