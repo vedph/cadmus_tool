@@ -109,6 +109,7 @@ namespace CadmusTool.Commands
             IItemIndexWriter writer = factory.GetItemIndexWriter(true);
             do
             {
+                int done = 0;
                 foreach (ItemInfo info in page.Items)
                 {
                     IItem item = repository.GetItem(info.Id, true);
@@ -131,6 +132,7 @@ namespace CadmusTool.Commands
                                 .ToArray(),
                             _options);
                     }
+                    bar.Message = "item " + (++done);
                 }
 
                 // progress
