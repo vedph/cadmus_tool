@@ -81,7 +81,7 @@ namespace CadmusTool.Commands
             Serilog.Log.Information("Creating repository...");
 
             var repositoryProvider = PluginFactoryProvider
-                .GetFromTag<ICliRepositoryFactoryProvider>(
+                .GetFromTag<ICliCadmusRepositoryProvider>(
                 _options.RepositoryPluginTag);
             if (repositoryProvider == null)
             {
@@ -101,7 +101,7 @@ namespace CadmusTool.Commands
 
             // first page
             int oldPercent = 0;
-            ItemFilter filter = new ItemFilter { PageSize = 100 };
+            ItemFilter filter = new() { PageSize = 100 };
             DataPage<ItemInfo> page = repository.GetItems(filter);
             if (page.Total == 0) return;
 

@@ -31,7 +31,7 @@ Index the specified Cadmus database into a MySql database. If the MySql database
 This requires a plugin with providers for the repository factory and the parts seeders factory. Each project has its own plugin, which must be placed in a subfolder of the tool's `plugins` folder.
 
 ```ps1
-./cadmus-tool index <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag> [-c]
+./cadmus-tool index <DatabaseName> <JsonProfilePath> <RepositoryProviderTag> [-c]
 ```
 
 - `-c`=clear the target database when it exists.
@@ -39,7 +39,7 @@ This requires a plugin with providers for the repository factory and the parts s
 Sample:
 
 ```bash
-./cadmus-tool index cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura
+./cadmus-tool index cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura
 ```
 
 ## Seed Database Command
@@ -47,7 +47,7 @@ Sample:
 Create a new Cadmus MongoDB database (if the specified database does not already exists), and seed it with a specified number of random items.
 
 ```ps1
-./cadmus-tool seed <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag> <SeedersFactoryProviderTag> [-c count] [-d] [-h]
+./cadmus-tool seed <DatabaseName> <JsonProfilePath> <RepositoryProviderTag> <SeedersFactoryProviderTag> [-c count] [-d] [-h]
 ```
 
 - `-c N`: the number of items to be seeded. Default is 100.
@@ -57,7 +57,7 @@ Create a new Cadmus MongoDB database (if the specified database does not already
 Sample:
 
 ```ps1
-./cadmus-tool seed cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura part-seeder-factory-provider.pura -c 10 -d
+./cadmus-tool seed cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura cli-seeder-factory-provider.pura -c 10 -d
 ```
 
 ## Graph One Command
@@ -65,7 +65,7 @@ Sample:
 Map a single item/part into graph.
 
 ```ps1
-./cadmus-tool graph-one <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag> <IdArgument> [-p] [-d]
+./cadmus-tool graph-one <DatabaseName> <JsonProfilePath> <RepositoryProviderTag> <IdArgument> [-p] [-d]
 ```
 
 - `-p`: the ID refers to a part rather than to an item.
@@ -74,7 +74,7 @@ Map a single item/part into graph.
 Sample:
 
 ```ps1
-./cadmus-tool graph-one cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura a47e233b-b50c-4110-af5b-343e12decdac
+./cadmus-tool graph-one cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura a47e233b-b50c-4110-af5b-343e12decdac
 ```
 
 ## Graph Many Command
@@ -82,13 +82,13 @@ Sample:
 Map all the items into graph.
 
 ```ps1
-./cadmus-tool graph-many <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag>
+./cadmus-tool graph-many <DatabaseName> <JsonProfilePath> <RepositoryProviderTag>
 ```
 
 Sample:
 
 ```ps1
-./cadmus-tool graph-many cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura
+./cadmus-tool graph-many cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura
 ```
 
 ## Add Graph Presets Command
@@ -96,7 +96,7 @@ Sample:
 Add preset nodes, node mappings, or thesauri class nodes into graph.
 
 ```ps1
-./cadmus-tool graph-add <JsonFilePath> <DatabaseName> <JsonProfilePath> <RepositoryFactoryProviderTag> [-t] [-d] [-r] [-p <Prefix>]
+./cadmus-tool graph-add <JsonFilePath> <DatabaseName> <JsonProfilePath> <RepositoryProviderTag> [-t] [-d] [-r] [-p <Prefix>]
 ```
 
 - `-t`: data type: `n`odes (default), `m`appings, `t`hesauri.
@@ -107,7 +107,7 @@ Add preset nodes, node mappings, or thesauri class nodes into graph.
 Sample:
 
 ```ps1
-./cadmus-tool graph-add c:/users/dfusi/desktop/nodes.json cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-factory-provider.pura
+./cadmus-tool graph-add c:/users/dfusi/desktop/nodes.json cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura
 ```
 
 All data files are JSON documents, having their root element as an objects array. Samples for each type follow.

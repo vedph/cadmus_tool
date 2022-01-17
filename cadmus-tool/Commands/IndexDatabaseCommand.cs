@@ -96,7 +96,7 @@ namespace CadmusTool.Commands
             Serilog.Log.Information("Creating repository...");
 
             var repositoryProvider = PluginFactoryProvider
-                .GetFromTag<ICliRepositoryFactoryProvider>(
+                .GetFromTag<ICliCadmusRepositoryProvider>(
                 _options.RepositoryPluginTag);
             if (repositoryProvider == null)
             {
