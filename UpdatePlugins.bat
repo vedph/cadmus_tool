@@ -16,6 +16,7 @@ xcopy ..\Pura\CadmusPuraApi\CadmusPuraApi\wwwroot\seed-profile.json %target%\Cad
 xcopy ..\Tgr\CadmusTgr\Cadmus.Seed.Tgr.Parts\bin\Debug\netstandard2.0\ %target%\Cadmus.Cli.Plugin.Pura\ /y
 pause
 REM Renovella
+xcopy ..\CadmusBricks\Cadmus.Refs.Bricks\bin\Debug\netstandard2.0\*.* %target%\Cadmus.Cli.Plugin.Renovella\ /y
 xcopy ..\Renovella\CadmusRenovella\Cadmus.Cli.Plugin.Renovella\bin\Debug\net6.0\*.* %target%\Cadmus.Cli.Plugin.Renovella\ /y
 xcopy ..\Renovella\CadmusRenovellaApi\CadmusRenovellaApi\wwwroot\seed-profile.json %target%\Cadmus.Cli.Plugin.Renovella\ /y
 pause
