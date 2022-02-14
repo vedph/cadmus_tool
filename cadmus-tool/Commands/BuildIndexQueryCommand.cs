@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CadmusTool.Commands
 {
-    public sealed class BuildIndexQueryCommand : ICommand
+    internal sealed class BuildIndexQueryCommand : ICommand
     {
         private readonly string _dbType;
         private readonly string _query;

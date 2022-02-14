@@ -4,7 +4,6 @@ using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
 using Cadmus.Mongo;
 using Cadmus.Seed;
-using CadmusTool.Services;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -14,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CadmusTool.Commands
 {
-    public sealed class SeedDatabaseCommand : ICommand
+    internal sealed class SeedDatabaseCommand : ICommand
     {
         private readonly SeedDatabaseCommandOptions _options;
 
@@ -62,9 +61,8 @@ namespace CadmusTool.Commands
                 }
 
                 options.Command = new SeedDatabaseCommand(
-                    new SeedDatabaseCommandOptions
+                    new SeedDatabaseCommandOptions(options)
                     {
-                        AppOptions = options,
                         DatabaseName = databaseArgument.Value,
                         ProfilePath = profileArgument.Value,
                         RepositoryPluginTag = repositoryTagArgument.Value,
@@ -112,7 +110,7 @@ namespace CadmusTool.Commands
             {
                 // create database if not exists
                 string connection = string.Format(CultureInfo.InvariantCulture,
-                    _options.AppOptions.Configuration.GetConnectionString("Mongo"),
+                    _options.Configuration.GetConnectionString("Mongo"),
                     _options.DatabaseName);
 
                 IDatabaseManager manager = new MongoDatabaseManager();
@@ -147,8 +145,8 @@ namespace CadmusTool.Commands
                     " was not found among plugins in " +
                     PluginFactoryProvider.GetPluginsDir());
             }
-            repositoryProvider.ConnectionString = _options.AppOptions
-                .Configuration.GetConnectionString("Mongo");
+            repositoryProvider.ConnectionString =
+                _options.Configuration.GetConnectionString("Mongo");
             ICadmusRepository repository = _options.IsDryRun
                 ? null : repositoryProvider.CreateRepository(_options.DatabaseName);
 
@@ -168,7 +166,7 @@ namespace CadmusTool.Commands
             Console.WriteLine("Seeding items");
             PartSeederFactory factory = seederProvider.GetFactory(
                 profileContent);
-            CadmusSeeder seeder = new CadmusSeeder(factory);
+            CadmusSeeder seeder = new(factory);
             foreach (IItem item in seeder.GetItems(_options.Count))
             {
                 Console.WriteLine($"{item}: {item.Parts.Count} parts");
@@ -187,8 +185,12 @@ namespace CadmusTool.Commands
         }
     }
 
-    public class SeedDatabaseCommandOptions : CommandOptions
+    internal class SeedDatabaseCommandOptions : CommandOptions
     {
+        public SeedDatabaseCommandOptions(AppOptions options) : base(options)
+        {
+        }
+
         public string DatabaseName { get; set; }
         public string ProfilePath { get; set; }
         public int Count { get; set; }

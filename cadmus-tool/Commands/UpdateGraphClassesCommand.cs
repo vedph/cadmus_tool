@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CadmusTool.Commands
 {
-    public sealed class UpdateGraphClassesCommand : ICommand
+    internal sealed class UpdateGraphClassesCommand : ICommand
     {
         private readonly GraphCommandOptions _options;
 
@@ -33,9 +33,8 @@ namespace CadmusTool.Commands
             command.OnExecute(() =>
             {
                 options.Command = new UpdateGraphClassesCommand(
-                    new GraphCommandOptions
+                    new GraphCommandOptions(options)
                     {
-                        AppOptions = options,
                         DatabaseName = databaseArgument.Value,
                         ProfilePath = profileArgument.Value
                     });

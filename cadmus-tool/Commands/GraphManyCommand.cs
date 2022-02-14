@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace CadmusTool.Commands
 {
-    public sealed class GraphManyCommand : ICommand
+    internal sealed class GraphManyCommand : ICommand
     {
         private readonly GraphCommandOptions _options;
 
@@ -44,9 +44,8 @@ namespace CadmusTool.Commands
             command.OnExecute(() =>
             {
                 options.Command = new GraphManyCommand(
-                    new GraphCommandOptions
+                    new GraphCommandOptions(options)
                     {
-                        AppOptions = options,
                         DatabaseName = databaseArgument.Value,
                         ProfilePath = profileArgument.Value,
                         RepositoryPluginTag = repositoryTagArgument.Value
@@ -71,7 +70,7 @@ namespace CadmusTool.Commands
 
             string profileContent = GraphHelper.LoadProfile(_options.ProfilePath);
 
-            string cs = string.Format(_options.AppOptions.Configuration
+            string cs = string.Format(_options.Configuration
                 .GetConnectionString("Index"), _options.DatabaseName);
             IItemIndexFactoryProvider provider =
                 new StandardItemIndexFactoryProvider(cs);
@@ -91,7 +90,7 @@ namespace CadmusTool.Commands
                     " was not found among plugins in " +
                     PluginFactoryProvider.GetPluginsDir());
             }
-            repositoryProvider.ConnectionString = _options.AppOptions.Configuration
+            repositoryProvider.ConnectionString = _options.Configuration
                 .GetConnectionString("Mongo");
             ICadmusRepository repository = repositoryProvider.CreateRepository(
                 _options.DatabaseName);
@@ -151,8 +150,12 @@ namespace CadmusTool.Commands
         }
     }
 
-    public class GraphCommandOptions : CommandOptions
+    internal class GraphCommandOptions : CommandOptions
     {
+        public GraphCommandOptions(AppOptions options) : base(options)
+        {
+        }
+
         public string DatabaseName { get; set; }
         public string ProfilePath { get; set; }
         public string RepositoryPluginTag { get; set; }

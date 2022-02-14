@@ -4,7 +4,7 @@ using Microsoft.Extensions.CommandLineUtils;
 
 namespace CadmusTool.Commands
 {
-    public sealed class RootCommand : ICommand
+    internal sealed class RootCommand : ICommand
     {
         private readonly CommandLineApplication _app;
 

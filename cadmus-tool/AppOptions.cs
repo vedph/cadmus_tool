@@ -8,7 +8,7 @@ using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace CadmusTool
 {
-    public sealed class AppOptions
+    internal sealed class AppOptions
     {
         public ICommand Command { get; set; }
         public IConfiguration Configuration { get; private set; }
@@ -21,7 +21,7 @@ namespace CadmusTool
 
         private void BuildConfiguration()
         {
-            ConfigurationBuilder cb = new ConfigurationBuilder();
+            ConfigurationBuilder cb = new();
             Configuration = cb
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables()
@@ -35,8 +35,8 @@ namespace CadmusTool
         {
             if (args == null) throw new ArgumentNullException(nameof(args));
 
-            AppOptions options = new AppOptions();
-            CommandLineApplication app = new CommandLineApplication
+            AppOptions options = new();
+            CommandLineApplication app = new()
             {
                 Name = "CadmusTool",
                 FullName = "Cadmus Utility Tool"

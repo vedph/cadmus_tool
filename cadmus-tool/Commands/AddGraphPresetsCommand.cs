@@ -14,7 +14,7 @@ namespace CadmusTool.Commands
     /// Add graph presets command.
     /// </summary>
     /// <seealso cref="ICommand" />
-    public sealed class AddGraphPresetsCommand : ICommand
+    internal sealed class AddGraphPresetsCommand : ICommand
     {
         private readonly AddGraphPresetsCommandOptions _options;
 
@@ -65,9 +65,8 @@ namespace CadmusTool.Commands
                     type = char.ToUpperInvariant(typeOption.Value()[0]);
 
                 options.Command = new AddGraphPresetsCommand(
-                    new AddGraphPresetsCommandOptions
+                    new AddGraphPresetsCommandOptions(options)
                     {
-                        AppOptions = options,
                         Source = sourceArgument.Value,
                         DatabaseName = databaseArgument.Value,
                         ProfilePath = profileArgument.Value,
@@ -192,8 +191,12 @@ namespace CadmusTool.Commands
     /// <summary>
     /// Options for <see cref="AddGraphPresetsCommand"/>
     /// </summary>
-    public class AddGraphPresetsCommandOptions : GraphCommandOptions
+    internal class AddGraphPresetsCommandOptions : GraphCommandOptions
     {
+        public AddGraphPresetsCommandOptions(AppOptions options) : base(options)
+        {
+        }
+
         public string Source { get; set; }
         public char Type { get; set; }
         public bool IsDry { get; set; }

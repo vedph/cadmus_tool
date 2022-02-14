@@ -26,7 +26,7 @@ namespace CadmusTool.Commands
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
 
-            string cs = string.Format(options.AppOptions.Configuration
+            string cs = string.Format(options.Configuration
                 .GetConnectionString("Index"), options.DatabaseName);
 
             var repository = new MySqlGraphRepository();
@@ -48,14 +48,14 @@ namespace CadmusTool.Commands
             IGraphRepository graphRepository = GetGraphRepository(options);
             if (graphRepository == null) return;
 
-            options.AppOptions.Logger.LogInformation("Mapping " + item);
+            options.Logger.LogInformation("Mapping " + item);
             NodeMapper mapper = new(graphRepository)
             {
-                Logger = options.AppOptions.Logger
+                Logger = options.Logger
             };
             GraphSet set = mapper.MapItem(item);
 
-            options.AppOptions.Logger.LogInformation("Updating graph " + set);
+            options.Logger.LogInformation("Updating graph " + set);
             graphRepository.UpdateGraph(set);
         }
 
@@ -74,14 +74,14 @@ namespace CadmusTool.Commands
             IGraphRepository graphRepository = GetGraphRepository(options);
             if (graphRepository == null) return;
 
-            options.AppOptions.Logger.LogInformation("Mapping " + part);
-            NodeMapper mapper = new NodeMapper(graphRepository)
+            options.Logger.LogInformation("Mapping " + part);
+            NodeMapper mapper = new(graphRepository)
             {
-                Logger = options.AppOptions.Logger
+                Logger = options.Logger
             };
             GraphSet set = mapper.MapPins(item, part, pins);
 
-            options.AppOptions.Logger.LogInformation("Updating graph " + set);
+            options.Logger.LogInformation("Updating graph " + set);
             graphRepository.UpdateGraph(set);
         }
 
@@ -95,8 +95,7 @@ namespace CadmusTool.Commands
             IGraphRepository graphRepository = GetGraphRepository(options);
             if (graphRepository == null) return;
 
-            options.AppOptions.Logger.LogInformation(
-                "Updating graph for deleted " + id);
+            options.Logger.LogInformation("Updating graph for deleted " + id);
             graphRepository.DeleteGraphSet(id);
         }
     }

@@ -20,3 +20,8 @@ xcopy ..\CadmusBricks\Cadmus.Refs.Bricks\bin\Debug\netstandard2.0\*.* %target%\C
 xcopy ..\Renovella\CadmusRenovella\Cadmus.Cli.Plugin.Renovella\bin\Debug\net6.0\*.* %target%\Cadmus.Cli.Plugin.Renovella\ /y
 xcopy ..\Renovella\CadmusRenovellaApi\CadmusRenovellaApi\wwwroot\seed-profile.json %target%\Cadmus.Cli.Plugin.Renovella\ /y
 pause
+REM Tgr
+xcopy ..\CadmusBricks\Cadmus.Refs.Bricks\bin\Debug\netstandard2.0\*.* %target%\Cadmus.Cli.Plugin.Tgr\ /y
+xcopy ..\Tgr\CadmusTgr\Cadmus.Cli.Plugin.Tgr\bin\Debug\net6.0\*.* %target%\Cadmus.Cli.Plugin.Tgr\ /y
+xcopy ..\Tgr\CadmusTgrApi\CadmusTgrApi\wwwroot\seed-profile.json %target%\Cadmus.Cli.Plugin.Tgr\ /y
+pause
