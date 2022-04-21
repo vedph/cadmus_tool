@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="34.0.1" />
+    <PackageReference Include="Bogus" Version="34.0.2" />
     <PackageReference Include="Cadmus.Cli.Core" Version="2.0.0" />
     <PackageReference Include="Cadmus.Core" Version="2.5.2" />
     <PackageReference Include="Cadmus.Index" Version="1.4.5" />
@@ -48,11 +48,11 @@
     <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="2.0.0" />
     <PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="1.0.3" />
     <PackageReference Include="Fusi.Text" Version="1.1.13" />
-    <PackageReference Include="Fusi.Tools" Version="1.1.17" />
-    <PackageReference Include="Fusi.Tools.Config" Version="1.0.19" />
+    <PackageReference Include="Fusi.Tools" Version="1.1.18" />
+    <PackageReference Include="Fusi.Tools.Config" Version="1.0.20" />
     <PackageReference Include="McMaster.NETCore.Plugins" Version="1.4.0" />
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
