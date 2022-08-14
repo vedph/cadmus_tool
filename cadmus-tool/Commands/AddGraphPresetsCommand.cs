@@ -1,5 +1,5 @@
 ﻿using Cadmus.Core.Config;
-using Cadmus.Index.Graph;
+using Cadmus.Graph;
 using Microsoft.Extensions.CommandLineUtils;
 using System;
 using System.Collections.Generic;
@@ -30,16 +30,17 @@ namespace CadmusTool.Commands
                 "specified database index.";
             command.HelpOption("-?|-h|--help");
 
-            CommandArgument sourceArgument = command.Argument("[source]",
+            CommandArgument sourceArgument = command.Argument("[SourcePath]",
                 "The path to the source JSON file with nodes or mappings");
 
-            CommandArgument databaseArgument = command.Argument("[database]",
+            CommandArgument databaseArgument = command.Argument("[DatabaseName]",
                 "The database name");
 
-            CommandArgument profileArgument = command.Argument("[profile]",
-                "The indexer profile JSON file path");
+            CommandArgument mappingsArgument = command.Argument("[MappingsPath]",
+                "The mappings JSON file path");
 
-            CommandArgument repositoryTagArgument = command.Argument("[tag]",
+            CommandArgument repositoryTagArgument = command.Argument(
+                "[RepoFactoryProviderTag]",
                 "The repository factory provider plugin tag.");
 
             CommandOption typeOption = command.Option("-t|--type",
@@ -69,7 +70,7 @@ namespace CadmusTool.Commands
                     {
                         Source = sourceArgument.Value,
                         DatabaseName = databaseArgument.Value,
-                        ProfilePath = profileArgument.Value,
+                        MappingsPath = mappingsArgument.Value,
                         RepositoryPluginTag = repositoryTagArgument.Value,
                         Type = type,
                         ThesaurusIdAsRoot = thesIdAsRootOption.HasValue(),
@@ -83,11 +84,10 @@ namespace CadmusTool.Commands
         private void ImportMappings(Stream source, IGraphRepository repository)
         {
             // source id : graph id
-            Dictionary<int, int> ids = new Dictionary<int, int>();
+            Dictionary<int, int> ids = new();
 
             JsonGraphPresetReader reader = new();
-            foreach (NodeMapping mapping in
-                reader.ReadMappings(source))
+            foreach (NodeMapping mapping in reader.LoadMappings(source))
             {
                 Console.WriteLine(mapping);
                 if (!_options.IsDry)
@@ -111,11 +111,14 @@ namespace CadmusTool.Commands
             {
                 if (!_options.IsDry)
                 {
-                    node.Id = repository.AddUri(node.Uri);
+                    node.Id = repository.AddUri(node.Uri!);
                     Console.WriteLine(node);
                     repository.AddNode(node);
                 }
-                else Console.WriteLine(node);
+                else
+                {
+                    Console.WriteLine(node);
+                }
             }
         }
 
@@ -127,7 +130,7 @@ namespace CadmusTool.Commands
                 {
                     PropertyNameCaseInsensitive = true,
                     AllowTrailingCommas = true
-                });
+                })!;
             foreach (Thesaurus thesaurus in thesauri)
             {
                 if (!_options.IsDry)
@@ -150,14 +153,14 @@ namespace CadmusTool.Commands
                 $"Source: {_options.Source}\n" +
                 $"Type: {_options.Type}\n" +
                 $"Database: {_options.DatabaseName}\n" +
-                $"Profile file: {_options.ProfilePath}\n" +
+                $"Mappings: {_options.MappingsPath}\n" +
                 $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
                 $"Dry mode: {(_options.IsDry ? "yes" : "no")}\n");
 
             if (_options.Type == 'T')
             {
                 Console.WriteLine(
-                    "Thesaurus ID as root" + 
+                    "Thesaurus ID as root" +
                     (_options.ThesaurusIdAsRoot ? "yes" : "no"));
                 Console.WriteLine(
                     $"\nThesaurus ID prefix {_options.ThesaurusIdPrefix}\n");
@@ -167,7 +170,7 @@ namespace CadmusTool.Commands
                 _options);
             if (repository != null)
             {
-                using Stream source = new FileStream(_options.Source, FileMode.Open,
+                using Stream source = new FileStream(_options.Source!, FileMode.Open,
                     FileAccess.Read, FileShare.Read);
 
                 switch (_options.Type)
@@ -197,10 +200,10 @@ namespace CadmusTool.Commands
         {
         }
 
-        public string Source { get; set; }
+        public string? Source { get; set; }
         public char Type { get; set; }
         public bool IsDry { get; set; }
         public bool ThesaurusIdAsRoot { get; set; }
-        public string ThesaurusIdPrefix { get; set; }
+        public string? ThesaurusIdPrefix { get; set; }
     }
 }

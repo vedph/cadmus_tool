@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
+	<Nullable>enable</Nullable>
     <RootNamespace>cadmus_tool</RootNamespace>
 	  <Authors>Daniele Fusi</Authors>
 	  <Company>Fusi</Company>
@@ -11,7 +12,9 @@
 	  <Copyright>by Daniele Fusi</Copyright>
 	  <NeutralLanguage>en-US</NeutralLanguage>
 	  <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-	  <Version>2.0.0</Version>
+	  <Version>2.1.0</Version>
+	  <FileVersion>2.1.0</FileVersion>
+	  <AssemblyVersion>2.1.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,22 +37,22 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="34.0.2" />
-    <PackageReference Include="Cadmus.Cli.Core" Version="2.0.0" />
-    <PackageReference Include="Cadmus.Core" Version="2.5.2" />
-    <PackageReference Include="Cadmus.Index" Version="1.4.5" />
-    <PackageReference Include="Cadmus.Index.MsSql" Version="1.2.11" />
-    <PackageReference Include="Cadmus.Index.MySql" Version="1.2.11" />
-    <PackageReference Include="Cadmus.Index.Sql" Version="1.3.10" />
-    <PackageReference Include="Cadmus.Mongo" Version="2.5.3" />
+    <PackageReference Include="Cadmus.Cli.Core" Version="4.0.3" />
+    <PackageReference Include="Cadmus.Core" Version="4.0.3" />
+    <PackageReference Include="Cadmus.Index" Version="4.0.3" />
+    <PackageReference Include="Cadmus.Index.MsSql" Version="4.0.3" />
+    <PackageReference Include="Cadmus.Index.MySql" Version="4.0.3" />
+    <PackageReference Include="Cadmus.Index.Sql" Version="4.0.3" />
+    <PackageReference Include="Cadmus.Mongo" Version="4.0.3" />
     <PackageReference Include="Cadmus.Parts" Version="2.7.1" />
-    <PackageReference Include="Cadmus.Philology.Parts" Version="3.0.0" />
-    <PackageReference Include="Cadmus.Seed" Version="1.3.2" />
+    <PackageReference Include="Cadmus.Philology.Parts" Version="4.0.0" />
+    <PackageReference Include="Cadmus.Seed" Version="4.0.3" />
     <PackageReference Include="Cadmus.Seed.Parts" Version="1.5.1" />
-    <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="2.0.0" />
+    <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="4.0.0" />
     <PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="1.0.3" />
-    <PackageReference Include="Fusi.Text" Version="1.1.13" />
-    <PackageReference Include="Fusi.Tools" Version="1.1.18" />
-    <PackageReference Include="Fusi.Tools.Config" Version="1.0.20" />
+    <PackageReference Include="Fusi.Text" Version="2.0.0" />
+    <PackageReference Include="Fusi.Tools" Version="2.1.7" />
+    <PackageReference Include="Fusi.Tools.Config" Version="2.1.8" />
     <PackageReference Include="McMaster.NETCore.Plugins" Version="1.4.0" />
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
@@ -57,10 +60,10 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
-    <PackageReference Include="Serilog" Version="2.10.0" />
+    <PackageReference Include="Serilog" Version="2.11.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-    <PackageReference Include="ShellProgressBar" Version="5.1.0" />
+    <PackageReference Include="ShellProgressBar" Version="5.2.0" />
   </ItemGroup>
 
   <ItemGroup>

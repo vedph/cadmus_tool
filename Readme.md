@@ -110,9 +110,7 @@ Sample:
 ./cadmus-tool graph-add c:/users/dfusi/desktop/nodes.json cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura
 ```
 
-All data files are JSON documents, having their root element as an objects array. Samples for each type follow.
-
-**Nodes** (omit all the properties you don't need):
+All data files are JSON documents, having their root element as an objects array. For instance, this is a node (omit all the properties you don't need):
 
 ```json
 [
@@ -125,38 +123,7 @@ All data files are JSON documents, having their root element as an objects array
 ]
 ```
 
-**Mappings** (omit all the properties you don't need):
-
-```json
-[
-  {
-    "id": 3,
-    "parentId": 2,
-    "name": "A child mapping",
-    "ordinal": 0,
-    "facetFilter": null,
-    "groupFilter": null,
-    "flagsFilter": 0,
-    "titleFilter": null,
-    "partType": null,
-    "partRole": null,
-    "pinName": null,
-    "prefix": null,
-    "labelTemplate": null,
-    "tripleS": null,
-    "tripleP": null,
-    "tripleO": null,
-    "tripleOPrefix": null,
-    "isReversed": false,
-    "slot": null,
-    "description": null
-  }
-]
-```
-
-Note that mappings have a numeric ID which is used to allow children mappings reference their parent. Yet, each mapping will get a new ID when injected in the database.
-
-**Thesauri**:
+while this is a thesaurus:
 
 ```json
 [
@@ -243,3 +210,9 @@ The items count defaults to 100. Example:
 ```ps1
 ./cadmus-tool seed cadmus \Projects\Core20\CadmusApi\cadmus-tool\Assets\Profile.json facet-default -c 100
 ```
+
+## History
+
+### 2.1.0
+
+- 2022-08-14: updated packages, refactored graph related commands, added get object command (for preview).

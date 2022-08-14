@@ -23,7 +23,7 @@ namespace CadmusTool.Commands
 
         private static string[] RandomizeLines(string[] lines)
         {
-            List<KeyValuePair<int, string>> list = new List<KeyValuePair<int, string>>();
+            List<KeyValuePair<int, string>> list = new();
             foreach (string line in lines)
                 list.Add(new KeyValuePair<int, string>(_random.Next(), line));
 
@@ -46,8 +46,7 @@ namespace CadmusTool.Commands
         private static string LoadResourceText(string name)
         {
             Assembly asm = typeof(LoremIpsumGenerator).GetTypeInfo().Assembly;
-            using (StreamReader reader = new StreamReader
-                (asm.GetManifestResourceStream(name), Encoding.UTF8))
+            using (StreamReader reader = new                (asm.GetManifestResourceStream(name), Encoding.UTF8))
             {
                 return reader.ReadToEnd();
             }
@@ -56,7 +55,7 @@ namespace CadmusTool.Commands
         public static string Generate(int wordCount, int paragraphLength)
         {
             string[] tokens = RandomizeLines(_tokens);
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             for (int i = 0; i < wordCount; i++)
             {

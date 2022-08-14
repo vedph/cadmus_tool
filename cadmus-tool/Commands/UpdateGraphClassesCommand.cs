@@ -1,4 +1,4 @@
-﻿using Cadmus.Index.Graph;
+﻿using Cadmus.Graph;
 using Fusi.Tools;
 using Microsoft.Extensions.CommandLineUtils;
 using ShellProgressBar;
@@ -36,7 +36,7 @@ namespace CadmusTool.Commands
                     new GraphCommandOptions(options)
                     {
                         DatabaseName = databaseArgument.Value,
-                        ProfilePath = profileArgument.Value
+                        MappingsPath = profileArgument.Value
                     });
                 return 0;
             });
@@ -49,7 +49,7 @@ namespace CadmusTool.Commands
 
             Console.WriteLine(
                 $"Database: {_options.DatabaseName}\n" +
-                $"Profile file: {_options.ProfilePath}\n");
+                $"Profile file: {_options.MappingsPath}\n");
 
             IGraphRepository repository = GraphHelper.GetGraphRepository(
                 _options);

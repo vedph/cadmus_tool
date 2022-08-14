@@ -13,7 +13,7 @@ namespace CadmusTool.Commands
         private readonly string _dbType;
         private readonly string _query;
         private readonly PagingOptions _options;
-        private SqlQueryBuilderBase _builder;
+        private SqlQueryBuilderBase? _builder;
 
         public BuildIndexQueryCommand(string dbType, string query)
         {
@@ -77,7 +77,7 @@ namespace CadmusTool.Commands
             while (true)
             {
                 Console.Write("Enter query: ");
-                string query = Console.ReadLine();
+                string? query = Console.ReadLine();
                 if (string.IsNullOrEmpty(query) || query == "quit") break;
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Green;

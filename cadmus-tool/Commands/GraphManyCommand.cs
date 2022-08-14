@@ -1,16 +1,11 @@
-﻿using Cadmus.Cli.Core;
-using Cadmus.Core;
+﻿using Cadmus.Core;
 using Cadmus.Core.Storage;
-using Cadmus.Index;
-using Cadmus.Index.Config;
-using CadmusTool.Services;
+using Cadmus.Graph;
 using Fusi.Tools.Data;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
 using ShellProgressBar;
 using System;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CadmusTool.Commands
@@ -32,13 +27,14 @@ namespace CadmusTool.Commands
                 "indexer profile.";
             command.HelpOption("-?|-h|--help");
 
-            CommandArgument databaseArgument = command.Argument("[database]",
+            CommandArgument databaseArgument = command.Argument("[DatabaseName]",
                 "The database name");
 
-            CommandArgument profileArgument = command.Argument("[profile]",
-                "The indexer profile JSON file path");
+            CommandArgument mappingsArgument = command.Argument("[MappingsPath]",
+                "The mappings JSON file path");
 
-            CommandArgument repositoryTagArgument = command.Argument("[tag]",
+            CommandArgument repositoryTagArgument = command.Argument(
+                "[RepoFactoryProviderTag]",
                 "The repository factory provider plugin tag.");
 
             command.OnExecute(() =>
@@ -47,53 +43,38 @@ namespace CadmusTool.Commands
                     new GraphCommandOptions(options)
                     {
                         DatabaseName = databaseArgument.Value,
-                        ProfilePath = profileArgument.Value,
+                        MappingsPath = mappingsArgument.Value,
                         RepositoryPluginTag = repositoryTagArgument.Value
                     });
                 return 0;
             });
         }
 
-        public async Task Run()
+        public Task Run()
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("MAP ITEMS TO GRAPH\n");
             Console.ResetColor();
 
             Console.WriteLine($"Database: {_options.DatabaseName}\n" +
-                              $"Profile file: {_options.ProfilePath}\n" +
+                              $"Mappings: {_options.MappingsPath}\n" +
                               $"Repository plugin tag: {_options.RepositoryPluginTag}\n");
             Serilog.Log.Information("MAP TO GRAPH: " +
                          $"Database: {_options.DatabaseName}, " +
-                         $"Profile file: {_options.ProfilePath}, " +
+                         $"Mappings: {_options.MappingsPath}, " +
                          $"Repository plugin tag: {_options.RepositoryPluginTag}\n");
-
-            string profileContent = GraphHelper.LoadProfile(_options.ProfilePath);
-
-            string cs = string.Format(_options.Configuration
-                .GetConnectionString("Index"), _options.DatabaseName);
-            IItemIndexFactoryProvider provider =
-                new StandardItemIndexFactoryProvider(cs);
 
             // repository
             Console.WriteLine("Creating repository...");
             Serilog.Log.Information("Creating repository...");
+            ICadmusRepository repository = CliHelper.GetCadmusRepository(
+                _options.RepositoryPluginTag!,
+                _options.Configuration.GetConnectionString("Mongo"),
+                _options.DatabaseName!);
 
-            var repositoryProvider = PluginFactoryProvider
-                .GetFromTag<ICliCadmusRepositoryProvider>(
-                _options.RepositoryPluginTag);
-            if (repositoryProvider == null)
-            {
-                throw new FileNotFoundException(
-                    "The requested repository provider tag " +
-                    _options.RepositoryPluginTag +
-                    " was not found among plugins in " +
-                    PluginFactoryProvider.GetPluginsDir());
-            }
-            repositoryProvider.ConnectionString = _options.Configuration
-                .GetConnectionString("Mongo");
-            ICadmusRepository repository = repositoryProvider.CreateRepository(
-                _options.DatabaseName);
+            IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
+                _options);
+            GraphUpdater updater = new(graphRepository);
 
             ProgressBarOptions options = CliHelper.GetProgressBarOptions();
             using var bar = new ProgressBar(100, "Indexing...", options);
@@ -102,10 +83,8 @@ namespace CadmusTool.Commands
             int oldPercent = 0;
             ItemFilter filter = new() { PageSize = 100 };
             DataPage<ItemInfo> page = repository.GetItems(filter);
-            if (page.Total == 0) return;
+            if (page.Total == 0) return Task.CompletedTask;
 
-            ItemIndexFactory factory = provider.GetFactory(profileContent);
-            IItemIndexWriter writer = factory.GetItemIndexWriter(true);
             do
             {
                 int done = 0;
@@ -116,20 +95,16 @@ namespace CadmusTool.Commands
                     if (item == null)
                     {
                         Console.WriteLine("Item not found");
-                        return;
+                        return Task.CompletedTask;
                     }
-                    await writer.WriteItem(item);
+
                     // update graph for item
-                    GraphHelper.UpdateGraph(item, _options);
+                    updater.Update(item);
 
                     // update graph for its parts
                     foreach (IPart part in item.Parts)
                     {
-                        GraphHelper.UpdateGraph(item, part,
-                            part.GetDataPins()
-                                .Select(p => Tuple.Create(p.Name, p.Value))
-                                .ToArray(),
-                            _options);
+                        updater.Update(item, part);
                     }
                     bar.Message = "item " + (++done);
                 }
@@ -146,7 +121,8 @@ namespace CadmusTool.Commands
                 if (++filter.PageNumber > page.PageCount) break;
                 page = repository.GetItems(filter);
             } while (page.Items.Count != 0);
-            writer.Close();
+
+            return Task.CompletedTask;
         }
     }
 
@@ -156,8 +132,8 @@ namespace CadmusTool.Commands
         {
         }
 
-        public string DatabaseName { get; set; }
-        public string ProfilePath { get; set; }
-        public string RepositoryPluginTag { get; set; }
+        public string? DatabaseName { get; set; }
+        public string? MappingsPath { get; set; }
+        public string? RepositoryPluginTag { get; set; }
     }
 }
