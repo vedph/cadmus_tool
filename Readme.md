@@ -8,9 +8,12 @@
   - [Add Graph Presets Command](#add-graph-presets-command)
   - [Update Node Classes Command](#update-node-classes-command)
   - [Build SQL Command](#build-sql-command)
+  - [Get Object Command](#get-object-command)
   - [Legacy Commands](#legacy-commands)
     - [Import LEX](#import-lex)
     - [Legacy Seed](#legacy-seed)
+  - [History](#history)
+    - [2.1.0](#210)
 
 Cadmus configuration and utility tool.
 
@@ -176,6 +179,23 @@ This allows you to interactively build SQL code. Otherwise, add your query after
 ```
 
 where `mysql` is the index database type, which is currently MySql.
+
+## Get Object Command
+
+Get the JSON code representing an item or a part's content, optionally also converted in XML.
+
+```ps1
+./cadmus-tool get-obj <DatabaseName> <ID> <RepositoryProviderTag> <OutputDir> [-p] [-x]
+```
+
+- `p`: the ID refers to a part rather than to an item.
+- `x`: also write an XML version of the result.
+
+Sample:
+
+```ps1
+./cadmus-tool get-obj cadmus 8e5d5b5d-4b27-4d00-9038-f611a8e199b9 cli-repository-provider.pura c:\users\dfusi\desktop\ -p -x
+```
 
 ## Legacy Commands
 

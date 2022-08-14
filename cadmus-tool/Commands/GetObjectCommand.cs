@@ -71,13 +71,13 @@ namespace CadmusTool.Commands
             using StreamWriter writer = new(
                 new FileStream(path, FileMode.Create, FileAccess.Write,
                 FileShare.Read), Encoding.UTF8);
-            writer.WriteLine(path, text);
+            writer.WriteLine(text);
             writer.Flush();
         }
 
         public Task Run()
         {
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("GET OBJECT\n");
             Console.ResetColor();
 
@@ -140,6 +140,7 @@ namespace CadmusTool.Commands
             if (_options.IsXml)
             {
                 // convert to XML
+                json = "{\"root\":" + json + "}";
                 XmlDocument? doc = JsonConvert.DeserializeXmlNode(json);
                 string xml = doc?.OuterXml ?? "";
                 path = Path.Combine(_options.OutputDir ?? "",
