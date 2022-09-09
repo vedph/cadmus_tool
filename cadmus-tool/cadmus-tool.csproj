@@ -12,9 +12,9 @@
 	  <Copyright>by Daniele Fusi</Copyright>
 	  <NeutralLanguage>en-US</NeutralLanguage>
 	  <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-	  <Version>2.1.0</Version>
-	  <FileVersion>2.1.0</FileVersion>
-	  <AssemblyVersion>2.1.0</AssemblyVersion>
+	  <Version>2.1.1</Version>
+	  <FileVersion>2.1.1</FileVersion>
+	  <AssemblyVersion>2.1.1</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,22 +37,23 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="34.0.2" />
-    <PackageReference Include="Cadmus.Cli.Core" Version="4.0.3" />
-    <PackageReference Include="Cadmus.Core" Version="4.0.3" />
-    <PackageReference Include="Cadmus.Index" Version="4.0.3" />
-    <PackageReference Include="Cadmus.Index.MsSql" Version="4.0.3" />
-    <PackageReference Include="Cadmus.Index.MySql" Version="4.0.3" />
-    <PackageReference Include="Cadmus.Index.Sql" Version="4.0.3" />
-    <PackageReference Include="Cadmus.Mongo" Version="4.0.3" />
+    <PackageReference Include="Cadmus.Cli.Core" Version="4.0.4" />
+    <PackageReference Include="Cadmus.Core" Version="4.0.4" />
+    <PackageReference Include="Cadmus.General.Parts" Version="2.1.0" />
+    <PackageReference Include="Cadmus.Index" Version="4.0.4" />
+    <PackageReference Include="Cadmus.Index.MsSql" Version="4.0.4" />
+    <PackageReference Include="Cadmus.Index.MySql" Version="4.0.4" />
+    <PackageReference Include="Cadmus.Index.Sql" Version="4.0.4" />
+    <PackageReference Include="Cadmus.Mongo" Version="4.0.4" />
     <PackageReference Include="Cadmus.Parts" Version="2.7.1" />
     <PackageReference Include="Cadmus.Philology.Parts" Version="4.0.0" />
-    <PackageReference Include="Cadmus.Seed" Version="4.0.3" />
+    <PackageReference Include="Cadmus.Seed" Version="4.0.4" />
     <PackageReference Include="Cadmus.Seed.Parts" Version="1.5.1" />
     <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="4.0.0" />
     <PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="1.0.3" />
     <PackageReference Include="Fusi.Text" Version="2.0.0" />
-    <PackageReference Include="Fusi.Tools" Version="2.1.7" />
-    <PackageReference Include="Fusi.Tools.Config" Version="2.1.8" />
+    <PackageReference Include="Fusi.Tools" Version="2.1.9" />
+    <PackageReference Include="Fusi.Tools.Config" Version="2.1.9" />
     <PackageReference Include="McMaster.NETCore.Plugins" Version="1.4.0" />
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />

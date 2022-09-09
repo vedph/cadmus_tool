@@ -60,7 +60,7 @@ namespace CadmusTool
 
                 Task.Run(async () =>
                 {
-                    AppOptions options = AppOptions.Parse(args);
+                    AppOptions? options = AppOptions.Parse(args);
                     if (options?.Command == null)
                     {
                         // RootCommand will have printed help

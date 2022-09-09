@@ -31,7 +31,7 @@ namespace CadmusTool
                 .CreateLogger(nameof(Program));
         }
 
-        public static AppOptions Parse(string[] args)
+        public static AppOptions? Parse(string[] args)
         {
             if (args == null) throw new ArgumentNullException(nameof(args));
 

@@ -78,7 +78,7 @@ namespace CadmusTool.Commands
                          $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
                          $"Clear: {_options.ClearDatabase}");
 
-            string profileContent = LoadProfile(_options.ProfilePath);
+            string profileContent = LoadProfile(_options.ProfilePath!);
 
             string cs = string.Format(_options.Configuration
                 .GetConnectionString("Index"), _options.DatabaseName);
@@ -111,8 +111,10 @@ namespace CadmusTool.Commands
 
             using (var bar = new ProgressBar(100, "Indexing...", options))
             {
-                ItemIndexer indexer = new(writer);
-                indexer.Logger = _options.Logger;
+                ItemIndexer indexer = new(writer)
+                {
+                    Logger = _options.Logger
+                };
                 if (_options.ClearDatabase) await indexer.Clear();
 
                 indexer.Build(repository, new ItemFilter(),
@@ -130,9 +132,9 @@ namespace CadmusTool.Commands
         {
         }
 
-        public string DatabaseName { get; set; }
-        public string ProfilePath { get; set; }
-        public string RepositoryPluginTag { get; set; }
+        public string? DatabaseName { get; set; }
+        public string? ProfilePath { get; set; }
+        public string? RepositoryPluginTag { get; set; }
         public bool ClearDatabase { get; set; }
     }
 }

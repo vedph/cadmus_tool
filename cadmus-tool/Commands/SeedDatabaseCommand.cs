@@ -104,7 +104,7 @@ namespace CadmusTool.Commands
                          $"History: {_options.HasHistory}");
 
             // profile
-            string profileContent = LoadProfile(_options.ProfilePath);
+            string profileContent = LoadProfile(_options.ProfilePath!);
 
             if (!_options.IsDryRun)
             {
@@ -147,7 +147,7 @@ namespace CadmusTool.Commands
             }
             repositoryProvider.ConnectionString =
                 _options.Configuration.GetConnectionString("Mongo");
-            ICadmusRepository repository = _options.IsDryRun
+            ICadmusRepository? repository = _options.IsDryRun
                 ? null : repositoryProvider.CreateRepository(_options.DatabaseName);
 
             // seeder
@@ -172,10 +172,10 @@ namespace CadmusTool.Commands
                 Console.WriteLine($"{item}: {item.Parts.Count} parts");
                 if (!_options.IsDryRun)
                 {
-                    repository.AddItem(item,_options.HasHistory);
+                    repository?.AddItem(item,_options.HasHistory);
                     foreach (IPart part in item.Parts)
                     {
-                        repository.AddPart(part, _options.HasHistory);
+                        repository?.AddPart(part, _options.HasHistory);
                     }
                 }
             }
@@ -191,12 +191,12 @@ namespace CadmusTool.Commands
         {
         }
 
-        public string DatabaseName { get; set; }
-        public string ProfilePath { get; set; }
+        public string? DatabaseName { get; set; }
+        public string? ProfilePath { get; set; }
         public int Count { get; set; }
         public bool IsDryRun { get; set; }
         public bool HasHistory { get; set; }
-        public string RepositoryPluginTag { get; set; }
-        public string SeederPluginTag { get; set; }
+        public string? RepositoryPluginTag { get; set; }
+        public string? SeederPluginTag { get; set; }
     }
 }

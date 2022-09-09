@@ -13,6 +13,7 @@
     - [Import LEX](#import-lex)
     - [Legacy Seed](#legacy-seed)
   - [History](#history)
+    - [2.1.1](#211)
     - [2.1.0](#210)
 
 Cadmus configuration and utility tool.
@@ -232,6 +233,10 @@ The items count defaults to 100. Example:
 ```
 
 ## History
+
+### 2.1.1
+
+- 2022-09-09: updated packages.
 
 ### 2.1.0
 

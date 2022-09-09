@@ -46,10 +46,9 @@ namespace CadmusTool.Commands
         private static string LoadResourceText(string name)
         {
             Assembly asm = typeof(LoremIpsumGenerator).GetTypeInfo().Assembly;
-            using (StreamReader reader = new                (asm.GetManifestResourceStream(name), Encoding.UTF8))
-            {
-                return reader.ReadToEnd();
-            }
+            using StreamReader reader = new
+                (asm.GetManifestResourceStream(name)!, Encoding.UTF8);
+            return reader.ReadToEnd();
         }
 
         public static string Generate(int wordCount, int paragraphLength)
