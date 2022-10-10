@@ -70,7 +70,7 @@ namespace CadmusTool.Commands
             IGraphRepository graphRepository = GetGraphRepository(options);
             if (graphRepository == null) return;
 
-            options.Logger.LogInformation("Updating graph for deleted " + id);
+            options.Logger?.LogInformation("Updating graph for deleted " + id);
             graphRepository.DeleteGraphSet(id);
         }
     }

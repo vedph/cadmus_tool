@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Configuration;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -100,10 +101,11 @@ namespace CadmusTool.Commands
 
             // repository
             Console.WriteLine("Creating repository...");
+            string cs = string.Format(
+              _options.Configuration.GetConnectionString("Mongo"),
+              _options.DatabaseName);
             ICadmusRepository repository = CliHelper.GetCadmusRepository(
-                _options.RepositoryPluginTag!,
-                _options.Configuration.GetConnectionString("Mongo"),
-                _options.DatabaseName!);
+                _options.RepositoryPluginTag!, cs);
 
             // get object
             string? json;
@@ -157,8 +159,8 @@ namespace CadmusTool.Commands
     {
         private readonly AppOptions _appOptions;
 
-        public IConfiguration Configuration => _appOptions.Configuration;
-        public ILogger Logger => _appOptions.Logger;
+        public IConfiguration? Configuration => _appOptions.Configuration;
+        public ILogger? Logger => _appOptions.Logger;
 
         public GetObjectCommandOptions(AppOptions options)
         {

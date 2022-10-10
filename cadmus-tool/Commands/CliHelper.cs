@@ -2,8 +2,8 @@
 using Cadmus.Core.Storage;
 using ShellProgressBar;
 using System.IO;
-using System;
 using System.Runtime.InteropServices;
+using Cadmus.Core;
 
 namespace CadmusTool.Commands
 {
@@ -28,11 +28,11 @@ namespace CadmusTool.Commands
         }
 
         public static ICadmusRepository GetCadmusRepository(string tag,
-            string connStr, string dbName)
+            string connStr)
         {
-            var repositoryProvider = PluginFactoryProvider
-                .GetFromTag<ICliCadmusRepositoryProvider>(tag);
-            if (repositoryProvider == null)
+            IRepositoryProvider provider = PluginFactoryProvider
+                .GetFromTag<IRepositoryProvider>(tag);
+            if (provider == null)
             {
                 throw new FileNotFoundException(
                     "The requested repository provider tag " +
@@ -40,8 +40,8 @@ namespace CadmusTool.Commands
                     " was not found among plugins in " +
                     PluginFactoryProvider.GetPluginsDir());
             }
-            repositoryProvider.ConnectionString = connStr;
-            return repositoryProvider.CreateRepository(dbName);
+            provider.ConnectionString = connStr;
+            return provider.CreateRepository();
         }
     }
 }

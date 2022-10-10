@@ -7,8 +7,8 @@ namespace CadmusTool.Commands
     {
         private readonly AppOptions _appOptions;
 
-        public IConfiguration Configuration => _appOptions.Configuration;
-        public ILogger Logger => _appOptions.Logger;
+        public IConfiguration? Configuration => _appOptions.Configuration;
+        public ILogger? Logger => _appOptions.Logger;
 
         public CommandOptions(AppOptions options)
         {

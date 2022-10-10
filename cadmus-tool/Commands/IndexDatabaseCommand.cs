@@ -1,4 +1,5 @@
 ﻿using Cadmus.Cli.Core;
+using Cadmus.Core;
 using Cadmus.Core.Storage;
 using Cadmus.Index;
 using Cadmus.Index.Config;
@@ -94,8 +95,7 @@ namespace CadmusTool.Commands
             Serilog.Log.Information("Creating repository...");
 
             var repositoryProvider = PluginFactoryProvider
-                .GetFromTag<ICliCadmusRepositoryProvider>(
-                _options.RepositoryPluginTag);
+                .GetFromTag<IRepositoryProvider>(_options.RepositoryPluginTag);
             if (repositoryProvider == null)
             {
                 throw new FileNotFoundException(
@@ -104,10 +104,10 @@ namespace CadmusTool.Commands
                     " was not found among plugins in " +
                     PluginFactoryProvider.GetPluginsDir());
             }
-            repositoryProvider.ConnectionString = _options.Configuration
-                .GetConnectionString("Mongo");
-            ICadmusRepository repository = repositoryProvider.CreateRepository(
+            repositoryProvider.ConnectionString = string.Format(
+                _options.Configuration.GetConnectionString("Mongo"),
                 _options.DatabaseName);
+            ICadmusRepository repository = repositoryProvider.CreateRepository();
 
             using (var bar = new ProgressBar(100, "Indexing...", options))
             {

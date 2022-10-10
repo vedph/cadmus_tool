@@ -135,7 +135,7 @@ namespace CadmusTool.Commands
             Serilog.Log.Information("Creating repository...");
 
             var repositoryProvider = PluginFactoryProvider
-                .GetFromTag<ICliCadmusRepositoryProvider>(
+                .GetFromTag<IRepositoryProvider>(
                 _options.RepositoryPluginTag);
             if (repositoryProvider == null)
             {
@@ -145,15 +145,15 @@ namespace CadmusTool.Commands
                     " was not found among plugins in " +
                     PluginFactoryProvider.GetPluginsDir());
             }
-            repositoryProvider.ConnectionString =
-                _options.Configuration.GetConnectionString("Mongo");
+            repositoryProvider.ConnectionString = string.Format(
+                _options.Configuration.GetConnectionString("Mongo"),
+                _options.DatabaseName);
             ICadmusRepository? repository = _options.IsDryRun
-                ? null : repositoryProvider.CreateRepository(_options.DatabaseName);
+                ? null : repositoryProvider.CreateRepository();
 
             // seeder
             var seederProvider = PluginFactoryProvider
-                .GetFromTag<ICliPartSeederFactoryProvider>(
-                _options.SeederPluginTag);
+                .GetFromTag<IPartSeederFactoryProvider>(_options.SeederPluginTag);
             if (seederProvider == null)
             {
                 throw new FileNotFoundException(
@@ -164,8 +164,7 @@ namespace CadmusTool.Commands
             }
 
             Console.WriteLine("Seeding items");
-            PartSeederFactory factory = seederProvider.GetFactory(
-                profileContent);
+            PartSeederFactory factory = seederProvider.GetFactory(profileContent);
             CadmusSeeder seeder = new(factory);
             foreach (IItem item in seeder.GetItems(_options.Count))
             {

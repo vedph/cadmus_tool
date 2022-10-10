@@ -234,6 +234,8 @@ The items count defaults to 100. Example:
 
 ## History
 
+- 2022-10-10: updated packages and injection for new `IRepositoryProvider`. This makes CLI-specific providers for repository and seeders factory obsolete.
+
 ### 2.1.2
 
 - 2022-10-10: updated packages.
