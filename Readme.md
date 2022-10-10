@@ -234,6 +234,10 @@ The items count defaults to 100. Example:
 
 ## History
 
+### 2.1.2
+
+- 2022-10-10: updated packages.
+
 ### 2.1.1
 
 - 2022-09-09: updated packages.

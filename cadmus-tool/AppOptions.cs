@@ -10,9 +10,9 @@ namespace CadmusTool
 {
     internal sealed class AppOptions
     {
-        public ICommand Command { get; set; }
-        public IConfiguration Configuration { get; private set; }
-        public ILogger Logger { get; private set; }
+        public ICommand? Command { get; set; }
+        public IConfiguration? Configuration { get; private set; }
+        public ILogger? Logger { get; private set; }
 
         public AppOptions()
         {
