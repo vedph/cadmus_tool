@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cadmus-tool", "cadmus-tool\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D5047798-0FAE-493A-A822-90E49F6343E2}"
 	ProjectSection(SolutionItems) = preProject
+		Pack.bat = Pack.bat
+		Push.bat = Push.bat
 		Readme.md = Readme.md
 		UpdatePlugins.bat = UpdatePlugins.bat
 	EndProjectSection
