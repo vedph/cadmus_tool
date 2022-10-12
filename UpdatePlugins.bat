@@ -6,22 +6,18 @@ set target=.\cadmus-tool\bin\Debug\net6.0\plugins
 
 md %target%
 del %target%\*.* /q
-REM Mqdq
-xcopy ..\Mqdq\CadmusMqdq\Cadmus.Cli.Plugin.Mqdq\bin\Debug\net6.0\*.* %target%\Cadmus.Cli.Plugin.Mqdq\ /y
-xcopy ..\Mqdq\CadmusMqdqApi\CadmusMqdqApi\wwwroot\seed-profile.json %target%\Cadmus.Cli.Plugin.Mqdq\ /y
-pause
 REM Pura
-xcopy ..\Pura\CadmusPura\Cadmus.Cli.Plugin.Pura\bin\Debug\net6.0\*.* %target%\Cadmus.Cli.Plugin.Pura\ /y
-xcopy ..\Pura\CadmusPuraApi\CadmusPuraApi\wwwroot\seed-profile.json %target%\Cadmus.Cli.Plugin.Pura\ /y
-xcopy ..\Tgr\CadmusTgr\Cadmus.Seed.Tgr.Parts\bin\Debug\net6.0\ %target%\Cadmus.Cli.Plugin.Pura\ /y
+xcopy ..\Pura\CadmusPuraApi\CadmusPuraApi\wwwroot\seed-profile.json %target%\Cadmus.Pura.Services\ /y
+xcopy ..\Tgr\CadmusTgr\Cadmus.Seed.Tgr.Parts\bin\Debug\net6.0\*.* %target%\Cadmus.Pura.Services\ /y
+xcopy ..\Pura\CadmusPura\Cadmus.Pura.Services\bin\Debug\net6.0\*.* %target%\Cadmus.Pura.Services\ /y
 pause
 REM Renovella
-xcopy ..\CadmusBricks\Cadmus.Refs.Bricks\bin\Debug\net6.0\*.* %target%\Cadmus.Cli.Plugin.Renovella\ /y
-xcopy ..\Renovella\CadmusRenovella\Cadmus.Cli.Plugin.Renovella\bin\Debug\net6.0\*.* %target%\Cadmus.Cli.Plugin.Renovella\ /y
-xcopy ..\Renovella\CadmusRenovellaApi\CadmusRenovellaApi\wwwroot\seed-profile.json %target%\Cadmus.Cli.Plugin.Renovella\ /y
+xcopy ..\Renovella\CadmusRenovellaApi\CadmusRenovellaApi\wwwroot\seed-profile.json %target%\Cadmus.Renovella.Services\ /y
+xcopy ..\CadmusBricks\Cadmus.Refs.Bricks\bin\Debug\net6.0\*.* %target%\Cadmus.Renovella.Services\ /y
+xcopy ..\Renovella\CadmusRenovella\Cadmus.Renovella.Services\bin\Debug\net6.0\*.* %target%\Cadmus.Renovella.Services\ /y
 pause
 REM Tgr
-xcopy ..\CadmusBricks\Cadmus.Refs.Bricks\bin\Debug\net6.0\*.* %target%\Cadmus.Cli.Plugin.Tgr\ /y
-xcopy ..\Tgr\CadmusTgr\Cadmus.Cli.Plugin.Tgr\bin\Debug\net6.0\*.* %target%\Cadmus.Cli.Plugin.Tgr\ /y
-xcopy ..\Tgr\CadmusTgrApi\CadmusTgrApi\wwwroot\seed-profile.json %target%\Cadmus.Cli.Plugin.Tgr\ /y
+xcopy ..\Tgr\CadmusTgrApi\CadmusTgrApi\wwwroot\seed-profile.json %target%\Cadmus.Tgr.Services\ /y
+xcopy ..\CadmusBricks\Cadmus.Refs.Bricks\bin\Debug\net6.0\*.* %target%\Cadmus.Tgr.Services\ /y
+xcopy ..\Tgr\CadmusTgr\Cadmus.Tgr.Services\bin\Debug\net6.0\*.* %target%\Cadmus.Tgr.Services\ /y
 pause

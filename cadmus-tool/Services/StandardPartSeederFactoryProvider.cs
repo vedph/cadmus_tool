@@ -1,10 +1,7 @@
-﻿/*
-using Cadmus.Core.Config;
+﻿using Cadmus.Core.Config;
 using Cadmus.Seed;
-using Cadmus.Seed.Itinera.Parts.Codicology;
 using Cadmus.Seed.Parts.General;
-using Cadmus.Seed.Philology.Parts.Layers;
-using Cadmus.Seed.Tgr.Parts.Grammar;
+using Cadmus.Seed.Philology.Parts;
 using Fusi.Microsoft.Extensions.Configuration.InMemoryJson;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
@@ -36,10 +33,6 @@ namespace CadmusTool.Services
                 typeof(NotePartSeeder).Assembly,
                 // Cadmus.Seed.Philology.Parts
                 typeof(ApparatusLayerFragmentSeeder).Assembly,
-                // Cadmus.Seed.Itinera.Parts
-                typeof(MsCatchwordsPartSeeder).Assembly,
-                // Cadmus.Seed.Tgr.Parts
-                typeof(LingTagsLayerFragmentSeeder).Assembly
             };
             TagAttributeToTypeMap map = new TagAttributeToTypeMap();
             map.Add(seedAssemblies);
@@ -62,4 +55,3 @@ namespace CadmusTool.Services
         }
     }
 }
-*/

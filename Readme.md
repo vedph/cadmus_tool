@@ -234,6 +234,7 @@ The items count defaults to 100. Example:
 
 ## History
 
+- 2022-10-12: moved `Cadmus.Cli.Core` from Cadmus core solution to this solution.
 - 2022-10-10: updated packages and injection for new `IRepositoryProvider`. This makes CLI-specific providers for repository and seeders factory obsolete.
 
 ### 2.1.2

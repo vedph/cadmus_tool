@@ -88,14 +88,14 @@ namespace CadmusTool.Commands
             ItemIndexFactory factory = provider.GetFactory(profileContent);
             IItemIndexWriter writer = factory.GetItemIndexWriter();
 
-            var options = CliHelper.GetProgressBarOptions();
-
             // repository
             Console.WriteLine("Creating repository...");
             Serilog.Log.Information("Creating repository...");
 
-            var repositoryProvider = PluginFactoryProvider
-                .GetFromTag<IRepositoryProvider>(_options.RepositoryPluginTag);
+            var repositoryProvider = string.IsNullOrEmpty(_options.RepositoryPluginTag)
+                ? new StandardRepositoryProvider()
+                : PluginFactoryProvider.GetFromTag<IRepositoryProvider>(
+                    _options.RepositoryPluginTag);
             if (repositoryProvider == null)
             {
                 throw new FileNotFoundException(
@@ -109,6 +109,7 @@ namespace CadmusTool.Commands
                 _options.DatabaseName);
             ICadmusRepository repository = repositoryProvider.CreateRepository();
 
+            var options = CliHelper.GetProgressBarOptions();
             using (var bar = new ProgressBar(100, "Indexing...", options))
             {
                 ItemIndexer indexer = new(writer)

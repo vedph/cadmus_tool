@@ -1,55 +1,44 @@
-﻿/*
-using System;
+﻿using System;
 using System.Reflection;
 using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
-using Cadmus.Itinera.Parts.Codicology;
 using Cadmus.Mongo;
 using Cadmus.Parts.General;
-using Cadmus.Philology.Parts.Layers;
-using Cadmus.Tgr.Parts.Grammar;
-using Microsoft.Extensions.Configuration;
-using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
+using Cadmus.Philology.Parts;
+using Fusi.Tools.Config;
 
 namespace CadmusTool.Services
 {
     /// <summary>
-    /// Cadmus standard repository service.
+    /// Cadmus standard repository service. This includes general and philologic
+    /// parts.
+    /// Tag: <c>repository-provider.standard</c>.
     /// </summary>
+    [Tag("repository-provider.standard")]
     public sealed class StandardRepositoryProvider : IRepositoryProvider
     {
-        private readonly IConfiguration _configuration;
-        private readonly TagAttributeToTypeMap _map;
         private readonly IPartTypeProvider _partTypeProvider;
+
+        public string? ConnectionString { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StandardRepositoryProvider"/>
         /// class.
         /// </summary>
-        /// <param name="configuration">The configuration.</param>
         /// <exception cref="ArgumentNullException">configuration</exception>
-        public StandardRepositoryProvider(IConfiguration configuration)
+        public StandardRepositoryProvider()
         {
-            _configuration = configuration ??
-                throw new ArgumentNullException(nameof(configuration));
-
-            _map = new TagAttributeToTypeMap();
-            _map.Add(new[]
+            TagAttributeToTypeMap map = new TagAttributeToTypeMap();
+            map.Add(new[]
             {
                 // Cadmus.Parts
                 typeof(NotePart).GetTypeInfo().Assembly,
-                // Cadmus.Lexicon.Parts
-                // typeof(WordFormPart).GetTypeInfo().Assembly,
                 // Cadmus.Philology.Parts
                 typeof(ApparatusLayerFragment).GetTypeInfo().Assembly,
-                // Cadmus.Itinera.Parts
-                typeof(MsCatchwordsPart).GetTypeInfo().Assembly,
-                // Cadmus.Tgr.Parts
-                typeof(LingTagsLayerFragment).GetTypeInfo().Assembly
             });
 
-            _partTypeProvider = new StandardPartTypeProvider(_map);
+            _partTypeProvider = new StandardPartTypeProvider(map);
         }
 
         /// <summary>
@@ -64,14 +53,10 @@ namespace CadmusTool.Services
         /// <summary>
         /// Creates a Cadmus repository.
         /// </summary>
-        /// <param name="database">The database name.</param>
         /// <returns>repository</returns>
         /// <exception cref="ArgumentNullException">null database</exception>
-        public ICadmusRepository CreateRepository(string database)
+        public ICadmusRepository CreateRepository()
         {
-            if (database == null)
-                throw new ArgumentNullException(nameof(database));
-
             // create the repository (no need to use container here)
             MongoCadmusRepository repository =
                 new MongoCadmusRepository(
@@ -80,12 +65,12 @@ namespace CadmusTool.Services
 
             repository.Configure(new MongoCadmusRepositoryOptions
             {
-                ConnectionString = string.Format(
-                    _configuration.GetConnectionString("Mongo"), database)
+                ConnectionString = ConnectionString ??
+                    throw new InvalidOperationException(
+                    "No connection string set for IRepositoryProvider implementation")
             });
 
             return repository;
         }
     }
 }
-*/
