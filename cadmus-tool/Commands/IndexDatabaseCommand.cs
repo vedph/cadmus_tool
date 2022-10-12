@@ -122,6 +122,8 @@ namespace CadmusTool.Commands
                     CancellationToken.None,
                     new Progress<ProgressReport>(
                         r => bar.Tick(r.Percent, r.Message)));
+
+                bar.Tick(100);
             }
             writer.Close();
         }
