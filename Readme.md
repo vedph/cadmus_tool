@@ -13,6 +13,7 @@
     - [Import LEX](#import-lex)
     - [Legacy Seed](#legacy-seed)
   - [History](#history)
+    - [2.1.2](#212)
     - [2.1.1](#211)
     - [2.1.0](#210)
 
@@ -22,11 +23,13 @@ Since version 2, this tool requires plugin providers under its `plugins` folder.
 
 The tool has now become more like an empty shell, where project-dependent components are demanded to plugins under its `plugins` folder. The commands requiring plugins are those used to build a full Cadmus MySql index from its Mongo database, or to seed a Mongo Cadmus database with mock data. To this end, the CLI tool requires two factory objects: one for the repository, acting as the hub for all its parts and fragments; and another for the part and fragment seeders.
 
-These providers glue together the composable Cadmus parts, and as such are surface components laid on top of each Cadmus solution, just like services in the web APIs. A similar service is also required for these two functions of the CLI tool, for each Cadmus soluition. So, each solution will provide its plugin. Plugins are an easy solution for the CLI tool because runtime binding via reflection there is a viable option, which instead is not the case for the API backend (this gets packed into a different Docker image for each solution).
+These providers glue together the composable Cadmus parts, and as such are surface components laid on top of each Cadmus solution, just like services in the web APIs. Usually they are located in the `Cadmus.PRJ.Services` (where `PRJ` is your project name) library of your project.Plugins are an easy solution for the CLI tool because runtime binding via reflection there is a viable option, which instead is not the case for the API backend (which gets packed into a different Docker image for each solution).
 
-Consequently, plugins are not found in this CLI solution. They can be found in a corresponding CLI project in the respective Cadmus backend solutions.
+To add a plugin:
 
-To use a plugin, place its files (the library and its dependencies) in a subfolder of this folder, naming each subfolder after the DLL plugin filename. For instance, plugin `Cadmus.Cli.Plugin.Mqdq.dll` should be placed in a subfolder of the `plugins` folder named `Cadmus.Cli.Plugin.Mqdq`.
+1. create a subfolder of this folder, named after the DLL plugin filename (usually `Cadmus.PRJ.Services`, where `PRJ` is your project name). For instance, the plugin `Cadmus.Tgr.Services.dll` should be placed in a subfolder of this folder named `Cadmus.Tgr.Services`.
+2. copy the plugin files including all its dependencies in this folder.
+3. it is also useful to copy the project configuration file (`seed-profile.json`) in this folder, so you can have it at hand when required.
 
 ## Index Database Command
 
@@ -234,6 +237,9 @@ The items count defaults to 100. Example:
 
 ## History
 
+- 2022-10-14:
+  - `PluginFactoryProvider`: allow custom directory.
+  - enable nullability.
 - 2022-10-12: moved `Cadmus.Cli.Core` from Cadmus core solution to this solution.
 - 2022-10-10: updated packages and injection for new `IRepositoryProvider`. This makes CLI-specific providers for repository and seeders factory obsolete.
 

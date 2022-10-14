@@ -16,7 +16,8 @@ namespace Cadmus.Cli.Core
     public static class PluginFactoryProvider
     {
         /// <summary>
-        /// Gets the plugins directory.
+        /// Gets the default plugins directory, corresponding to the app's
+        /// base directory plus <c>plugins</c>.
         /// </summary>
         /// <returns>Directory.</returns>
         public static string GetPluginsDir() =>
@@ -26,25 +27,35 @@ namespace Cadmus.Cli.Core
         /// Scans all the plugins in the plugins folder and returns the first
         /// plugin matching the requested tag.
         /// </summary>
-        /// <param name="tag">The requested plugin tag.</param>
+        /// <param name="tag">The requested plugin tag, or null to match the
+        /// first plugin of type <typeparamref name="T"/>, whatever its tag.
+        /// </param>
+        /// <param name="pluginDir">The optional plugins directory. When not
+        /// specified, this is got from <see cref="GetPluginsDir"/>.</param>
         /// <returns>The provider, or null if not found.</returns>
-        public static T GetFromTag<T>(string tag) where T : class
+        public static T? GetFromTag<T>(string? tag, string? pluginDir = null)
+            where T : class
         {
             // create plugin loaders
-            string pluginsDir = GetPluginsDir();
-            foreach (string dir in Directory.GetDirectories(pluginsDir))
+            pluginDir ??= GetPluginsDir();
+
+            foreach (string dir in Directory.GetDirectories(pluginDir))
             {
                 string dirName = Path.GetFileName(dir);
                 string pluginDll = Path.Combine(dir, dirName + ".dll");
 
-                Debug.WriteLine($"Probing {pluginDll} for {typeof(T)} with tag {tag}");
-                T provider = Get<T>(pluginDll, tag);
+                Debug.WriteLine(
+                    $"Probing {pluginDll} for {typeof(T)} with tag {tag}");
+                T? provider = Get<T>(pluginDll, tag);
                 if (provider != null)
                 {
-                    Debug.WriteLine($"Plugin found");
+                    Debug.WriteLine("Plugin found");
                     return provider;
                 }
-                else Debug.WriteLine("Plugin not found!");
+                else
+                {
+                    Debug.WriteLine("Plugin not found!");
+                }
             }
 
             return null;
@@ -53,21 +64,23 @@ namespace Cadmus.Cli.Core
         /// <summary>
         /// Gets the provider plugin from the specified directory.
         /// </summary>
-        /// <param name="path">The path to the plugin file.</param>
-        /// <param name="tag">The optional provider tag. If null, the first
+        /// <param name="pluginPath">The path to the plugin file.</param>
+        /// <param name="tag">The optional plugin tag. If null, the first
         /// matching plugin in the target assembly will be returned. This can
         /// be used when an assembly just contains a single plugin implementation.
         /// </param>
         /// <returns>Provider, or null if not found.</returns>
         /// <exception cref="ArgumentNullException">path</exception>
-        public static T Get<T>(string path, string tag = null) where T : class
+        public static T? Get<T>(string pluginPath, string? tag = null)
+            where T : class
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (pluginPath == null)
+                throw new ArgumentNullException(nameof(pluginPath));
 
-            if (!File.Exists(path)) return null;
+            if (!File.Exists(pluginPath)) return null;
 
             PluginLoader loader = PluginLoader.CreateFromAssemblyFile(
-                    path,
+                    pluginPath,
                     sharedTypes: new[] { typeof(T) });
 
             foreach (Type type in loader.LoadDefaultAssembly()
@@ -75,12 +88,12 @@ namespace Cadmus.Cli.Core
                 .Where(t => typeof(T).IsAssignableFrom(t) && !t.IsAbstract))
             {
                 if (tag == null)
-                    return (T)Activator.CreateInstance(type);
+                    return (T?)Activator.CreateInstance(type);
 
-                TagAttribute tagAttr = (TagAttribute)Attribute.GetCustomAttribute(
-                    type, typeof(TagAttribute));
+                TagAttribute? tagAttr = (TagAttribute?)
+                    Attribute.GetCustomAttribute(type, typeof(TagAttribute));
                 if (tagAttr?.Tag == tag)
-                    return (T)Activator.CreateInstance(type);
+                    return (T?)Activator.CreateInstance(type);
             }
 
             return null;
