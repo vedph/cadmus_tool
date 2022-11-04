@@ -20,7 +20,7 @@ namespace CadmusTool.Services
     {
         private readonly IPartTypeProvider _partTypeProvider;
 
-        public string? ConnectionString { get; set; }
+        public string ConnectionString { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StandardRepositoryProvider"/>
@@ -29,7 +29,8 @@ namespace CadmusTool.Services
         /// <exception cref="ArgumentNullException">configuration</exception>
         public StandardRepositoryProvider()
         {
-            TagAttributeToTypeMap map = new TagAttributeToTypeMap();
+            ConnectionString = "";
+            TagAttributeToTypeMap map = new();
             map.Add(new[]
             {
                 // Cadmus.Parts
@@ -59,7 +60,7 @@ namespace CadmusTool.Services
         {
             // create the repository (no need to use container here)
             MongoCadmusRepository repository =
-                new MongoCadmusRepository(
+                new(
                     _partTypeProvider,
                     new StandardItemSortKeyBuilder());
 

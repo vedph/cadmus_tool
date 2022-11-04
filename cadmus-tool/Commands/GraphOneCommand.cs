@@ -98,7 +98,7 @@ namespace CadmusTool.Commands
             // get item and part
             if (_options.IsPart)
             {
-                part = repository.GetPart<IPart>(_options.Id);
+                part = repository.GetPart<IPart>(_options.Id!);
                 if (part == null)
                 {
                     Console.WriteLine("Part not found");
@@ -108,7 +108,7 @@ namespace CadmusTool.Commands
             }
             else
             {
-                item = repository.GetItem(_options.Id, false);
+                item = repository.GetItem(_options.Id!, false);
             }
 
             if (item == null)

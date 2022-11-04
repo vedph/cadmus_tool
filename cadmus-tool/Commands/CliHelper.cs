@@ -30,7 +30,7 @@ namespace CadmusTool.Commands
         public static ICadmusRepository GetCadmusRepository(string tag,
             string connStr)
         {
-            IRepositoryProvider provider = PluginFactoryProvider
+            IRepositoryProvider? provider = PluginFactoryProvider
                 .GetFromTag<IRepositoryProvider>(tag);
             if (provider == null)
             {

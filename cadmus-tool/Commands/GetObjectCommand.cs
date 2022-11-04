@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Configuration;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -111,7 +110,7 @@ namespace CadmusTool.Commands
             string? json;
             if (_options.IsPart)
             {
-                json = repository.GetPartContent(_options.Id);
+                json = repository.GetPartContent(_options.Id!);
                 if (json == null)
                 {
                     Console.WriteLine("Part not found");
@@ -120,7 +119,7 @@ namespace CadmusTool.Commands
             }
             else
             {
-                IItem? item = repository.GetItem(_options.Id, false);
+                IItem? item = repository.GetItem(_options.Id!, false);
                 if (item == null)
                 {
                     Console.WriteLine("Item not found");

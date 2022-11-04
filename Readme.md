@@ -237,6 +237,7 @@ The items count defaults to 100. Example:
 
 ## History
 
+- 2022-11-04: updated packages (nullability enabled in Cadmus core).
 - 2022-10-14:
   - `PluginFactoryProvider`: allow custom directory.
   - enable nullability.

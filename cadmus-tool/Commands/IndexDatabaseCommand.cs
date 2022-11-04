@@ -86,7 +86,12 @@ namespace CadmusTool.Commands
             IItemIndexFactoryProvider provider =
                 new StandardItemIndexFactoryProvider(cs);
             ItemIndexFactory factory = provider.GetFactory(profileContent);
-            IItemIndexWriter writer = factory.GetItemIndexWriter();
+            IItemIndexWriter? writer = factory.GetItemIndexWriter();
+            if (writer == null)
+            {
+                throw new InvalidOperationException(
+                    "Unable to instantiate item index writer");
+            }
 
             // repository
             Console.WriteLine("Creating repository...");

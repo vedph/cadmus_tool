@@ -91,7 +91,7 @@ namespace CadmusTool.Commands
                 int done = 0;
                 foreach (ItemInfo info in page.Items)
                 {
-                    IItem item = repository.GetItem(info.Id, true);
+                    IItem? item = repository.GetItem(info.Id!, true);
                     if (item == null) continue;
                     if (item == null)
                     {
