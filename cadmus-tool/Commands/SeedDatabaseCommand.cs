@@ -110,7 +110,7 @@ namespace CadmusTool.Commands
             {
                 // create database if not exists
                 string connection = string.Format(CultureInfo.InvariantCulture,
-                    _options.Configuration.GetConnectionString("Mongo"),
+                    _options.Configuration!.GetConnectionString("Mongo")!,
                     _options.DatabaseName);
 
                 IDatabaseManager manager = new MongoDatabaseManager();
@@ -146,7 +146,7 @@ namespace CadmusTool.Commands
                     PluginFactoryProvider.GetPluginsDir());
             }
             repositoryProvider.ConnectionString = string.Format(
-                _options.Configuration.GetConnectionString("Mongo"),
+                _options.Configuration!.GetConnectionString("Mongo")!,
                 _options.DatabaseName);
             ICadmusRepository? repository = _options.IsDryRun
                 ? null : repositoryProvider.CreateRepository();

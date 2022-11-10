@@ -13,6 +13,7 @@
     - [Import LEX](#import-lex)
     - [Legacy Seed](#legacy-seed)
   - [History](#history)
+    - [5.0.0](#500)
     - [2.1.2](#212)
     - [2.1.1](#211)
     - [2.1.0](#210)
@@ -237,6 +238,9 @@ The items count defaults to 100. Example:
 
 ## History
 
+### 5.0.0
+
+- 2022-11-10: upgraded to NET 7.
 - 2022-11-04: updated packages (nullability enabled in Cadmus core).
 - 2022-10-14:
   - `PluginFactoryProvider`: allow custom directory.

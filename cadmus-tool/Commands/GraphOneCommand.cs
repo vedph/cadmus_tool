@@ -81,7 +81,7 @@ namespace CadmusTool.Commands
             Console.WriteLine("Creating repository...");
             Serilog.Log.Information("Creating repository...");
             string cs = string.Format(
-              _options.Configuration.GetConnectionString("Mongo"),
+              _options.Configuration!.GetConnectionString("Mongo")!,
               _options.DatabaseName);
             ICadmusRepository repository = CliHelper.GetCadmusRepository(
                 _options.RepositoryPluginTag!, cs);

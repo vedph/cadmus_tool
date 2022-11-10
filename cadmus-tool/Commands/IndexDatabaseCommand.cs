@@ -81,8 +81,8 @@ namespace CadmusTool.Commands
 
             string profileContent = LoadProfile(_options.ProfilePath!);
 
-            string cs = string.Format(_options.Configuration
-                .GetConnectionString("Index"), _options.DatabaseName);
+            string cs = string.Format(_options.Configuration!
+                .GetConnectionString("Index")!, _options.DatabaseName);
             IItemIndexFactoryProvider provider =
                 new StandardItemIndexFactoryProvider(cs);
             ItemIndexFactory factory = provider.GetFactory(profileContent);
@@ -110,7 +110,7 @@ namespace CadmusTool.Commands
                     PluginFactoryProvider.GetPluginsDir());
             }
             repositoryProvider.ConnectionString = string.Format(
-                _options.Configuration.GetConnectionString("Mongo"),
+                _options.Configuration!.GetConnectionString("Mongo")!,
                 _options.DatabaseName);
             ICadmusRepository repository = repositoryProvider.CreateRepository();
 

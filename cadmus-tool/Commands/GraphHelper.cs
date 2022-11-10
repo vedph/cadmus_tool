@@ -49,8 +49,8 @@ namespace CadmusTool.Commands
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
 
-            string cs = string.Format(options.Configuration
-                .GetConnectionString("Index"), options.DatabaseName);
+            string cs = string.Format(options.Configuration!
+                .GetConnectionString("Index")!, options.DatabaseName);
 
             var repository = new MySqlGraphRepository();
             repository.Configure(new SqlOptions
@@ -70,7 +70,7 @@ namespace CadmusTool.Commands
             IGraphRepository graphRepository = GetGraphRepository(options);
             if (graphRepository == null) return;
 
-            options.Logger?.LogInformation("Updating graph for deleted " + id);
+            options.Logger?.LogInformation("Updating graph for deleted {Id}", id);
             graphRepository.DeleteGraphSet(id);
         }
     }
