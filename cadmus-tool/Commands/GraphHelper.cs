@@ -8,70 +8,69 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
-namespace CadmusTool.Commands
+namespace Cadmus.Cli.Commands;
+
+internal static class GraphHelper
 {
-    internal static class GraphHelper
+    public static string LoadText(string path)
     {
-        public static string LoadText(string path)
+        if (path == null) throw new ArgumentNullException(nameof(path));
+
+        using StreamReader reader = File.OpenText(path);
+        return reader.ReadToEnd();
+    }
+
+    public static IList<NodeMapping> ParseMappings(string json)
+    {
+        List<NodeMapping> mappings = new();
+        JsonSerializerOptions options = new()
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
+            AllowTrailingCommas = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true
+        };
+        options.Converters.Add(new NodeMappingOutputJsonConverter());
 
-            using StreamReader reader = File.OpenText(path);
-            return reader.ReadToEnd();
-        }
+        mappings.AddRange(JsonSerializer.Deserialize<IList<NodeMapping>>(
+            json ?? "{}",
+            options) ?? Array.Empty<NodeMapping>());
 
-        public static IList<NodeMapping> ParseMappings(string json)
+        return mappings;
+    }
+
+    public static IList<NodeMapping> LoadMappings(string path)
+    {
+        return ParseMappings(LoadText(path));
+    }
+
+    public static IGraphRepository GetGraphRepository(
+        GraphCommandOptions options)
+    {
+        if (options == null)
+            throw new ArgumentNullException(nameof(options));
+
+        string cs = string.Format(options.Configuration!
+            .GetConnectionString("Index")!, options.DatabaseName);
+
+        var repository = new MySqlGraphRepository();
+        repository.Configure(new SqlOptions
         {
-            List<NodeMapping> mappings = new();
-            JsonSerializerOptions options = new()
-            {
-                AllowTrailingCommas = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                PropertyNameCaseInsensitive = true
-            };
-            options.Converters.Add(new NodeMappingOutputJsonConverter());
+            ConnectionString = cs
+        });
+        return repository;
+    }
 
-            mappings.AddRange(JsonSerializer.Deserialize<IList<NodeMapping>>(
-                json ?? "{}",
-                options) ?? Array.Empty<NodeMapping>());
+    public static void UpdateGraphForDeletion(string id,
+        GraphCommandOptions options)
+    {
+        if (id == null) throw new ArgumentNullException(nameof(id));
+        if (options == null)
+            throw new ArgumentNullException(nameof(options));
 
-            return mappings;
-        }
+        IGraphRepository graphRepository = GetGraphRepository(options);
+        if (graphRepository == null) return;
 
-        public static IList<NodeMapping> LoadMappings(string path)
-        {
-            return ParseMappings(LoadText(path));
-        }
-
-        public static IGraphRepository GetGraphRepository(
-            GraphCommandOptions options)
-        {
-            if (options == null)
-                throw new ArgumentNullException(nameof(options));
-
-            string cs = string.Format(options.Configuration!
-                .GetConnectionString("Index")!, options.DatabaseName);
-
-            var repository = new MySqlGraphRepository();
-            repository.Configure(new SqlOptions
-            {
-                ConnectionString = cs
-            });
-            return repository;
-        }
-
-        public static void UpdateGraphForDeletion(string id,
-            GraphCommandOptions options)
-        {
-            if (id == null) throw new ArgumentNullException(nameof(id));
-            if (options == null)
-                throw new ArgumentNullException(nameof(options));
-
-            IGraphRepository graphRepository = GetGraphRepository(options);
-            if (graphRepository == null) return;
-
-            options.Logger?.LogInformation("Updating graph for deleted {Id}", id);
-            graphRepository.DeleteGraphSet(id);
-        }
+        options.Logger?.LogInformation("Updating graph for deleted {Id}", id);
+        graphRepository.DeleteGraphSet(id);
     }
 }

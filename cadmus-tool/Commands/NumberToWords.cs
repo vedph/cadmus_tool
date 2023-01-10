@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CadmusTool.Commands
+namespace Cadmus.Cli.Commands
 {
     // https://stackoverflow.com/questions/2729752/converting-numbers-in-to-words-c-sharp
 

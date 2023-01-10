@@ -8,50 +8,49 @@ using SimpleInjector;
 using System;
 using System.Reflection;
 
-namespace CadmusTool.Services
+namespace Cadmus.Cli.Services;
+
+/// <summary>
+/// Standard seeders service.
+/// </summary>
+public sealed class StandardPartSeederFactoryProvider : IPartSeederFactoryProvider
 {
     /// <summary>
-    /// Standard seeders service.
+    /// Gets the part/fragment seeders factory.
     /// </summary>
-    public sealed class StandardPartSeederFactoryProvider : IPartSeederFactoryProvider
+    /// <param name="profile">The profile.</param>
+    /// <returns>Factory.</returns>
+    /// <exception cref="ArgumentNullException">profile</exception>
+    public PartSeederFactory GetFactory(string profile)
     {
-        /// <summary>
-        /// Gets the part/fragment seeders factory.
-        /// </summary>
-        /// <param name="profile">The profile.</param>
-        /// <returns>Factory.</returns>
-        /// <exception cref="ArgumentNullException">profile</exception>
-        public PartSeederFactory GetFactory(string profile)
+        if (profile == null)
+            throw new ArgumentNullException(nameof(profile));
+
+        // build the tags to types map for parts/fragments
+        Assembly[] seedAssemblies = new[]
         {
-            if (profile == null)
-                throw new ArgumentNullException(nameof(profile));
+            // Cadmus.Seed.Parts
+            typeof(NotePartSeeder).Assembly,
+            // Cadmus.Seed.Philology.Parts
+            typeof(ApparatusLayerFragmentSeeder).Assembly,
+        };
+        TagAttributeToTypeMap map = new();
+        map.Add(seedAssemblies);
 
-            // build the tags to types map for parts/fragments
-            Assembly[] seedAssemblies = new[]
-            {
-                // Cadmus.Seed.Parts
-                typeof(NotePartSeeder).Assembly,
-                // Cadmus.Seed.Philology.Parts
-                typeof(ApparatusLayerFragmentSeeder).Assembly,
-            };
-            TagAttributeToTypeMap map = new();
-            map.Add(seedAssemblies);
+        // build the container for seeders
+        Container container = new();
+        PartSeederFactory.ConfigureServices(
+            container,
+            new StandardPartTypeProvider(map),
+            seedAssemblies);
 
-            // build the container for seeders
-            Container container = new();
-            PartSeederFactory.ConfigureServices(
-                container,
-                new StandardPartTypeProvider(map),
-                seedAssemblies);
+        container.Verify();
 
-            container.Verify();
+        // load seed configuration
+        IConfigurationBuilder builder = new ConfigurationBuilder()
+            .AddInMemoryJson(profile);
+        var configuration = builder.Build();
 
-            // load seed configuration
-            IConfigurationBuilder builder = new ConfigurationBuilder()
-                .AddInMemoryJson(profile);
-            var configuration = builder.Build();
-
-            return new PartSeederFactory(container, configuration);
-        }
+        return new PartSeederFactory(container, configuration);
     }
 }

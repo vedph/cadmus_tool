@@ -1,18 +1,20 @@
 # Cadmus Tool
 
 - [Cadmus Tool](#cadmus-tool)
-  - [Index Database Command](#index-database-command)
-  - [Seed Database Command](#seed-database-command)
-  - [Graph One Command](#graph-one-command)
-  - [Graph Many Command](#graph-many-command)
-  - [Add Graph Presets Command](#add-graph-presets-command)
-  - [Update Node Classes Command](#update-node-classes-command)
-  - [Build SQL Command](#build-sql-command)
-  - [Get Object Command](#get-object-command)
-  - [Legacy Commands](#legacy-commands)
-    - [Import LEX](#import-lex)
-    - [Legacy Seed](#legacy-seed)
+  - [Commands](#commands)
+    - [Index Database Command](#index-database-command)
+    - [Seed Database Command](#seed-database-command)
+    - [Graph One Command](#graph-one-command)
+    - [Graph Many Command](#graph-many-command)
+    - [Add Graph Presets Command](#add-graph-presets-command)
+    - [Update Graph Classes Command](#update-graph-classes-command)
+    - [Build SQL Command](#build-sql-command)
+    - [Get Object Command](#get-object-command)
+    - [Legacy Commands](#legacy-commands)
+      - [Import LEX](#import-lex)
+      - [Legacy Seed](#legacy-seed)
   - [History](#history)
+    - [5.1.0](#510)
     - [5.0.0](#500)
     - [2.1.2](#212)
     - [2.1.1](#211)
@@ -20,9 +22,11 @@
 
 Cadmus configuration and utility tool.
 
-Since version 2, this tool requires plugin providers under its `plugins` folder. The plugin architecture is a planned upgrade to avoid the tool being dependent on Cadmus projects, each having its own models. Otherwise, every Cadmus project should be included as a dependency in the CLI tool, defeating the purpose of a generic and universal tool. Plugins are used to get Cadmus factory providers. A Cadmus factory provider plugin acts as a hub entry point for all the components to be packed in the CLI tool for a specific project.
+Since version 2, this tool requires plugin providers under its `plugins` folder. The plugin architecture makes the tool independent from Cadmus projects, each having its own models. Otherwise, every Cadmus project should be included as a dependency in the CLI tool, thus defeating the purpose of a generic and universal tool.
 
-The tool has now become more like an empty shell, where project-dependent components are demanded to plugins under its `plugins` folder. The commands requiring plugins are those used to build a full Cadmus MySql index from its Mongo database, or to seed a Mongo Cadmus database with mock data. To this end, the CLI tool requires two factory objects: one for the repository, acting as the hub for all its parts and fragments; and another for the part and fragment seeders.
+Plugins are used to get Cadmus factory providers. A Cadmus factory provider plugin acts as a hub entry point for all the components to be packed in the CLI tool for a specific project.
+
+The tool is like an empty shell, where project-dependent components are demanded to plugins under its `plugins` folder. The commands requiring plugins are those used to build a full Cadmus MySql index from its Mongo database, or to seed a Mongo Cadmus database with mock data. To this end, the CLI tool requires two factory objects: one for the repository, acting as the hub for all its parts and fragments; and another for the part and fragment seeders.
 
 These providers glue together the composable Cadmus parts, and as such are surface components laid on top of each Cadmus solution, just like services in the web APIs. Usually they are located in the `Cadmus.PRJ.Services` (where `PRJ` is your project name) library of your project.Plugins are an easy solution for the CLI tool because runtime binding via reflection there is a viable option, which instead is not the case for the API backend (which gets packed into a different Docker image for each solution).
 
@@ -32,7 +36,9 @@ To add a plugin:
 2. copy the plugin files including all its dependencies in this folder.
 3. it is also useful to copy the project configuration file (`seed-profile.json`) in this folder, so you can have it at hand when required.
 
-## Index Database Command
+## Commands
+
+### Index Database Command
 
 Index the specified Cadmus database into a MySql database. If the MySql database does not exist, it will be created; if it exists, it will be cleared if requested.
 
@@ -50,7 +56,7 @@ Sample:
 ./cadmus-tool index cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura
 ```
 
-## Seed Database Command
+### Seed Database Command
 
 Create a new Cadmus MongoDB database (if the specified database does not already exists), and seed it with a specified number of random items.
 
@@ -68,7 +74,7 @@ Sample:
 ./cadmus-tool seed cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura cli-seeder-factory-provider.pura -c 10 -d
 ```
 
-## Graph One Command
+### Graph One Command
 
 Map a single item/part into graph.
 
@@ -85,7 +91,7 @@ Sample:
 ./cadmus-tool graph-one cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura a47e233b-b50c-4110-af5b-343e12decdac
 ```
 
-## Graph Many Command
+### Graph Many Command
 
 Map all the items into graph.
 
@@ -99,7 +105,7 @@ Sample:
 ./cadmus-tool graph-many cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura
 ```
 
-## Add Graph Presets Command
+### Add Graph Presets Command
 
 Add preset nodes, node mappings, or thesauri class nodes into graph.
 
@@ -151,7 +157,7 @@ while this is a thesaurus:
 ]
 ```
 
-## Update Node Classes Command
+### Update Graph Classes Command
 
 Update the index of nodes classes in the index database. This is a potentially long task, depending on the number of nodes and the depth of class hierarchies.
 
@@ -165,7 +171,7 @@ Sample:
 ./cadmus-tool graph-cls cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json
 ```
 
-## Build SQL Command
+### Build SQL Command
 
 Build SQL code for querying the Cadmus index database, once or interactively.
 
@@ -185,7 +191,7 @@ This allows you to interactively build SQL code. Otherwise, add your query after
 
 where `mysql` is the index database type, which is currently MySql.
 
-## Get Object Command
+### Get Object Command
 
 Get the JSON code representing an item or a part's content, optionally also converted in XML.
 
@@ -202,11 +208,11 @@ Sample:
 ./cadmus-tool get-obj cadmus 8e5d5b5d-4b27-4d00-9038-f611a8e199b9 cli-repository-provider.pura c:\users\dfusi\desktop\ -p -x
 ```
 
-## Legacy Commands
+### Legacy Commands
 
 These commands are obsolete, but we keep their documentation here for reference.
 
-### Import LEX
+#### Import LEX
 
 Import into a Cadmus database an essential subset of roughly filtered data to be used as seed data. This is a very minimal conversion from Zingarelli LEX files, just to have some fake data to work with.
 
@@ -220,7 +226,7 @@ The profile JSON file defines items facets and flags. You can find a sample in `
 ./cadmus-tool import-lex c:\users\dfusi\desktop\lex cadmuslex c:\users\dfusi\desktop\Profile.json -p
 ```
 
-### Legacy Seed
+#### Legacy Seed
 
 Seed a Cadmus database (creating it if it does not exist) with a specified number of random items with their parts.
 
@@ -237,6 +243,10 @@ The items count defaults to 100. Example:
 ```
 
 ## History
+
+### 5.1.0
+
+- 2023-01-10: refactored CLI infrastructure.
 
 ### 5.0.0
 

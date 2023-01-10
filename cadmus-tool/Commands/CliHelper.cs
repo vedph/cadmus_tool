@@ -5,7 +5,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Cadmus.Core;
 
-namespace CadmusTool.Commands
+namespace Cadmus.Cli.Commands
 {
     internal static class CliHelper
     {

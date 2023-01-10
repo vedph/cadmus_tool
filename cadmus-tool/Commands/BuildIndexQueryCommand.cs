@@ -1,91 +1,91 @@
 ﻿using Cadmus.Index.MsSql;
 using Cadmus.Index.MySql;
 using Cadmus.Index.Sql;
+using Fusi.Cli.Commands;
 using Fusi.Tools.Data;
 using Microsoft.Extensions.CommandLineUtils;
 using System;
 using System.Threading.Tasks;
 
-namespace CadmusTool.Commands
+namespace Cadmus.Cli.Commands;
+
+internal sealed class BuildIndexQueryCommand : ICommand
 {
-    internal sealed class BuildIndexQueryCommand : ICommand
+    private readonly string _dbType;
+    private readonly string _query;
+    private readonly PagingOptions _options;
+    private SqlQueryBuilderBase? _builder;
+
+    public BuildIndexQueryCommand(string dbType, string query)
     {
-        private readonly string _dbType;
-        private readonly string _query;
-        private readonly PagingOptions _options;
-        private SqlQueryBuilderBase? _builder;
+        _dbType = dbType;
+        _query = query;
+        _options = new PagingOptions();
+    }
 
-        public BuildIndexQueryCommand(string dbType, string query)
+    public static void Configure(CommandLineApplication app,
+        ICliAppContext context)
+    {
+        app.Description = "Build Cadmus index SQL query code " +
+                              "from the specified query text.";
+        app.HelpOption("-?|-h|--help");
+
+        CommandArgument dbTypeArgument = app.Argument("[db-type]",
+            "The database type (mysql or mssql)");
+        CommandOption queryOption = app.Option("-q|--query",
+            "The query text", CommandOptionType.SingleValue);
+
+        app.OnExecute(() =>
         {
-            _dbType = dbType;
-            _query = query;
-            _options = new PagingOptions();
-        }
+            context.Command = new BuildIndexQueryCommand(
+                dbTypeArgument.Value,
+                queryOption.Value());
+            return 0;
+        });
+    }
 
-        public static void Configure(CommandLineApplication command,
-            AppOptions options)
+    public Task<int> Run()
+    {
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("BUILD INDEX QUERY");
+        Console.WriteLine();
+        Console.ResetColor();
+
+        switch (_dbType?.ToLowerInvariant())
         {
-            command.Description = "Build Cadmus index SQL query code " +
-                                  "from the specified query text.";
-            command.HelpOption("-?|-h|--help");
-
-            CommandArgument dbTypeArgument = command.Argument("[db-type]",
-                "The database type (mysql or mssql)");
-            CommandOption queryOption = command.Option("-q|--query",
-                "The query text", CommandOptionType.SingleValue);
-
-            command.OnExecute(() =>
-            {
-                options.Command = new BuildIndexQueryCommand(
-                    dbTypeArgument.Value,
-                    queryOption.Value());
-                return 0;
-            });
-        }
-
-        public Task Run()
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("BUILD INDEX QUERY");
-            Console.WriteLine();
-            Console.ResetColor();
-
-            switch (_dbType?.ToLowerInvariant())
-            {
-                case "mysql":
-                    _builder = new MySqlQueryBuilder();
-                    break;
-                case "mssql":
-                    _builder = new MsSqlQueryBuilder();
-                    break;
-                default:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Unknown DB type: {_dbType}");
-                    Console.ResetColor();
-                    return Task.CompletedTask;
-            }
-
-            if (_query != null)
-            {
-                Console.WriteLine(_query);
-                Console.WriteLine();
-                var sql = _builder.BuildForItem(_query, _options);
-                Console.WriteLine(sql.Item1);
-                return Task.CompletedTask;
-            }
-
-            while (true)
-            {
-                Console.Write("Enter query: ");
-                string? query = Console.ReadLine();
-                if (string.IsNullOrEmpty(query) || query == "quit") break;
-                Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.Green;
-                var sql = _builder.BuildForItem(query, _options);
-                Console.WriteLine(sql.Item1);
+            case "mysql":
+                _builder = new MySqlQueryBuilder();
+                break;
+            case "mssql":
+                _builder = new MsSqlQueryBuilder();
+                break;
+            default:
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Unknown DB type: {_dbType}");
                 Console.ResetColor();
-            }
-            return Task.CompletedTask;
+                return Task.FromResult(1);
         }
+
+        if (_query != null)
+        {
+            Console.WriteLine(_query);
+            Console.WriteLine();
+            var sql = _builder.BuildForItem(_query, _options);
+            Console.WriteLine(sql.Item1);
+            return Task.FromResult(0);
+        }
+
+        while (true)
+        {
+            Console.Write("Enter query: ");
+            string? query = Console.ReadLine();
+            if (string.IsNullOrEmpty(query) || query == "quit") break;
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Green;
+            var sql = _builder.BuildForItem(query, _options);
+            Console.WriteLine(sql.Item1);
+            Console.ResetColor();
+        }
+        return Task.FromResult(0);
     }
 }

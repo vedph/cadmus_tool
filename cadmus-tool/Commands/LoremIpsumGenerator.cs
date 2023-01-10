@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace CadmusTool.Commands
+namespace Cadmus.Cli.Commands
 {
     // cfr. http://loremipsumhelper.codeplex.com/SourceControl/latest#LoremIpsum.cs
 
