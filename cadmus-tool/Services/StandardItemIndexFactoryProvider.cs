@@ -1,10 +1,9 @@
-﻿using Cadmus.Index.Config;
+﻿using Cadmus.Graph.MySql;
+using Cadmus.Index.Config;
 using Cadmus.Index.MySql;
 using Fusi.Microsoft.Extensions.Configuration.InMemoryJson;
-using Microsoft.Extensions.Configuration;
-using SimpleInjector;
+using Microsoft.Extensions.Hosting;
 using System;
-using System.Reflection;
 
 namespace Cadmus.Cli.Services;
 
@@ -29,6 +28,24 @@ public sealed class StandardItemIndexFactoryProvider :
             throw new ArgumentNullException(nameof(connectionString));
     }
 
+    private static IHost GetHost(string config)
+    {
+        return new HostBuilder()
+            .ConfigureServices((hostContext, services) =>
+            {
+                ItemIndexFactory.ConfigureServices(services, new[]
+                {
+                    // Cadmus.Index.MySql
+                    typeof(MySqlItemIndexWriter).Assembly,
+                    // Cadmus.Graph.MySql
+                    typeof(MySqlGraphRepository).Assembly
+                });
+            })
+            // extension method from Fusi library
+            .AddInMemoryJson(config)
+            .Build();
+    }
+
     /// <summary>
     /// Gets the part/fragment seeders factory.
     /// </summary>
@@ -37,32 +54,8 @@ public sealed class StandardItemIndexFactoryProvider :
     /// <exception cref="ArgumentNullException">profile</exception>
     public ItemIndexFactory GetFactory(string profile)
     {
-        if (profile == null)
-            throw new ArgumentNullException(nameof(profile));
+        if (profile == null) throw new ArgumentNullException(nameof(profile));
 
-        // build the container for seeders
-        Assembly[] indexAssemblies = new[]
-        {
-            // Cadmus.Index.MySql
-            typeof(MySqlItemIndexWriter).Assembly
-        };
-
-        Container container = new();
-
-        ItemIndexFactory.ConfigureServices(
-            container,
-            indexAssemblies);
-
-        container.Verify();
-
-        // load seed configuration
-        IConfigurationBuilder builder = new ConfigurationBuilder()
-            .AddInMemoryJson(profile);
-        var configuration = builder.Build();
-
-        return new ItemIndexFactory(
-            container,
-            configuration,
-            _connectionString);
+        return new ItemIndexFactory(GetHost(profile), _connectionString);
     }
 }

@@ -6,7 +6,7 @@ using Cadmus.Core.Storage;
 using Cadmus.Mongo;
 using Cadmus.Parts.General;
 using Cadmus.Philology.Parts;
-using Fusi.Tools.Config;
+using Fusi.Tools.Configuration;
 
 namespace Cadmus.Cli.Services;
 
