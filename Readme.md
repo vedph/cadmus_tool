@@ -14,6 +14,7 @@
       - [Import LEX](#import-lex)
       - [Legacy Seed](#legacy-seed)
   - [History](#history)
+    - [6.0.0](#600)
     - [5.1.0](#510)
     - [5.0.0](#500)
     - [2.1.2](#212)
