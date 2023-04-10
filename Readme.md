@@ -112,13 +112,13 @@ Sample:
 
 ### Add Graph Presets Command
 
-💡 Add preset nodes, node mappings, or thesauri class nodes into graph.
+💡 Add preset nodes, triples, node mappings, or thesauri class nodes into graph.
 
 ```ps1
 ./cadmus-tool graph-add <JsonFilePath> <DatabaseName> <JsonProfilePath> <RepositoryProviderTag> [-t] [-d] [-r] [-p <Prefix>]
 ```
 
-- `-t`: data type: `n`odes (default), `m`appings, `t`hesauri.
+- `-t`: data type: `n`odes (default), `t`riples, `m`appings, `h`hesauri.
 - `-r`: when importing thesauri, make the thesaurus' ID the root class node.
 - `-p <Prefix>`: when importing thesauri, set the prefix to be added to each class node.
 - `-d`: dry mode - don't write to database.
@@ -129,7 +129,9 @@ Sample:
 ./cadmus-tool graph-add c:/users/dfusi/desktop/nodes.json cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura
 ```
 
-All data files are JSON documents, having their root element as an objects array. For instance, this is a node (omit all the properties you don't need):
+All data files are JSON documents, having as their root element an array of objects. For instance:
+
+- **node** (omit all the properties you don't need):
 
 ```json
 [
@@ -142,7 +144,37 @@ All data files are JSON documents, having their root element as an objects array
 ]
 ```
 
-while this is a thesaurus:
+- **triple** with non-literal object:
+
+```json
+[
+  {
+    "subjectUri": "x:beta",
+    "predicateUri": "rdfs:subClassOf",
+    "objectUri": "x:alpha",
+    "tag": null
+  }
+]
+```
+
+- **triple** with literal object:
+
+```json
+[
+  {
+    "subjectUri": "x:alpha",
+    "predicateUri": "rdf:label",
+    "objectLiteral": "Alpha",
+    "objectLiteralIx": "alpha",
+    "literalType": "xs:string",
+    "literalLanguage": "en",
+    "literalNumber": null,
+    "tag": null
+  }
+]
+```
+
+- **thesaurus**:
 
 ```json
 [

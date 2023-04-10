@@ -28,8 +28,8 @@ internal sealed class AddGraphPresetsCommand : ICommand
     public static void Configure(CommandLineApplication app,
         ICliAppContext context)
     {
-        app.Description = "Add preset nodes and mappings into the " +
-            "specified database index.";
+        app.Description = "Add preset nodes, triples, thesauri or mappings " +
+            "into the specified database index.";
         app.HelpOption("-?|-h|--help");
 
         CommandArgument sourceArgument = app.Argument("[SourcePath]",
@@ -46,7 +46,7 @@ internal sealed class AddGraphPresetsCommand : ICommand
             "The repository factory provider plugin tag.");
 
         CommandOption typeOption = app.Option("-t|--type",
-            "The type of data to import: [N]odes, [M]appings, [T]hesauri",
+            "The type of data to import: [N]odes, [M]appings, [T]riples, t[H]esauri",
             CommandOptionType.SingleValue);
 
         CommandOption thesIdAsRootOption = app.Option("-r|--root",
@@ -124,6 +124,16 @@ internal sealed class AddGraphPresetsCommand : ICommand
         }
     }
 
+    private void ImportTriples(Stream source, IGraphRepository repository)
+    {
+        JsonGraphPresetReader reader = new();
+        foreach (Triple triple in reader.ReadTriples(source))
+        {
+            if (!_options.IsDry) repository.AddTriple(triple);
+            else Console.WriteLine(triple);
+        }
+    }
+
     private void ImportThesauri(Stream source, IGraphRepository repository)
     {
         string json = new StreamReader(source, Encoding.UTF8).ReadToEnd();
@@ -159,7 +169,7 @@ internal sealed class AddGraphPresetsCommand : ICommand
             $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
             $"Dry mode: {(_options.IsDry ? "yes" : "no")}\n");
 
-        if (_options.Type == 'T')
+        if (_options.Type == 'H')
         {
             Console.WriteLine(
                 "Thesaurus ID as root" +
@@ -181,6 +191,9 @@ internal sealed class AddGraphPresetsCommand : ICommand
                     ImportMappings(source, repository);
                     break;
                 case 'T':
+                    ImportTriples(source, repository);
+                    break;
+                case 'H':
                     ImportThesauri(source, repository);
                     break;
                 default:
