@@ -1,6 +1,7 @@
 # Cadmus Tool
 
 - [Cadmus Tool](#cadmus-tool)
+  - [Plugin Architecture](#plugin-architecture)
   - [Commands](#commands)
     - [Index Database Command](#index-database-command)
     - [Seed Database Command](#seed-database-command)
@@ -24,6 +25,8 @@
 
 Cadmus configuration and utility tool.
 
+## Plugin Architecture
+
 Since version 2, this tool requires plugin providers under its `plugins` folder. The plugin architecture makes the tool independent from Cadmus projects, each having its own models. Otherwise, every Cadmus project should be included as a dependency in the CLI tool, thus defeating the purpose of a generic and universal tool.
 
 Plugins are used to get Cadmus factory providers. A Cadmus factory provider plugin acts as a hub entry point for all the components to be packed in the CLI tool for a specific project.
@@ -42,7 +45,7 @@ To add a plugin:
 
 ### Index Database Command
 
-Index the specified Cadmus database into a MySql database. If the MySql database does not exist, it will be created; if it exists, it will be cleared if requested.
+💡 Index the specified Cadmus database into a MySql database. If the MySql database does not exist, it will be created; if it exists, it will be cleared if requested.
 
 This requires a plugin with providers for the repository factory and the parts seeders factory. Each project has its own plugin, which must be placed in a subfolder of the tool's `plugins` folder.
 
@@ -60,7 +63,7 @@ Sample:
 
 ### Seed Database Command
 
-Create a new Cadmus MongoDB database (if the specified database does not already exists), and seed it with a specified number of random items.
+💡 Create a new Cadmus MongoDB database (if the specified database does not already exists), and seed it with a specified number of random items.
 
 ```ps1
 ./cadmus-tool seed <DatabaseName> <JsonProfilePath> <RepositoryProviderTag> <SeedersFactoryProviderTag> [-c count] [-d] [-h]
@@ -78,7 +81,7 @@ Sample:
 
 ### Graph One Command
 
-Map a single item/part into graph.
+💡 Map a single item/part into graph.
 
 ```ps1
 ./cadmus-tool graph-one <DatabaseName> <JsonProfilePath> <RepositoryProviderTag> <IdArgument> [-p] [-d]
@@ -95,7 +98,7 @@ Sample:
 
 ### Graph Many Command
 
-Map all the items into graph.
+💡 Map all the items into graph.
 
 ```ps1
 ./cadmus-tool graph-many <DatabaseName> <JsonProfilePath> <RepositoryProviderTag>
@@ -109,7 +112,7 @@ Sample:
 
 ### Add Graph Presets Command
 
-Add preset nodes, node mappings, or thesauri class nodes into graph.
+💡 Add preset nodes, node mappings, or thesauri class nodes into graph.
 
 ```ps1
 ./cadmus-tool graph-add <JsonFilePath> <DatabaseName> <JsonProfilePath> <RepositoryProviderTag> [-t] [-d] [-r] [-p <Prefix>]
@@ -161,7 +164,7 @@ while this is a thesaurus:
 
 ### Update Graph Classes Command
 
-Update the index of nodes classes in the index database. This is a potentially long task, depending on the number of nodes and the depth of class hierarchies.
+💡 Update the index of nodes classes in the index database. This is a potentially long task, depending on the number of nodes and the depth of class hierarchies.
 
 ```ps1
 ./cadmus-tool graph-cls <DatabaseName> <ProfilePath>
@@ -175,7 +178,7 @@ Sample:
 
 ### Build SQL Command
 
-Build SQL code for querying the Cadmus index database, once or interactively.
+💡 Build SQL code for querying the Cadmus index database, once or interactively.
 
 ```ps1
 ./cadmus-tool build-sql <DatabaseType> [-q query]
@@ -195,7 +198,7 @@ where `mysql` is the index database type, which is currently MySql.
 
 ### Get Object Command
 
-Get the JSON code representing an item or a part's content, optionally also converted in XML.
+💡 Get the JSON code representing an item or a part's content, optionally also converted in XML.
 
 ```ps1
 ./cadmus-tool get-obj <DatabaseName> <ID> <RepositoryProviderTag> <OutputDir> [-p] [-x]
@@ -248,7 +251,9 @@ The items count defaults to 100. Example:
 
 ### 6.0.1
 
-- 2023-04-10: updated packages.
+- 2023-04-10:
+  - updated packages and action.
+  - added build script.
 
 ### 6.0.0
 
