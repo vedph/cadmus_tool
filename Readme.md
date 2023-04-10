@@ -281,6 +281,8 @@ The items count defaults to 100. Example:
 
 ## History
 
+- 2023-04-10: refactoring CLI infrastructure to use Spectre.Console.
+
 ### 6.0.1
 
 - 2023-04-10:

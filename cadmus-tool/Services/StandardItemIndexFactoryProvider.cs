@@ -33,13 +33,11 @@ public sealed class StandardItemIndexFactoryProvider :
         return new HostBuilder()
             .ConfigureServices((hostContext, services) =>
             {
-                ItemIndexFactory.ConfigureServices(services, new[]
-                {
+                ItemIndexFactory.ConfigureServices(services,
                     // Cadmus.Index.MySql
                     typeof(MySqlItemIndexWriter).Assembly,
                     // Cadmus.Graph.MySql
-                    typeof(MySqlGraphRepository).Assembly
-                });
+                    typeof(MySqlGraphRepository).Assembly);
             })
             // extension method from Fusi library
             .AddInMemoryJson(config)

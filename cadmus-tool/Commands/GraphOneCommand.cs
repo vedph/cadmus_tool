@@ -2,95 +2,51 @@
 using Cadmus.Core;
 using Cadmus.Core.Storage;
 using Cadmus.Graph;
-using Fusi.Cli.Commands;
-using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
+using Spectre.Console;
+using Spectre.Console.Cli;
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
 
-internal sealed class GraphOneCommand : ICommand
+internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
 {
-    private readonly GraphOneCommandOptions _options;
-
-    public GraphOneCommand(GraphOneCommandOptions options)
+    public override Task<int> ExecuteAsync(CommandContext context,
+        GraphOneCommandSettings settings)
     {
-        _options = options;
-    }
+        AnsiConsole.MarkupLine("[red underline]MAP ITEM/PART TO GRAPH[/]");
 
-    public static void Configure(CommandLineApplication app,
-        ICliAppContext context)
-    {
-        app.Description = "Map a single item/part into the graph " +
-            "from a Cadmus MongoDB database.";
-        app.HelpOption("-?|-h|--help");
-
-        CommandArgument databaseArgument = app.Argument("[DatabaseName]",
-            "The database name");
-
-        CommandArgument mappingsArgument = app.Argument("[MappingsPath]",
-            "The indexer profile JSON file path");
-
-        CommandArgument repositoryTagArgument = app.Argument(
-            "[RepoFactoryProviderTag]",
-            "The repository factory provider plugin tag.");
-
-        CommandArgument idArgument = app.Argument("[ID]",
-            "The ID of the item/part to be mapped");
-
-        CommandOption isPartOption = app.Option("-p|--part",
-            "The ID refers to a part rather than to an item",
-            CommandOptionType.NoValue);
-
-        CommandOption isDeletedOption = app.Option("-d|--deleted",
-            "The ID refers to an item/part which was deleted",
-            CommandOptionType.NoValue);
-
-        app.OnExecute(() =>
+        AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");
+        AnsiConsole.MarkupLine($"Mappings file: [cyan]{settings.MappingsPath}[/]");
+        if (!string.IsNullOrEmpty(settings.RepositoryPluginTag))
         {
-            context.Command = new GraphOneCommand(
-                new GraphOneCommandOptions(context)
-                {
-                    DatabaseName = databaseArgument.Value,
-                    MappingsPath = mappingsArgument.Value,
-                    RepositoryPluginTag = repositoryTagArgument.Value,
-                    Id = idArgument.Value,
-                    IsPart = isPartOption.HasValue(),
-                    IsDeleted = isDeletedOption.HasValue()
-                });
-            return 0;
-        });
-    }
+            AnsiConsole.MarkupLine(
+                $"Repository plugin tag: [cyan]{settings.RepositoryPluginTag}[/]");
+        }
+        AnsiConsole.MarkupLine(
+            $"{(settings.IsPart ? "Part" : "Item")} ID: [cyan]{settings.Id}[/]");
 
-    public Task<int> Run()
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("MAP SINGLE ITEM/PART TO GRAPH\n");
-        Console.ResetColor();
-
-        Console.WriteLine($"Database: {_options.DatabaseName}\n" +
-                          $"Mappings file: {_options.MappingsPath}\n" +
-                          $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
-                          $"{(_options.IsPart ? "Part" : "Item")} ID: {_options.Id}\n");
         Serilog.Log.Information("MAP TO GRAPH: " +
-                     $"Database: {_options.DatabaseName}, " +
-                     $"Mappings file: {_options.MappingsPath}, " +
-                     $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
-                     $"{(_options.IsPart ? "Part" : "Item")} ID: {_options.Id}\n");
+                     $"Database: {settings.DatabaseName}, " +
+                     $"Mappings file: {settings.MappingsPath}, " +
+                     $"Repository plugin tag: {settings.RepositoryPluginTag}\n" +
+                     $"{(settings.IsPart ? "Part" : "Item")} ID: {settings.Id}\n");
 
         // repository
-        Console.WriteLine("Creating repository...");
+        AnsiConsole.MarkupLine("Creating repository...");
         Serilog.Log.Information("Creating repository...");
         string cs = string.Format(
-          _options.Configuration!.GetConnectionString("Mongo")!,
-          _options.DatabaseName);
+          CliAppContext.Configuration.GetConnectionString("Mongo")!,
+          settings.DatabaseName);
         ICadmusRepository repository = CliHelper.GetCadmusRepository(
-            _options.RepositoryPluginTag!, cs);
+            settings.RepositoryPluginTag!, cs);
 
-        if (_options.IsDeleted)
+        if (settings.IsDeleted)
         {
-            GraphHelper.UpdateGraphForDeletion(_options.Id!, _options);
+            GraphHelper.UpdateGraphForDeletion(settings.Id!,
+                settings.DatabaseName!);
             return Task.FromResult(0);
         }
 
@@ -98,9 +54,9 @@ internal sealed class GraphOneCommand : ICommand
         IPart? part = null;
 
         // get item and part
-        if (_options.IsPart)
+        if (settings.IsPart)
         {
-            part = repository.GetPart<IPart>(_options.Id!);
+            part = repository.GetPart<IPart>(settings.Id!);
             if (part == null)
             {
                 Console.WriteLine("Part not found");
@@ -110,7 +66,7 @@ internal sealed class GraphOneCommand : ICommand
         }
         else
         {
-            item = repository.GetItem(_options.Id!, false);
+            item = repository.GetItem(settings.Id!, false);
         }
 
         if (item == null)
@@ -121,10 +77,10 @@ internal sealed class GraphOneCommand : ICommand
 
         // update graph
         IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
-            _options);
+            settings.DatabaseName!);
         GraphUpdater updater = new(graphRepository);
 
-        if (_options.IsPart)
+        if (settings.IsPart)
         {
             updater.Update(item, part!);
         }
@@ -136,14 +92,29 @@ internal sealed class GraphOneCommand : ICommand
     }
 }
 
-internal class GraphOneCommandOptions : GraphCommandOptions
+internal class GraphOneCommandSettings : CommandSettings
 {
-    public string? Id { get; set; }
-    public bool IsPart { get; set; }
-    public bool IsDeleted { get; set; }
+    [CommandArgument(0, "<DatabaseName>")]
+    [Description("The database name")]
+    public string? DatabaseName { get; set; }
 
-    public GraphOneCommandOptions(ICliAppContext options)
-        : base((CadmusCliAppContext)options)
-    {
-    }
+    [CommandArgument(1, "<MappingsPath>")]
+    [Description("The path to the mappings file")]
+    public string? MappingsPath { get; set; }
+
+    [CommandOption("-t|--tag <RepositoryPluginTag>")]
+    [Description("The repository factory plugin tag")]
+    public string? RepositoryPluginTag { get; set; }
+
+    [CommandOption("-i|--id <ID>")]
+    [Description("The item/part ID")]
+    public string? Id { get; set; }
+
+    [CommandOption("-p|--part")]
+    [Description("The ID refers to a part rather than to an item")]
+    public bool IsPart { get; set; }
+
+    [CommandOption("-d|--deleted")]
+    [Description("The ID refers to an item/part which was deleted")]
+    public bool IsDeleted { get; set; }
 }

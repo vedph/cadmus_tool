@@ -1,8 +1,8 @@
-﻿using Cadmus.Graph;
+﻿using Cadmus.Cli.Services;
+using Cadmus.Graph;
 using Cadmus.Graph.MySql;
 using Cadmus.Index.Sql;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,14 +43,12 @@ internal static class GraphHelper
         return ParseMappings(LoadText(path));
     }
 
-    public static IGraphRepository GetGraphRepository(
-        GraphCommandOptions options)
+    public static IGraphRepository GetGraphRepository(string dbName)
     {
-        if (options == null)
-            throw new ArgumentNullException(nameof(options));
+        if (dbName is null) throw new ArgumentNullException(nameof(dbName));
 
-        string cs = string.Format(options.Configuration!
-            .GetConnectionString("Index")!, options.DatabaseName);
+        string cs = string.Format(CliAppContext.Configuration
+            .GetConnectionString("Index")!, dbName);
 
         var repository = new MySqlGraphRepository();
         repository.Configure(new SqlOptions
@@ -60,17 +58,14 @@ internal static class GraphHelper
         return repository;
     }
 
-    public static void UpdateGraphForDeletion(string id,
-        GraphCommandOptions options)
+    public static void UpdateGraphForDeletion(string id, string dbName)
     {
         if (id == null) throw new ArgumentNullException(nameof(id));
-        if (options == null)
-            throw new ArgumentNullException(nameof(options));
+        if (dbName is null) throw new ArgumentNullException(nameof(dbName));
 
-        IGraphRepository graphRepository = GetGraphRepository(options);
+        IGraphRepository graphRepository = GetGraphRepository(dbName);
         if (graphRepository == null) return;
 
-        options.Logger?.LogInformation("Updating graph for deleted {Id}", id);
         graphRepository.DeleteGraphSet(id);
     }
 }

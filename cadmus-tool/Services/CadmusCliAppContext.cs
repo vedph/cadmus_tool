@@ -1,47 +1,52 @@
-﻿using Fusi.Cli.Commands;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Globalization;
+﻿using Microsoft.Extensions.Configuration;
+using Serilog.Extensions.Logging;
+using Serilog;
 using System.IO;
+using System.Reflection;
 
 namespace Cadmus.Cli.Services;
 
-/// <summary>
-/// CLI app context.
-/// </summary>
-/// <seealso cref="CliAppContext" />
-public class CadmusCliAppContext : CliAppContext
+internal static class CliAppContext
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CadmusCliAppContext"/>
-    /// class.
-    /// </summary>
-    /// <param name="config">The configuration.</param>
-    /// <param name="logger">The logger.</param>
-    public CadmusCliAppContext(IConfiguration? config, ILogger? logger)
-        : base(config, logger)
+    private static IConfiguration? _configuration;
+    private static Microsoft.Extensions.Logging.ILogger? _logger;
+
+    public static IConfiguration Configuration
     {
+        get
+        {
+            _configuration ??= new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables()
+                .Build();
+            return _configuration;
+        }
     }
 
-    /// <summary>
-    /// Gets the context service.
-    /// </summary>
-    /// <param name="dbName">The database name.</param>
-    /// <exception cref="ArgumentNullException">dbName</exception>
-    public virtual CadmusCliContextService GetContextService(string dbName)
+    public static Microsoft.Extensions.Logging.ILogger Logger
     {
-        if (dbName is null) throw new ArgumentNullException(nameof(dbName));
-
-        return new CadmusCliContextService(
-            new CadmusCliContextServiceConfig
+        get
+        {
+            if (_logger is null)
             {
-                DataConnectionString = string.Format(CultureInfo.InvariantCulture,
-                    Configuration!.GetConnectionString("Mongo")!, dbName),
-                IndexConnectionString = string.Format(CultureInfo.InvariantCulture,
-                    Configuration!.GetConnectionString("Index")!, dbName),
-                LocalDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                    "Assets")
-            });
+                // https://github.com/serilog/serilog-sinks-file
+                string logFilePath = Path.Combine(
+                    Path.GetDirectoryName(
+                        Assembly.GetExecutingAssembly().Location) ?? "",
+                        "cadmus-tool-log.txt");
+                Log.Logger = new LoggerConfiguration()
+#if DEBUG
+                    .MinimumLevel.Debug()
+#else
+                .MinimumLevel.Information()
+#endif
+                    .Enrich.FromLogContext()
+                    .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day)
+                    .CreateLogger();
+
+                _logger = new SerilogLoggerFactory(Log.Logger).CreateLogger("");
+            }
+            return _logger;
+        }
     }
 }

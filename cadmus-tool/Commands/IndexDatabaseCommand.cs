@@ -4,58 +4,26 @@ using Cadmus.Core;
 using Cadmus.Core.Storage;
 using Cadmus.Index;
 using Cadmus.Index.Config;
-using Fusi.Cli.Commands;
 using Fusi.Tools;
-using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
-using ShellProgressBar;
+using Spectre.Console;
+using Spectre.Console.Cli;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
 
-internal sealed class IndexDatabaseCommand : ICommand
+internal sealed class IndexDatabaseCommand :
+    AsyncCommand<IndexDatabaseCommandSettings>
 {
-    private readonly IndexDatabaseCommandOptions _options;
+    private readonly IndexDatabaseCommandSettings _options;
 
-    public IndexDatabaseCommand(IndexDatabaseCommandOptions options)
+    public IndexDatabaseCommand(IndexDatabaseCommandSettings options)
     {
         _options = options;
-    }
-
-    public static void Configure(CommandLineApplication app,
-        ICliAppContext context)
-    {
-        app.Description = "Index a Cadmus MongoDB database " +
-                              "from the specified indexer profile.";
-        app.HelpOption("-?|-h|--help");
-
-        CommandArgument databaseArgument = app.Argument("[database]",
-            "The database name");
-
-        CommandArgument profileArgument = app.Argument("[profile]",
-            "The indexer profile JSON file path");
-
-        CommandArgument repositoryTagArgument = app.Argument("[tag]",
-            "The repository factory provider plugin tag.");
-
-        CommandOption clearOption = app.Option("-c|--clear",
-            "Clear before indexing", CommandOptionType.NoValue);
-
-        app.OnExecute(() =>
-        {
-        context.Command = new IndexDatabaseCommand(
-            new IndexDatabaseCommandOptions(context)
-            {
-                DatabaseName = databaseArgument.Value,
-                ProfilePath = profileArgument.Value,
-                RepositoryPluginTag = repositoryTagArgument.Value,
-                ClearDatabase = clearOption.HasValue()
-            });
-            return 0;
-        });
     }
 
     private static string LoadProfile(string path)
@@ -64,7 +32,8 @@ internal sealed class IndexDatabaseCommand : ICommand
         return reader.ReadToEnd();
     }
 
-    public async Task<int> Run()
+    public async override Task<int> ExecuteAsync(CommandContext context,
+        IndexDatabaseCommandSettings settings)
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("INDEX DATABASE\n");
@@ -82,69 +51,70 @@ internal sealed class IndexDatabaseCommand : ICommand
 
         string profileContent = LoadProfile(_options.ProfilePath!);
 
-        string cs = string.Format(_options.Configuration!
+        string cs = string.Format(CliAppContext.Configuration
             .GetConnectionString("Index")!, _options.DatabaseName);
         IItemIndexFactoryProvider provider =
             new StandardItemIndexFactoryProvider(cs);
         ItemIndexFactory factory = provider.GetFactory(profileContent);
-        IItemIndexWriter? writer = factory.GetItemIndexWriter();
-        if (writer == null)
-        {
-            throw new InvalidOperationException(
+        IItemIndexWriter? writer = factory.GetItemIndexWriter()
+            ?? throw new InvalidOperationException(
                 "Unable to instantiate item index writer");
-        }
 
         // repository
         Console.WriteLine("Creating repository...");
         Serilog.Log.Information("Creating repository...");
 
-        var repositoryProvider = string.IsNullOrEmpty(_options.RepositoryPluginTag)
+        var repositoryProvider = (string.IsNullOrEmpty(_options.RepositoryPluginTag)
             ? new StandardRepositoryProvider()
             : PluginFactoryProvider.GetFromTag<IRepositoryProvider>(
-                _options.RepositoryPluginTag);
-        if (repositoryProvider == null)
-        {
-            throw new FileNotFoundException(
-                "The requested repository provider tag " +
-                _options.RepositoryPluginTag +
-                " was not found among plugins in " +
-                PluginFactoryProvider.GetPluginsDir());
-        }
+                _options.RepositoryPluginTag)) ??
+                throw new FileNotFoundException(
+                    "The requested repository provider tag " +
+                    _options.RepositoryPluginTag +
+                    " was not found among plugins in " +
+                    PluginFactoryProvider.GetPluginsDir());
+
         repositoryProvider.ConnectionString = string.Format(
-            _options.Configuration!.GetConnectionString("Mongo")!,
+            CliAppContext.Configuration.GetConnectionString("Mongo")!,
             _options.DatabaseName);
+
         ICadmusRepository repository = repositoryProvider.CreateRepository();
-
-        var options = CliHelper.GetProgressBarOptions();
-        using (var bar = new ProgressBar(100, "Indexing...", options))
-        {
-            ItemIndexer indexer = new(writer)
+        await AnsiConsole.Progress().StartAsync(async ctx =>
             {
-                Logger = _options.Logger
-            };
-            if (_options.ClearDatabase) await indexer.Clear();
+                ProgressTask task = ctx.AddTask("Indexing database");
+                ItemIndexer indexer = new(writer)
+                {
+                    Logger = CliAppContext.Logger
+                };
+                if (_options.ClearDatabase) await indexer.Clear();
 
-            indexer.Build(repository, new ItemFilter(),
-                CancellationToken.None,
-                new Progress<ProgressReport>(
-                    r => bar.Tick(r.Percent, r.Message)));
+                indexer.Build(repository, new ItemFilter(),
+                    CancellationToken.None,
+                    new Progress<ProgressReport>(
+                        r => task.Increment(r.Percent - task.Value)));
 
-            bar.Tick(100);
-        }
+                task.Increment(100 - task.Value);
+            });
         writer.Close();
         return 0;
     }
 }
 
-internal class IndexDatabaseCommandOptions : CommandOptions<CadmusCliAppContext>
+internal class IndexDatabaseCommandSettings : CommandSettings
 {
+    [CommandArgument(0, "<DatabaseName>")]
+    [Description("The database name")]
     public string? DatabaseName { get; set; }
-    public string? ProfilePath { get; set; }
-    public string? RepositoryPluginTag { get; set; }
-    public bool ClearDatabase { get; set; }
 
-    public IndexDatabaseCommandOptions(ICliAppContext options)
-        : base((CadmusCliAppContext)options)
-    {
-    }
+    [CommandArgument(1, "<ProfilePath>")]
+    [Description("The indexer profile JSON file path")]
+    public string? ProfilePath { get; set; }
+
+    [CommandOption("-t|--tag <RepositoryPluginTag>")]
+    [Description("The repository factory plugin tag")]
+    public string? RepositoryPluginTag { get; set; }
+
+    [CommandOption("-c|--clear")]
+    [Description("Clear before indexing")]
+    public bool ClearDatabase { get; set; }
 }

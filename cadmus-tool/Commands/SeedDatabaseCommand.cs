@@ -5,71 +5,25 @@ using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
 using Cadmus.Mongo;
 using Cadmus.Seed;
-using Fusi.Cli.Commands;
-using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
+using Spectre.Console;
+using Spectre.Console.Cli;
 using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
 
-internal sealed class SeedDatabaseCommand : ICommand
+internal sealed class SeedDatabaseCommand :
+    AsyncCommand<SeedDatabaseCommandSettings>
 {
-    private readonly SeedDatabaseCommandOptions _options;
+    private readonly SeedDatabaseCommandSettings _options;
 
-    public SeedDatabaseCommand(SeedDatabaseCommandOptions options)
+    public SeedDatabaseCommand(SeedDatabaseCommandSettings options)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
-    }
-
-    public static void Configure(CommandLineApplication app,
-        ICliAppContext context)
-    {
-        app.Description = "Create and seed a Cadmus MongoDB database " +
-                              "from the specified profile and number of items.";
-        app.HelpOption("-?|-h|--help");
-
-        CommandArgument databaseArgument = app.Argument("[database]",
-            "The database name");
-
-        CommandArgument profileArgument = app.Argument("[profile]",
-            "The seed profile JSON file path");
-
-        CommandArgument repositoryTagArgument = app.Argument("[tag]",
-            "The repository factory provider plugin tag.");
-
-        CommandArgument seederTagArgument = app.Argument("[tag]",
-            "The parts seeder factory provider plugin tag.");
-
-        CommandOption countOption = app.Option("-c|--count",
-            "Items count (default=100)",
-            CommandOptionType.SingleValue);
-
-        CommandOption dryOption = app.Option("-d|--dry", "Dry run",
-            CommandOptionType.NoValue);
-
-        CommandOption historyOption = app.Option("-h|--history",
-            "Add history data",
-            CommandOptionType.NoValue);
-
-        app.OnExecute(() =>
-        {
-            context.Command = new SeedDatabaseCommand(
-                new SeedDatabaseCommandOptions(context)
-                {
-                    DatabaseName = databaseArgument.Value,
-                    ProfilePath = profileArgument.Value,
-                    RepositoryPluginTag = repositoryTagArgument.Value,
-                    SeederPluginTag = seederTagArgument.Value,
-                    Count = countOption.HasValue() &&
-                        int.TryParse(countOption.Value(), out int n) ? n : 100,
-                    IsDryRun = dryOption.HasValue(),
-                    HasHistory = historyOption.HasValue()
-                });
-            return 0;
-        });
     }
 
     private static string LoadProfile(string path)
@@ -78,19 +32,27 @@ internal sealed class SeedDatabaseCommand : ICommand
         return reader.ReadToEnd();
     }
 
-    public Task<int> Run()
+    public override Task<int> ExecuteAsync(CommandContext context,
+        SeedDatabaseCommandSettings settings)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("SEED DATABASE\n");
-        Console.ResetColor();
+        AnsiConsole.MarkupLine("[green underline]BUILD INDEX SQL[/]");
 
-        Console.WriteLine($"Database: {_options.DatabaseName}\n" +
-                          $"Profile file: {_options.ProfilePath}\n" +
-                          $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
-                          $"Seeders plugin tag: {_options.SeederPluginTag}\n" +
-                          $"Count: {_options.Count}\n" +
-                          $"Dry run: {_options.IsDryRun}\n" +
-                          $"History: {_options.HasHistory}\n");
+        AnsiConsole.MarkupLine($"Database: [cyan]{_options.DatabaseName}[/]");
+        AnsiConsole.MarkupLine($"Profile file: [cyan]{_options.ProfilePath}[/]");
+        if (!string.IsNullOrEmpty(_options.RepositoryPluginTag))
+        {
+            AnsiConsole.MarkupLine(
+                $"Repository plugin tag: [cyan]{_options.RepositoryPluginTag}[/]");
+        }
+        if (!string.IsNullOrEmpty(_options.SeederPluginTag))
+        {
+            AnsiConsole.MarkupLine(
+                $"Seeders plugin tag: [cyan]{_options.SeederPluginTag}[/]");
+        }
+        AnsiConsole.MarkupLine($"Count: [cyan]{_options.Count}[/]");
+        AnsiConsole.MarkupLine($"Dry run: [cyan]{_options.IsDryRun}[/]");
+        AnsiConsole.MarkupLine($"History: [cyan]{_options.HasHistory}[/]");
+
         Serilog.Log.Information("SEED DATABASE: " +
                      $"Database: {_options.DatabaseName}, " +
                      $"Profile file: {_options.ProfilePath}, " +
@@ -107,7 +69,7 @@ internal sealed class SeedDatabaseCommand : ICommand
         {
             // create database if not exists
             string connection = string.Format(CultureInfo.InvariantCulture,
-                _options.Configuration!.GetConnectionString("Mongo")!,
+                CliAppContext.Configuration.GetConnectionString("Mongo")!,
                 _options.DatabaseName);
 
             IDatabaseManager manager = new MongoDatabaseManager();
@@ -116,56 +78,51 @@ internal sealed class SeedDatabaseCommand : ICommand
 
             if (!manager.DatabaseExists(connection))
             {
-                Console.WriteLine("Creating database...");
+                AnsiConsole.MarkupLine("Creating database...");
                 Serilog.Log.Information(
                     $"Creating database {_options.DatabaseName}...");
 
                 manager.CreateDatabase(connection, profile);
 
-                Console.WriteLine("Database created.");
+                AnsiConsole.MarkupLine("Database created.");
                 Serilog.Log.Information("Database created.");
             }
         }
 
         // repository
-        Console.WriteLine("Creating repository...");
+        AnsiConsole.MarkupLine("Creating repository...");
         Serilog.Log.Information("Creating repository...");
 
         var repositoryProvider = PluginFactoryProvider
             .GetFromTag<IRepositoryProvider>(
-            _options.RepositoryPluginTag);
-        if (repositoryProvider == null)
-        {
+            _options.RepositoryPluginTag) ??
             throw new FileNotFoundException(
                 "The requested repository provider tag " +
                 _options.RepositoryPluginTag +
                 " was not found among plugins in " +
                 PluginFactoryProvider.GetPluginsDir());
-        }
+
         repositoryProvider.ConnectionString = string.Format(
-            _options.Configuration!.GetConnectionString("Mongo")!,
+            CliAppContext.Configuration.GetConnectionString("Mongo")!,
             _options.DatabaseName);
         ICadmusRepository? repository = _options.IsDryRun
             ? null : repositoryProvider.CreateRepository();
 
         // seeder
         var seederProvider = PluginFactoryProvider
-            .GetFromTag<IPartSeederFactoryProvider>(_options.SeederPluginTag);
-        if (seederProvider == null)
-        {
-            throw new FileNotFoundException(
+            .GetFromTag<IPartSeederFactoryProvider>(_options.SeederPluginTag)
+            ?? throw new FileNotFoundException(
                 "The requested part seeders provider tag " +
                 _options.SeederPluginTag +
                 " was not found among plugins in " +
                 PluginFactoryProvider.GetPluginsDir());
-        }
 
-        Console.WriteLine("Seeding items");
+        AnsiConsole.MarkupLine("Seeding items");
         PartSeederFactory factory = seederProvider.GetFactory(profileContent);
         CadmusSeeder seeder = new(factory);
         foreach (IItem item in seeder.GetItems(_options.Count))
         {
-            Console.WriteLine($"{item}: {item.Parts.Count} parts");
+            AnsiConsole.MarkupLine($"{item}: {item.Parts.Count} parts");
             if (!_options.IsDryRun)
             {
                 repository?.AddItem(item,_options.HasHistory);
@@ -175,24 +132,44 @@ internal sealed class SeedDatabaseCommand : ICommand
                 }
             }
         }
-        Console.WriteLine("Completed.");
+        AnsiConsole.MarkupLine("Completed.");
 
         return Task.FromResult(0);
     }
 }
 
-internal class SeedDatabaseCommandOptions : CommandOptions<CadmusCliAppContext>
+internal class SeedDatabaseCommandSettings : CommandSettings
 {
+    [CommandArgument(0, "<DatabaseName>")]
+    [Description("The database name")]
     public string? DatabaseName { get; set; }
+
+    [CommandArgument(1, "<ProfilePath>")]
+    [Description("The seed profile JSON file path")]
     public string? ProfilePath { get; set; }
+
+    [CommandOption("-c|--count <Count>")]
+    [DefaultValue(100)]
     public int Count { get; set; }
+
+    [CommandOption("-d|--dry")]
+    [Description("Dry run")]
     public bool IsDryRun { get; set; }
+
+    [CommandOption("-h|--history")]
+    [Description("Add history data")]
     public bool HasHistory { get; set; }
+
+    [CommandOption("-t|--tag <RepositoryPluginTag>")]
+    [Description("The repository factory plugin tag")]
     public string? RepositoryPluginTag { get; set; }
+
+    [CommandOption("-s|--seed-tag <SeederPluginTag>")]
+    [Description("The parts seeder factory plugin tag")]
     public string? SeederPluginTag { get; set; }
 
-    public SeedDatabaseCommandOptions(ICliAppContext options)
-        : base((CadmusCliAppContext)options)
+    public SeedDatabaseCommandSettings()
     {
+        Count = 100;
     }
 }

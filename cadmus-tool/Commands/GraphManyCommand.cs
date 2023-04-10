@@ -2,141 +2,108 @@
 using Cadmus.Core;
 using Cadmus.Core.Storage;
 using Cadmus.Graph;
-using Fusi.Cli.Commands;
 using Fusi.Tools.Data;
-using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
-using ShellProgressBar;
-using System;
+using Spectre.Console;
+using Spectre.Console.Cli;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
 
-internal sealed class GraphManyCommand : ICommand
+internal sealed class GraphManyCommand : AsyncCommand<GraphManyCommandSettings>
 {
-    private readonly GraphCommandOptions _options;
-
-    public GraphManyCommand(GraphCommandOptions options)
+    public override Task<int> ExecuteAsync(CommandContext context,
+        GraphManyCommandSettings settings)
     {
-        _options = options;
-    }
+        AnsiConsole.MarkupLine("[red underline]MAP ITEMS TO GRAPH[/]");
 
-    public static void Configure(CommandLineApplication app,
-        ICliAppContext context)
-    {
-        app.Description = "Map all the items into the graph " +
-            "from a Cadmus MongoDB database, using the specified " +
-            "indexer profile.";
-        app.HelpOption("-?|-h|--help");
-
-        CommandArgument databaseArgument = app.Argument("[DatabaseName]",
-            "The database name");
-
-        CommandArgument mappingsArgument = app.Argument("[MappingsPath]",
-            "The mappings JSON file path");
-
-        CommandArgument repositoryTagArgument = app.Argument(
-            "[RepoFactoryProviderTag]",
-            "The repository factory provider plugin tag.");
-
-        app.OnExecute(() =>
+        AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");
+        AnsiConsole.MarkupLine($"Mappings: [cyan]{settings.MappingsPath}[/]");
+        if (!string.IsNullOrEmpty(settings.RepositoryPluginTag))
         {
-            context.Command = new GraphManyCommand(
-                new GraphCommandOptions(context)
-                {
-                    DatabaseName = databaseArgument.Value,
-                    MappingsPath = mappingsArgument.Value,
-                    RepositoryPluginTag = repositoryTagArgument.Value
-                });
-            return 0;
-        });
-    }
-
-    public Task<int> Run()
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("MAP ITEMS TO GRAPH\n");
-        Console.ResetColor();
-
-        Console.WriteLine($"Database: {_options.DatabaseName}\n" +
-                          $"Mappings: {_options.MappingsPath}\n" +
-                          $"Repository plugin tag: {_options.RepositoryPluginTag}\n");
+            AnsiConsole.MarkupLine(
+                $"Repository plugin tag: [cyan]{settings.RepositoryPluginTag}[/]");
+        }
         Serilog.Log.Information("MAP TO GRAPH: " +
-                     $"Database: {_options.DatabaseName}, " +
-                     $"Mappings: {_options.MappingsPath}, " +
-                     $"Repository plugin tag: {_options.RepositoryPluginTag}\n");
+                     $"Database: {settings.DatabaseName}, " +
+                     $"Mappings: {settings.MappingsPath}, " +
+                     $"Repository plugin tag: {settings.RepositoryPluginTag}\n");
 
         // repository
-        Console.WriteLine("Creating repository...");
+        AnsiConsole.MarkupLine("Creating repository...");
         Serilog.Log.Information("Creating repository...");
         string cs = string.Format(
-          _options.Configuration!.GetConnectionString("Mongo")!,
-          _options.DatabaseName);
+          CliAppContext.Configuration.GetConnectionString("Mongo")!,
+          settings.DatabaseName);
         ICadmusRepository repository = CliHelper.GetCadmusRepository(
-            _options.RepositoryPluginTag!, cs);
+            settings.RepositoryPluginTag!, cs);
 
         IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
-            _options);
+            settings.DatabaseName!);
         GraphUpdater updater = new(graphRepository);
 
-        ProgressBarOptions options = CliHelper.GetProgressBarOptions();
-        using var bar = new ProgressBar(100, "Indexing...", options);
-
-        // first page
         int oldPercent = 0;
         ItemFilter filter = new() { PageSize = 100 };
         DataPage<ItemInfo> page = repository.GetItems(filter);
         if (page.Total == 0) return Task.FromResult(0);
 
-        do
+        bool error = false;
+        AnsiConsole.Progress().Start(ctx =>
         {
-            int done = 0;
-            foreach (ItemInfo info in page.Items)
+            ProgressTask task = ctx.AddTask("Mapping items to graph");
+
+            // first page
+            do
             {
-                IItem? item = repository.GetItem(info.Id!, true);
-                if (item == null) continue;
-                if (item == null)
+                foreach (ItemInfo info in page.Items)
                 {
-                    Console.WriteLine("Item not found");
-                    return Task.FromResult(2);
+                    IItem? item = repository.GetItem(info.Id!, true);
+                    if (item == null) continue;
+                    if (item == null)
+                    {
+                        AnsiConsole.MarkupLine("[red]Item not found[/]");
+                        error = true;
+                        break;
+                    }
+
+                    // update graph for item
+                    updater.Update(item);
+
+                    // update graph for its parts
+                    foreach (IPart part in item.Parts)
+                        updater.Update(item, part);
                 }
 
-                // update graph for item
-                updater.Update(item);
-
-                // update graph for its parts
-                foreach (IPart part in item.Parts)
+                // progress
+                int percent = filter.PageNumber * 100 / page.PageCount;
+                if (percent != oldPercent)
                 {
-                    updater.Update(item, part);
+                    task.Increment(percent - oldPercent);
+                    oldPercent = percent;
                 }
-                bar.Message = "item " + (++done);
-            }
 
-            // progress
-            int percent = filter.PageNumber * 100 / page.PageCount;
-            if (percent != oldPercent)
-            {
-                bar.Tick(percent);
-                oldPercent = percent;
-            }
+                // next page
+                if (++filter.PageNumber > page.PageCount) break;
+                page = repository.GetItems(filter);
+            } while (!error && page.Items.Count != 0);
+        });
 
-            // next page
-            if (++filter.PageNumber > page.PageCount) break;
-            page = repository.GetItems(filter);
-        } while (page.Items.Count != 0);
-
-        return Task.FromResult(0);
+        return error? Task.FromResult(2) : Task.FromResult(0);
     }
 }
 
-internal class GraphCommandOptions : CommandOptions<CadmusCliAppContext>
+internal class GraphManyCommandSettings : CommandSettings
 {
+    [CommandArgument(0, "<DatabaseName>")]
+    [Description("The database name")]
     public string? DatabaseName { get; set; }
-    public string? MappingsPath { get; set; }
-    public string? RepositoryPluginTag { get; set; }
 
-    public GraphCommandOptions(ICliAppContext options)
-        : base((CadmusCliAppContext)options)
-    {
-    }
+    [CommandArgument(1, "<MappingsPath>")]
+    [Description("The path to the mappings file")]
+    public string? MappingsPath { get; set; }
+
+    [CommandOption("-t|--tag <RepositoryPluginTag>")]
+    [Description("The repository factory plugin tag")]
+    public string? RepositoryPluginTag { get; set; }
 }

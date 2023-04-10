@@ -1,16 +1,12 @@
-﻿using Cadmus.Cli.Commands;
-using Cadmus.Cli.Services;
-using Fusi.Cli.Commands;
-using Microsoft.Extensions.CommandLineUtils;
-using Serilog;
-using Serilog.Extensions.Logging;
-using System;
-using System.Collections.Generic;
+﻿using Serilog;
+using Spectre.Console.Cli;
+using Spectre.Console;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
+using System;
+using Cadmus.Cli.Commands;
 
 namespace Cadmus.Cli;
 
@@ -20,7 +16,7 @@ public static class Program
     private static void DeleteLogs()
     {
         foreach (var path in Directory.EnumerateFiles(
-            AppDomain.CurrentDomain.BaseDirectory, "cadmus-log*.txt"))
+            AppDomain.CurrentDomain.BaseDirectory, "cadmus-tool-log*.txt"))
         {
             try
             {
@@ -34,28 +30,6 @@ public static class Program
     }
 #endif
 
-    private static CadmusCliAppContext? GetAppContext(string[] args)
-    {
-        return new CliAppContextBuilder<CadmusCliAppContext>(args)
-            .SetNames("Cadmus", "Cadmus CLI")
-            .SetLogger(new SerilogLoggerProvider(Log.Logger)
-                .CreateLogger(nameof(Program)))
-            .SetDefaultConfiguration()
-            .SetCommands(new Dictionary<string,
-                Action<CommandLineApplication, ICliAppContext>>
-            {
-                ["seed"] = SeedDatabaseCommand.Configure,
-                ["index"] = IndexDatabaseCommand.Configure,
-                ["build-sql"] = BuildIndexQueryCommand.Configure,
-                ["graph-one"] = GraphOneCommand.Configure,
-                ["graph-many"] = GraphManyCommand.Configure,
-                ["graph-add"] = AddGraphPresetsCommand.Configure,
-                ["graph-cls"] = UpdateGraphClassesCommand.Configure,
-                ["get-obj"] = GetObjectCommand.Configure,
-            })
-        .Build();
-    }
-
     public static async Task<int> Main(string[] args)
     {
         try
@@ -64,7 +38,7 @@ public static class Program
             string logFilePath = Path.Combine(
                 Path.GetDirectoryName(
                     Assembly.GetExecutingAssembly().Location) ?? "",
-                    "cadmus-log.txt");
+                    "cadmus-tool-log.txt");
             Log.Logger = new LoggerConfiguration()
 #if DEBUG
                 .MinimumLevel.Debug()
@@ -77,25 +51,39 @@ public static class Program
 #if DEBUG
             DeleteLogs();
 #endif
-            Console.OutputEncoding = Encoding.UTF8;
             Stopwatch stopwatch = new();
             stopwatch.Start();
 
-            CadmusCliAppContext? context = GetAppContext(args);
-
-            if (context?.Command == null)
+            CommandApp app = new();
+            app.Configure(config =>
             {
-                // RootCommand will have printed help
-                return 1;
-            }
+                config.AddCommand<BuildIndexSqlCommand>("build-sql")
+                    .WithDescription("Build SQL code from an index query.");
 
-            Console.Clear();
-            int result = await context.Command.Run();
+                config.AddCommand<GetObjectCommand>("get-obj")
+                    .WithDescription("Get the item/part with the specified ID.");
 
-            Console.ResetColor();
-            Console.CursorVisible = true;
-            Console.WriteLine();
-            Console.WriteLine();
+                config.AddCommand<GraphManyCommand>("graph-many")
+                    .WithDescription("Map all the items into graph.");
+
+                config.AddCommand<GraphOneCommand>("graph-one")
+                    .WithDescription("Map a single item/part into graph.");
+
+                config.AddCommand<ImportGraphPresetsCommand>("graph-import")
+                    .WithDescription(
+                    "Import nodes, triples, mappings or thesauri into graph.");
+
+                config.AddCommand<IndexDatabaseCommand>("index")
+                    .WithDescription("Build the database index.");
+
+                config.AddCommand<SeedDatabaseCommand>("seed")
+                    .WithDescription("Seed the database with mock items.");
+
+                config.AddCommand<GraphUpdateClassesCommand>("graph-cls")
+                    .WithDescription("Updates graph classes hierarchy.");
+            });
+
+            int result = await app.RunAsync(args);
 
             stopwatch.Stop();
             if (stopwatch.ElapsedMilliseconds > 1000)
@@ -110,11 +98,9 @@ public static class Program
         }
         catch (Exception ex)
         {
+            Log.Logger.Error(ex, ex.Message);
             Debug.WriteLine(ex.ToString());
-            Console.CursorVisible = true;
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(ex.ToString());
-            Console.ResetColor();
+            AnsiConsole.WriteException(ex);
             return 2;
         }
     }
