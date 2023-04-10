@@ -14,6 +14,7 @@
       - [Import LEX](#import-lex)
       - [Legacy Seed](#legacy-seed)
   - [History](#history)
+    - [6.0.1](#601)
     - [6.0.0](#600)
     - [5.1.0](#510)
     - [5.0.0](#500)
@@ -244,6 +245,10 @@ The items count defaults to 100. Example:
 ```
 
 ## History
+
+### 6.0.1
+
+- 2023-04-10: updated packages.
 
 ### 6.0.0
 
