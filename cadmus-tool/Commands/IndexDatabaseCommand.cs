@@ -35,14 +35,16 @@ internal sealed class IndexDatabaseCommand :
     public async override Task<int> ExecuteAsync(CommandContext context,
         IndexDatabaseCommandSettings settings)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("INDEX DATABASE\n");
-        Console.ResetColor();
+        AnsiConsole.MarkupLine("[red underline]INDEX DATABASE[/]");
+        AnsiConsole.MarkupLine($"Database: [cyan]{_options.DatabaseName}[/]");
+        AnsiConsole.MarkupLine($"Profile file: [cyan]{_options.ProfilePath}[/]");
+        if (!string.IsNullOrEmpty(_options.RepositoryPluginTag))
+        {
+            AnsiConsole.MarkupLine(
+                $"Repository plugin tag: [cyan]{_options.RepositoryPluginTag}[/]");
+        }
+        AnsiConsole.MarkupLine($"Clear: [cyan]{_options.ClearDatabase}[/]\n");
 
-        Console.WriteLine($"Database: {_options.DatabaseName}\n" +
-                          $"Profile file: {_options.ProfilePath}\n" +
-                          $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
-                          $"Clear: {_options.ClearDatabase}\n");
         Serilog.Log.Information("INDEX DATABASE: " +
                      $"Database: {_options.DatabaseName}, " +
                      $"Profile file: {_options.ProfilePath}, " +
@@ -62,23 +64,11 @@ internal sealed class IndexDatabaseCommand :
 
         // repository
         Console.WriteLine("Creating repository...");
-        Serilog.Log.Information("Creating repository...");
 
-        var repositoryProvider = (string.IsNullOrEmpty(_options.RepositoryPluginTag)
-            ? new StandardRepositoryProvider()
-            : PluginFactoryProvider.GetFromTag<IRepositoryProvider>(
-                _options.RepositoryPluginTag)) ??
-                throw new FileNotFoundException(
-                    "The requested repository provider tag " +
-                    _options.RepositoryPluginTag +
-                    " was not found among plugins in " +
-                    PluginFactoryProvider.GetPluginsDir());
+        ICadmusRepository repository = CliHelper.GetCadmusRepository(
+            settings.RepositoryPluginTag,
+            CliAppContext.Configuration.GetConnectionString("Mongo")!);
 
-        repositoryProvider.ConnectionString = string.Format(
-            CliAppContext.Configuration.GetConnectionString("Mongo")!,
-            _options.DatabaseName);
-
-        ICadmusRepository repository = repositoryProvider.CreateRepository();
         await AnsiConsole.Progress().StartAsync(async ctx =>
             {
                 ProgressTask task = ctx.AddTask("Indexing database");
@@ -106,7 +96,7 @@ internal class IndexDatabaseCommandSettings : CommandSettings
     [Description("The database name")]
     public string? DatabaseName { get; set; }
 
-    [CommandArgument(1, "<ProfilePath>")]
+    [CommandArgument(1, "<JsonProfilePath>")]
     [Description("The indexer profile JSON file path")]
     public string? ProfilePath { get; set; }
 

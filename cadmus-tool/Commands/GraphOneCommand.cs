@@ -17,7 +17,6 @@ internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
         GraphOneCommandSettings settings)
     {
         AnsiConsole.MarkupLine("[red underline]MAP ITEM/PART TO GRAPH[/]");
-
         AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");
         AnsiConsole.MarkupLine($"Mappings file: [cyan]{settings.MappingsPath}[/]");
         if (!string.IsNullOrEmpty(settings.RepositoryPluginTag))
@@ -36,12 +35,12 @@ internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
 
         // repository
         AnsiConsole.MarkupLine("Creating repository...");
-        Serilog.Log.Information("Creating repository...");
+
         string cs = string.Format(
           CliAppContext.Configuration.GetConnectionString("Mongo")!,
           settings.DatabaseName);
         ICadmusRepository repository = CliHelper.GetCadmusRepository(
-            settings.RepositoryPluginTag!, cs);
+            settings.RepositoryPluginTag, cs);
 
         if (settings.IsDeleted)
         {
@@ -102,13 +101,13 @@ internal class GraphOneCommandSettings : CommandSettings
     [Description("The path to the mappings file")]
     public string? MappingsPath { get; set; }
 
+    [CommandArgument(2, "-i|--id <ID>")]
+    [Description("The item/part ID")]
+    public string? Id { get; set; }
+
     [CommandOption("-t|--tag <RepositoryPluginTag>")]
     [Description("The repository factory plugin tag")]
     public string? RepositoryPluginTag { get; set; }
-
-    [CommandOption("-i|--id <ID>")]
-    [Description("The item/part ID")]
-    public string? Id { get; set; }
 
     [CommandOption("-p|--part")]
     [Description("The ID refers to a part rather than to an item")]

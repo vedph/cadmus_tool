@@ -60,7 +60,7 @@ internal sealed class GetObjectCommand : AsyncCommand<GetObjectCommandSettings>
             CliAppContext.Configuration.GetConnectionString("Mongo")!,
             settings.DatabaseName);
         ICadmusRepository repository = CliHelper.GetCadmusRepository(
-            settings.RepositoryPluginTag!, cs);
+            settings.RepositoryPluginTag, cs);
 
         // get object
         string? json;

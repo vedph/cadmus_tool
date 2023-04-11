@@ -3,18 +3,16 @@
 - [Cadmus Tool](#cadmus-tool)
   - [Plugin Architecture](#plugin-architecture)
   - [Commands](#commands)
+    - [Build SQL Command](#build-sql-command)
+    - [Get Object Command](#get-object-command)
     - [Index Database Command](#index-database-command)
     - [Seed Database Command](#seed-database-command)
     - [Graph One Command](#graph-one-command)
     - [Graph Many Command](#graph-many-command)
-    - [Add Graph Presets Command](#add-graph-presets-command)
+    - [Import Graph Presets Command](#import-graph-presets-command)
     - [Update Graph Classes Command](#update-graph-classes-command)
-    - [Build SQL Command](#build-sql-command)
-    - [Get Object Command](#get-object-command)
-    - [Legacy Commands](#legacy-commands)
-      - [Import LEX](#import-lex)
-      - [Legacy Seed](#legacy-seed)
   - [History](#history)
+    - [6.1.0](#610)
     - [6.0.1](#601)
     - [6.0.0](#600)
     - [5.1.0](#510)
@@ -43,6 +41,39 @@ To add a plugin:
 
 ## Commands
 
+### Build SQL Command
+
+💡 Build SQL code for querying the Cadmus index database, once or interactively.
+
+```ps1
+./cadmus-tool build-sql [-q query]
+```
+
+- `-q`: the query (for non-interactive mode).
+
+This allows you to interactively build SQL code. Otherwise, add your query after a `-q` option, e.g.:
+
+```bash
+./cadmus-tool build-sql [dsc*=even]
+```
+
+### Get Object Command
+
+💡 Get the JSON code representing an item or a part's content, optionally also converted in XML.
+
+```ps1
+./cadmus-tool get-obj <DatabaseName> <ID> <OutputDir> [-t <RepositoryPluginTag>] [-p] [-x]
+```
+
+- `p`: the ID refers to a part rather than to an item.
+- `x`: also write an XML version of the result.
+
+Sample:
+
+```ps1
+./cadmus-tool get-obj cadmus 8e5d5b5d-4b27-4d00-9038-f611a8e199b9 c:\users\dfusi\desktop\ -t cli-repository-provider.pura -p -x
+```
+
 ### Index Database Command
 
 💡 Index the specified Cadmus database into a MySql database. If the MySql database does not exist, it will be created; if it exists, it will be cleared if requested.
@@ -50,7 +81,7 @@ To add a plugin:
 This requires a plugin with providers for the repository factory and the parts seeders factory. Each project has its own plugin, which must be placed in a subfolder of the tool's `plugins` folder.
 
 ```ps1
-./cadmus-tool index <DatabaseName> <JsonProfilePath> <RepositoryProviderTag> [-c]
+./cadmus-tool index <DatabaseName> <JsonProfilePath> [-t <RepositoryPluginTag>] [-c]
 ```
 
 - `-c`=clear the target database when it exists.
@@ -58,7 +89,7 @@ This requires a plugin with providers for the repository factory and the parts s
 Sample:
 
 ```bash
-./cadmus-tool index cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura
+./cadmus-tool index cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json -t cli-repository-provider.pura
 ```
 
 ### Seed Database Command
@@ -66,7 +97,7 @@ Sample:
 💡 Create a new Cadmus MongoDB database (if the specified database does not already exists), and seed it with a specified number of random items.
 
 ```ps1
-./cadmus-tool seed <DatabaseName> <JsonProfilePath> <RepositoryProviderTag> <SeedersFactoryProviderTag> [-c count] [-d] [-h]
+./cadmus-tool seed <DatabaseName> <JsonProfilePath> [-t <RepositoryPluginTag>] [-s <SeedersFactoryPluginTag>] [-c count] [-d] [-h]
 ```
 
 - `-c N`: the number of items to be seeded. Default is 100.
@@ -76,7 +107,7 @@ Sample:
 Sample:
 
 ```ps1
-./cadmus-tool seed cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura cli-seeder-factory-provider.pura -c 10 -d
+./cadmus-tool seed cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json -t cli-repository-provider.pura -s cli-seeder-factory-provider.pura -c 10 -d
 ```
 
 ### Graph One Command
@@ -84,7 +115,7 @@ Sample:
 💡 Map a single item/part into graph.
 
 ```ps1
-./cadmus-tool graph-one <DatabaseName> <JsonProfilePath> <RepositoryProviderTag> <IdArgument> [-p] [-d]
+./cadmus-tool graph-one <DatabaseName> <MappingsPath> <Id> [-t <RepositoryPluginTag>] [-p] [-d]
 ```
 
 - `-p`: the ID refers to a part rather than to an item.
@@ -93,7 +124,7 @@ Sample:
 Sample:
 
 ```ps1
-./cadmus-tool graph-one cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura a47e233b-b50c-4110-af5b-343e12decdac
+./cadmus-tool graph-one cadmus-pura c:/users/dfusi/desktop/mappings.json a47e233b-b50c-4110-af5b-343e12decdac -t cli-repository-provider.pura
 ```
 
 ### Graph Many Command
@@ -101,7 +132,7 @@ Sample:
 💡 Map all the items into graph.
 
 ```ps1
-./cadmus-tool graph-many <DatabaseName> <JsonProfilePath> <RepositoryProviderTag>
+./cadmus-tool graph-many <DatabaseName> <MappingsPath> [-t <RepositoryPluginTag>]
 ```
 
 Sample:
@@ -110,23 +141,23 @@ Sample:
 ./cadmus-tool graph-many cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura
 ```
 
-### Add Graph Presets Command
+### Import Graph Presets Command
 
-💡 Add preset nodes, triples, node mappings, or thesauri class nodes into graph.
+💡 Import preset nodes, triples, node mappings, or thesauri class nodes into graph.
 
 ```ps1
-./cadmus-tool graph-add <JsonFilePath> <DatabaseName> <JsonProfilePath> <RepositoryProviderTag> [-t] [-d] [-r] [-p <Prefix>]
+./cadmus-tool graph-import <SourcePath> <DatabaseName> <JsonProfilePath> [-t <RepositoryPluginTag>] [-m] [-d] [-r] [-p <ThesaurusIdPrefix>]
 ```
 
-- `-t`: data type: `n`odes (default), `t`riples, `m`appings, `h`hesauri.
+- `-m`: import mode: `n`odes (default), `t`riples, `m`appings, t`h`esauri.
 - `-r`: when importing thesauri, make the thesaurus' ID the root class node.
-- `-p <Prefix>`: when importing thesauri, set the prefix to be added to each class node.
+- `-p <ThesaurusIdPrefix>`: when importing thesauri, set the prefix to be added to each class node.
 - `-d`: dry mode - don't write to database.
 
 Sample:
 
 ```ps1
-./cadmus-tool graph-add c:/users/dfusi/desktop/nodes.json cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json cli-repository-provider.pura
+./cadmus-tool graph-import c:/users/dfusi/desktop/nodes.json cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json -t cli-repository-provider.pura
 ```
 
 All data files are JSON documents, having as their root element an array of objects. For instance:
@@ -208,78 +239,9 @@ Sample:
 ./cadmus-tool graph-cls cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json
 ```
 
-### Build SQL Command
-
-💡 Build SQL code for querying the Cadmus index database, once or interactively.
-
-```ps1
-./cadmus-tool build-sql <DatabaseType> [-q query]
-```
-
-The database type can be `mysql` or `mssql`. Anyway, the current Cadmus implementation uses MySql.
-
-- `-q`: the query (for non-interactive mode).
-
-This allows you to interactively build SQL code. Otherwise, add your query after a `-q` option, e.g.:
-
-```bash
-./cadmus-tool build-sql mysql [dsc*=even]
-```
-
-where `mysql` is the index database type, which is currently MySql.
-
-### Get Object Command
-
-💡 Get the JSON code representing an item or a part's content, optionally also converted in XML.
-
-```ps1
-./cadmus-tool get-obj <DatabaseName> <ID> <RepositoryProviderTag> <OutputDir> [-p] [-x]
-```
-
-- `p`: the ID refers to a part rather than to an item.
-- `x`: also write an XML version of the result.
-
-Sample:
-
-```ps1
-./cadmus-tool get-obj cadmus 8e5d5b5d-4b27-4d00-9038-f611a8e199b9 cli-repository-provider.pura c:\users\dfusi\desktop\ -p -x
-```
-
-### Legacy Commands
-
-These commands are obsolete, but we keep their documentation here for reference.
-
-#### Import LEX
-
-Import into a Cadmus database an essential subset of roughly filtered data to be used as seed data. This is a very minimal conversion from Zingarelli LEX files, just to have some fake data to work with.
-
-```ps1
-./cadmus-tool import-lex <lexDirectory> <databaseName> <profileXmlFilePath> [-p|--preflight]
-```
-
-The profile JSON file defines items facets and flags. You can find a sample in `cadmus-tool/Assets/Profile-lex.json`. Note that this profile is used only to provide a better editing experience, and does not reflect a real limitation for allowed parts in the database.
-
-```ps1
-./cadmus-tool import-lex c:\users\dfusi\desktop\lex cadmuslex c:\users\dfusi\desktop\Profile.json -p
-```
-
-#### Legacy Seed
-
-Seed a Cadmus database (creating it if it does not exist) with a specified number of random items with their parts.
-
-```ps1
-./cadmus-tool seed <databaseName> <profileXmlFilePath> <facetsCsvList> [-c|--count itemCount]
-```
-
-The profile JSON file defines items facets and flags. You can find a sample in `cadmus-tool/Assets/Profile.json`. Note that this profile is used only to provide a better editing experience, and does not reflect a real limitation for allowed parts in the database.
-
-The items count defaults to 100. Example:
-
-```ps1
-./cadmus-tool seed cadmus \Projects\Core20\CadmusApi\cadmus-tool\Assets\Profile.json facet-default -c 100
-```
-
 ## History
+
+### 6.1.0
 
 - 2023-04-10: refactoring CLI infrastructure to use Spectre.Console.
 

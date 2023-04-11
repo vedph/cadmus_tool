@@ -18,7 +18,7 @@ internal sealed class GraphUpdateClassesCommand :
         AnsiConsole.MarkupLine("[red underline]UPDATE GRAPH CLASS NODES[/]");
 
         AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");
-        AnsiConsole.MarkupLine($"Profile file: [cyan]{settings.MappingsPath}[/]");
+        AnsiConsole.MarkupLine($"Profile file: [cyan]{settings.ProfilePath}[/]");
 
         IGraphRepository repository = GraphHelper.GetGraphRepository(
             settings.DatabaseName!);
@@ -44,7 +44,7 @@ internal class UpdateGraphClassesCommandSettings : CommandSettings
     [Description("The database name")]
     public string? DatabaseName { get; set; }
 
-    [CommandArgument(1, "<MappingsPath>")]
+    [CommandArgument(1, "<ProfilePath>")]
     [Description("The indexer profile JSON file path")]
-    public string? MappingsPath { get; set; }
+    public string? ProfilePath { get; set; }
 }
