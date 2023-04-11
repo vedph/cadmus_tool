@@ -243,7 +243,7 @@ Sample:
 
 ### 6.1.0
 
-- 2023-04-10: refactoring CLI infrastructure to use Spectre.Console.
+- 2023-04-10: refactored CLI infrastructure to use Spectre.Console.
 
 ### 6.0.1
 
