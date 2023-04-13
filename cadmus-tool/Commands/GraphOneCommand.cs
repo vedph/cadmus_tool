@@ -101,7 +101,7 @@ internal class GraphOneCommandSettings : CommandSettings
     [Description("The path to the mappings file")]
     public string? MappingsPath { get; set; }
 
-    [CommandArgument(2, "-i|--id <ID>")]
+    [CommandArgument(2, "<ID>")]
     [Description("The item/part ID")]
     public string? Id { get; set; }
 
