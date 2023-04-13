@@ -7,6 +7,7 @@
     - [Get Object Command](#get-object-command)
     - [Index Database Command](#index-database-command)
     - [Seed Database Command](#seed-database-command)
+    - [Graph Dereference Mappings](#graph-dereference-mappings)
     - [Graph One Command](#graph-one-command)
     - [Graph Many Command](#graph-many-command)
     - [Import Graph Presets Command](#import-graph-presets-command)
@@ -43,7 +44,7 @@ To add a plugin:
 
 ### Build SQL Command
 
-💡 Build SQL code for querying the Cadmus index database, once or interactively.
+🎯 Build SQL code for querying the Cadmus index database, once or interactively.
 
 ```ps1
 ./cadmus-tool build-sql [-q query]
@@ -59,7 +60,7 @@ This allows you to interactively build SQL code. Otherwise, add your query after
 
 ### Get Object Command
 
-💡 Get the JSON code representing an item or a part's content, optionally also converted in XML.
+🎯 Get the JSON code representing an item or a part's content, optionally also converted in XML.
 
 ```ps1
 ./cadmus-tool get-obj <DatabaseName> <ID> <OutputDir> [-t <RepositoryPluginTag>] [-p] [-x]
@@ -76,7 +77,7 @@ Sample:
 
 ### Index Database Command
 
-💡 Index the specified Cadmus database into a MySql database. If the MySql database does not exist, it will be created; if it exists, it will be cleared if requested.
+🎯 Index the specified Cadmus database into a MySql database. If the MySql database does not exist, it will be created; if it exists, it will be cleared if requested.
 
 This requires a plugin with providers for the repository factory and the parts seeders factory. Each project has its own plugin, which must be placed in a subfolder of the tool's `plugins` folder.
 
@@ -94,7 +95,7 @@ Sample:
 
 ### Seed Database Command
 
-💡 Create a new Cadmus MongoDB database (if the specified database does not already exists), and seed it with a specified number of random items.
+🎯 Create a new Cadmus MongoDB database (if the specified database does not already exists), and seed it with a specified number of random items.
 
 ```ps1
 ./cadmus-tool seed <DatabaseName> <JsonProfilePath> [-t <RepositoryPluginTag>] [-s <SeedersFactoryPluginTag>] [-c count] [-d] [-h]
@@ -110,9 +111,77 @@ Sample:
 ./cadmus-tool seed cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json -t cli-repository-provider.pura -s cli-seeder-factory-provider.pura -c 10 -d
 ```
 
+### Graph Dereference Mappings
+
+🎯 Dereference mappings in a JSON mappings file by outputting a fully dereferenced list of mappings into another file. This can then be imported via [graph-import](#import-graph-presets-command).
+
+```ps1
+./cadmus-tool graph-deref <InputPath> <OutputPath>
+```
+
+Sample:
+
+```ps1
+./cadmus-tool graph-deref c:/users/dfusi/desktop/mappings.json c:/users/dfusi/desktop/mappings-d.json
+```
+
+💡 A mappings document can be used to avoid repeating the same mappings in different places as children mappings. In this JSON document, you have a dictionary of named mappings, where each mapping is keyed under an ID; and a list of document mappings, including all the mappings you want to use. Inside them, you can either specify an inline mapping via `Value`, or reference it via `ReferenceId`. For instance:
+
+```json
+{
+  "NamedMappings": {
+    "event_note": {
+      "name": "event's note",
+      "source": "note",
+      "sid": "{$eid-sid}/note",
+      "output": {
+        "nodes": {
+          "note": "x:notes/n"
+        },
+        "triples": ["{?event} crm:P3_has_note \"{$.}\""]
+      }
+    }
+  },
+  "DocumentMappings": [
+    {
+      "name": "birth",
+      "sourceType": 2,
+      "facetFilter": "person",
+      "partTypeFilter": "it.vedph.historical-events",
+      "description": "Map birth event",
+      "source": "events[?type=='person.birth']",
+      "output": {
+        "metadata": {
+          "eid-sid": "{$part-id}/{@eid}"
+        }
+      },
+      "children": [
+        {
+          "Value": {
+            "name": "birth event - eid",
+            "source": "eid",
+            "sid": "{$eid-sid}",
+            "output": {
+              "nodes": {
+                "event": "x:events/{$.}"
+              },
+              "triples": [
+                "{?event} a crm:E67_Birth",
+                "{?event} crm:P98_brought_into_life {$item-uri}"
+              ]
+            }
+          }
+        },
+        { "ReferenceId": "event_note" }
+      ]
+    }
+  ]
+}
+```
+
 ### Graph One Command
 
-💡 Map a single item/part into graph.
+🎯 Map a single item/part into graph.
 
 ```ps1
 ./cadmus-tool graph-one <DatabaseName> <MappingsPath> <Id> [-t <RepositoryPluginTag>] [-p] [-d]
@@ -129,7 +198,7 @@ Sample:
 
 ### Graph Many Command
 
-💡 Map all the items into graph.
+🎯 Map all the items into graph.
 
 ```ps1
 ./cadmus-tool graph-many <DatabaseName> <MappingsPath> [-t <RepositoryPluginTag>]
@@ -143,7 +212,7 @@ Sample:
 
 ### Import Graph Presets Command
 
-💡 Import preset nodes, triples, node mappings, or thesauri class nodes into graph.
+🎯 Import preset nodes, triples, node mappings, or thesauri class nodes into graph.
 
 ```ps1
 ./cadmus-tool graph-import <SourcePath> <DatabaseName> <JsonProfilePath> [-t <RepositoryPluginTag>] [-m] [-d] [-r] [-p <ThesaurusIdPrefix>]
@@ -227,7 +296,7 @@ All data files are JSON documents, having as their root element an array of obje
 
 ### Update Graph Classes Command
 
-💡 Update the index of nodes classes in the index database. This is a potentially long task, depending on the number of nodes and the depth of class hierarchies.
+🎯 Update the index of nodes classes in the index database. This is a potentially long task, depending on the number of nodes and the depth of class hierarchies.
 
 ```ps1
 ./cadmus-tool graph-cls <DatabaseName> <ProfilePath>
