@@ -310,9 +310,11 @@ Sample:
 
 ## History
 
+- 2023-04-26: added `item-eid` to metadata in graph commands.
+
 ### 6.1.0
 
-- 2023-04-10: refactored CLI infrastructure to use Spectre.Console.
+- 2023-04-10: refactored CLI infrastructure to use [Spectre.Console](https://spectreconsole.net).
 
 ### 6.0.1
 

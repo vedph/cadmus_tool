@@ -2,6 +2,7 @@
 using Cadmus.Core;
 using Cadmus.Core.Storage;
 using Cadmus.Graph;
+using Cadmus.Graph.Extras;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -77,7 +78,14 @@ internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
         // update graph
         IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
             settings.DatabaseName!);
-        GraphUpdater updater = new(graphRepository);
+        GraphUpdater updater = new(graphRepository)
+        {
+            // we want item-eid as an additional metadatum, derived from
+            // eid in the role-less MetadataPart of the item, when present
+            MetadataSupplier = new MetadataSupplier()
+                .SetCadmusRepository(repository)
+                .AddItemEid()
+        };
 
         if (settings.IsPart)
         {

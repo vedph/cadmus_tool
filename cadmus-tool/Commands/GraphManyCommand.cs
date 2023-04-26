@@ -2,6 +2,7 @@
 using Cadmus.Core;
 using Cadmus.Core.Storage;
 using Cadmus.Graph;
+using Cadmus.Graph.Extras;
 using Fusi.Tools.Data;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
@@ -41,7 +42,14 @@ internal sealed class GraphManyCommand : AsyncCommand<GraphManyCommandSettings>
 
         IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
             settings.DatabaseName!);
-        GraphUpdater updater = new(graphRepository);
+        GraphUpdater updater = new(graphRepository)
+        {
+            // we want item-eid as an additional metadatum, derived from
+            // eid in the role-less MetadataPart of the item, when present
+            MetadataSupplier = new MetadataSupplier()
+                .SetCadmusRepository(repository)
+                .AddItemEid()
+        };
 
         int oldPercent = 0;
         ItemFilter filter = new() { PageSize = 100 };
