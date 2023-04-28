@@ -23,17 +23,22 @@ internal sealed class GraphDerefMappingsCommand :
         AnsiConsole.MarkupLine($"Output: [cyan]{settings.OutputPath}[/]");
 
         string json = File.ReadAllText(settings.InputPath!);
+        JsonSerializerOptions options = new()
+        {
+            AllowTrailingCommas = true,
+            PropertyNameCaseInsensitive = true,
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        };
+        options.Converters.Add(new NodeMappingOutputJsonConverter());
+
         NodeMappingDocument? doc =
-            JsonSerializer.Deserialize<NodeMappingDocument>(json,
-            new JsonSerializerOptions
-            {
-                AllowTrailingCommas = true,
-                PropertyNameCaseInsensitive = true,
-            }) ?? throw new InvalidFormatException("Invalid JSON mappings document");
+            JsonSerializer.Deserialize<NodeMappingDocument>(json, options)
+            ?? throw new InvalidFormatException("Invalid JSON mappings document");
 
         List<NodeMapping> mappings = doc.GetMappings().ToList();
         using StreamWriter writer = new(settings.OutputPath!, false, Encoding.UTF8);
-        writer.Write(JsonSerializer.Serialize(mappings));
+        writer.Write(JsonSerializer.Serialize(mappings, options));
         writer.Flush();
 
         return Task.FromResult(0);

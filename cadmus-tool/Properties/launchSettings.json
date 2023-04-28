@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": "index cadmus-tgr ./plugins/Cadmus.Tgr.Services/seed-profile.json repository-provider.tgr"
+      "commandLineArgs": "graph-deref c:\\users\\dfusi\\desktop\\mappings.json c:\\users\\dfusi\\desktop\\mappings.deref.json"
     }
   }
 }
