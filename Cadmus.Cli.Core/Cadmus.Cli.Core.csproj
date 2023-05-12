@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cadmus.Seed" Version="6.0.2" />
+    <PackageReference Include="Cadmus.Seed" Version="6.0.3" />
     <PackageReference Include="McMaster.NETCore.Plugins" Version="1.4.0" />
   </ItemGroup>
 

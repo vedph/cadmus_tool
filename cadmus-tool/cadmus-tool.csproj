@@ -37,20 +37,19 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="34.0.2" />
-    <PackageReference Include="Cadmus.Core" Version="6.0.2" />
-    <PackageReference Include="Cadmus.General.Parts" Version="4.2.0" />
+    <PackageReference Include="Cadmus.Core" Version="6.0.3" />
+    <PackageReference Include="Cadmus.General.Parts" Version="4.2.1" />
     <PackageReference Include="Cadmus.Graph" Version="2.1.4" />
     <PackageReference Include="Cadmus.Graph.Extras" Version="2.1.4" />
-    <PackageReference Include="Cadmus.Index" Version="6.0.2" />
-    <PackageReference Include="Cadmus.Index.MsSql" Version="6.0.2" />
-    <PackageReference Include="Cadmus.Index.MySql" Version="6.0.2" />
-    <PackageReference Include="Cadmus.Index.Sql" Version="6.0.2" />
-    <PackageReference Include="Cadmus.Mongo" Version="6.0.2" />
+    <PackageReference Include="Cadmus.Index" Version="6.0.3" />
+    <PackageReference Include="Cadmus.Index.MySql" Version="6.0.3" />
+    <PackageReference Include="Cadmus.Index.Sql" Version="6.0.3" />
+    <PackageReference Include="Cadmus.Mongo" Version="6.0.3" />
     <PackageReference Include="Cadmus.Parts" Version="2.7.1" />
-    <PackageReference Include="Cadmus.Philology.Parts" Version="6.0.1" />
-    <PackageReference Include="Cadmus.Seed" Version="6.0.2" />
+    <PackageReference Include="Cadmus.Philology.Parts" Version="6.0.2" />
+    <PackageReference Include="Cadmus.Seed" Version="6.0.3" />
     <PackageReference Include="Cadmus.Seed.Parts" Version="1.5.1" />
-    <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="6.0.1" />
+    <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="6.0.2" />
     <PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="3.0.0" />
     <PackageReference Include="Fusi.Text" Version="3.0.0" />
     <PackageReference Include="Fusi.Tools" Version="3.1.1" />
