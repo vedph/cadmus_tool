@@ -6,8 +6,8 @@ using Cadmus.Graph.Extras;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
@@ -57,7 +57,7 @@ internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
             part = repository.GetPart<IPart>(settings.Id!);
             if (part == null)
             {
-                Console.WriteLine("Part not found");
+                AnsiConsole.MarkupLine("[red]Part not found[/]");
                 return Task.FromResult(2);
             }
             item = repository.GetItem(part.ItemId, false);
@@ -69,7 +69,7 @@ internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
 
         if (item == null)
         {
-            Console.WriteLine("Item not found");
+            AnsiConsole.MarkupLine("[red]Item not found[/]");
             return Task.FromResult(2);
         }
 
@@ -85,13 +85,45 @@ internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
                 .AddItemEid()
         };
 
-        if (settings.IsPart)
+        if (settings.Explain)
         {
-            updater.Update(item, part!);
+            GraphUpdaterExplanation? explanation = settings.IsPart
+                ? updater.Explain(item, part!)
+                : updater.Explain(item);
+            if (explanation == null)
+            {
+                AnsiConsole.MarkupLine("[red]Item not found[/]");
+                return Task.FromResult(2);
+            }
+
+            AnsiConsole.MarkupLine("[yellow]Filter[/]");
+            RunNodeMappingFilter f = explanation.Filter;
+            AnsiConsole.MarkupLine($"- [cyan]source type[/]: {f.SourceType}");
+            AnsiConsole.MarkupLine($"- [cyan]facet[/]: {f.Facet}");
+            AnsiConsole.MarkupLine($"- [cyan]group[/]: {f.Group}");
+            AnsiConsole.MarkupLine($"- [cyan]flags[/]: {f.Flags}");
+            AnsiConsole.MarkupLine($"- [cyan]part type[/]: {f.PartType}");
+            AnsiConsole.MarkupLine($"- [cyan]role[/]: {f.PartRole}");
+            AnsiConsole.MarkupLineInterpolated($"- [cyan]title[/]: {f.Title}");
+
+            AnsiConsole.MarkupLine("\n[yellow]Metadata[/]");
+            foreach (string k in explanation.Metadata.Keys.OrderBy(s => s))
+            {
+                AnsiConsole.MarkupLineInterpolated(
+                    $"- [cyan]{k}[/]: {explanation.Metadata[k]}");
+            }
+
+            AnsiConsole.MarkupLine("\n[yellow]Mappings[/]");
+            for (int i = 0; i < explanation.Mappings.Count; i++)
+            {
+                AnsiConsole.Markup($"[cyan]{i + 1}.[/] ");
+                AnsiConsole.WriteLine(explanation.Mappings[i].ToString());
+            }
         }
         else
         {
-            updater.Update(item);
+            if (settings.IsPart) updater.Update(item, part!);
+            else updater.Update(item);
         }
         return Task.FromResult(0);
     }
@@ -118,4 +150,8 @@ internal class GraphOneCommandSettings : CommandSettings
     [CommandOption("-d|--deleted")]
     [Description("The ID refers to an item/part which was deleted")]
     public bool IsDeleted { get; set; }
+
+    [CommandOption("-x|--explain")]
+    [Description("Explain the graph update")]
+    public bool Explain { get; set; }
 }

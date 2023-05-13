@@ -275,11 +275,12 @@ All data files are JSON documents, having as their root element an **array** of 
 
 - `-p`: the ID refers to a part rather than to an item.
 - `-d`: the ID refers to an item/part which was deleted.
+- `-x`: explain the update without actually performing it.
 
 Sample:
 
 ```ps1
-./cadmus-tool graph-one cadmus-itinera a47e233b-b50c-4110-af5b-343e12decdac -t repository-provider.itinera
+./cadmus-tool graph-one cadmus-itinera 4a0ce97e-84d1-417d-9fb0-a91d9dfc4da7 -t repository-provider.itinera -p -x
 ```
 
 ### Graph Many Command
