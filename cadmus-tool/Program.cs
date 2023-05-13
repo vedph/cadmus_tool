@@ -69,7 +69,7 @@ public static class Program
                 config.AddCommand<GraphOneCommand>("graph-one")
                     .WithDescription("Map a single item/part into graph.");
 
-                config.AddCommand<ImportGraphPresetsCommand>("graph-import")
+                config.AddCommand<GraphImportCommand>("graph-import")
                     .WithDescription(
                     "Import nodes, triples, mappings or thesauri into graph.");
 

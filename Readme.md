@@ -8,9 +8,9 @@
     - [Index Database Command](#index-database-command)
     - [Seed Database Command](#seed-database-command)
     - [Graph Dereference Mappings](#graph-dereference-mappings)
+    - [Graph Import Command](#graph-import-command)
     - [Graph One Command](#graph-one-command)
     - [Graph Many Command](#graph-many-command)
-    - [Import Graph Presets Command](#import-graph-presets-command)
     - [Update Graph Classes Command](#update-graph-classes-command)
   - [History](#history)
     - [6.1.0](#610)
@@ -179,38 +179,7 @@ Sample:
 }
 ```
 
-### Graph One Command
-
-🎯 Map a single item/part into graph.
-
-```ps1
-./cadmus-tool graph-one <DatabaseName> <Id> [-t <RepositoryPluginTag>] [-p] [-d]
-```
-
-- `-p`: the ID refers to a part rather than to an item.
-- `-d`: the ID refers to an item/part which was deleted.
-
-Sample:
-
-```ps1
-./cadmus-tool graph-one cadmus-itinera a47e233b-b50c-4110-af5b-343e12decdac -t repository-provider.itinera
-```
-
-### Graph Many Command
-
-🎯 Map all the items into graph.
-
-```ps1
-./cadmus-tool graph-many <DatabaseName> [-t <RepositoryPluginTag>]
-```
-
-Sample:
-
-```ps1
-./cadmus-tool graph-many cadmus-itinera repository-provider.itinera
-```
-
-### Import Graph Presets Command
+### Graph Import Command
 
 🎯 Import preset nodes, triples, node mappings, or thesauri class nodes into graph.
 
@@ -228,6 +197,8 @@ Sample:
 ```ps1
 ./cadmus-tool graph-import c:/users/dfusi/desktop/nodes.json cadmus-itinera -t repository-provider.itinera
 ```
+
+>Note: if you are importing mappings, ensure that the JSON document has a root array property including mappings. When working with a compact mappings document using cross-references, dereference all the referenced mappings via the [apposite command](#graph-dereference-mappings) before importing.
 
 All data files are JSON documents, having as their root element an **array** of objects. For instance:
 
@@ -292,6 +263,37 @@ All data files are JSON documents, having as their root element an **array** of 
     ]
   }
 ]
+```
+
+### Graph One Command
+
+🎯 Map a single item/part into graph.
+
+```ps1
+./cadmus-tool graph-one <DatabaseName> <Id> [-t <RepositoryPluginTag>] [-p] [-d]
+```
+
+- `-p`: the ID refers to a part rather than to an item.
+- `-d`: the ID refers to an item/part which was deleted.
+
+Sample:
+
+```ps1
+./cadmus-tool graph-one cadmus-itinera a47e233b-b50c-4110-af5b-343e12decdac -t repository-provider.itinera
+```
+
+### Graph Many Command
+
+🎯 Map all the items into graph.
+
+```ps1
+./cadmus-tool graph-many <DatabaseName> [-t <RepositoryPluginTag>]
+```
+
+Sample:
+
+```ps1
+./cadmus-tool graph-many cadmus-itinera repository-provider.itinera
 ```
 
 ### Update Graph Classes Command

@@ -29,6 +29,8 @@ internal sealed class GraphDerefMappingsCommand :
             PropertyNameCaseInsensitive = true,
             WriteIndented = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            // avoid escaping of non-ASCII chars
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
         options.Converters.Add(new NodeMappingOutputJsonConverter());
 

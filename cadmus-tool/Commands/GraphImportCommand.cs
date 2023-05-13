@@ -16,11 +16,10 @@ namespace Cadmus.Cli.Commands;
 /// Import graph presets command.
 /// </summary>
 /// <seealso cref="ICommand" />
-internal sealed class ImportGraphPresetsCommand :
-    AsyncCommand<AddGraphPresetsCommandSettings>
+internal sealed class GraphImportCommand : AsyncCommand<GraphImportCommandSettings>
 {
     private static void ImportMappings(Stream source, IGraphRepository repository,
-        AddGraphPresetsCommandSettings settings)
+        GraphImportCommandSettings settings)
     {
         // source id : graph id
         Dictionary<int, int> ids = new();
@@ -43,7 +42,7 @@ internal sealed class ImportGraphPresetsCommand :
     }
 
     private static void ImportNodes(Stream source, IGraphRepository repository,
-        AddGraphPresetsCommandSettings settings)
+        GraphImportCommandSettings settings)
     {
         JsonGraphPresetReader reader = new();
 
@@ -63,7 +62,7 @@ internal sealed class ImportGraphPresetsCommand :
     }
 
     private static void ImportTriples(Stream source, IGraphRepository repository,
-        AddGraphPresetsCommandSettings settings)
+        GraphImportCommandSettings settings)
     {
         JsonGraphPresetReader reader = new();
         foreach (Triple triple in reader.ReadTriples(source))
@@ -74,7 +73,7 @@ internal sealed class ImportGraphPresetsCommand :
     }
 
     private static void ImportThesauri(Stream source, IGraphRepository repository,
-        AddGraphPresetsCommandSettings settings)
+        GraphImportCommandSettings settings)
     {
         string json = new StreamReader(source, Encoding.UTF8).ReadToEnd();
         Thesaurus[] thesauri = JsonSerializer.Deserialize<Thesaurus[]>(json,
@@ -96,7 +95,7 @@ internal sealed class ImportGraphPresetsCommand :
     }
 
     public override Task<int> ExecuteAsync(CommandContext context,
-        AddGraphPresetsCommandSettings settings)
+        GraphImportCommandSettings settings)
     {
         AnsiConsole.MarkupLine("[red underline]IMPORT INTO GRAPH[/]");
         AnsiConsole.MarkupLine($"Source: [cyan]{settings.SourcePath}[/]");
@@ -147,9 +146,9 @@ internal sealed class ImportGraphPresetsCommand :
 }
 
 /// <summary>
-/// Options for <see cref="ImportGraphPresetsCommand"/>
+/// Options for <see cref="GraphImportCommand"/>
 /// </summary>
-internal class AddGraphPresetsCommandSettings : CommandSettings
+internal class GraphImportCommandSettings : CommandSettings
 {
     [CommandArgument(0, "<SourcePath>")]
     [Description("The path to the source file")]
@@ -182,7 +181,7 @@ internal class AddGraphPresetsCommandSettings : CommandSettings
     [Description("The prefix to add to each thesaurus' class node")]
     public string? ThesaurusIdPrefix { get; set; }
 
-    public AddGraphPresetsCommandSettings()
+    public GraphImportCommandSettings()
     {
         Mode = 'n';
     }
