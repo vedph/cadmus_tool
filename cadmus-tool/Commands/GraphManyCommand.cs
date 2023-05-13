@@ -20,7 +20,6 @@ internal sealed class GraphManyCommand : AsyncCommand<GraphManyCommandSettings>
         AnsiConsole.MarkupLine("[red underline]MAP ITEMS TO GRAPH[/]");
 
         AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");
-        AnsiConsole.MarkupLine($"Mappings: [cyan]{settings.MappingsPath}[/]");
         if (!string.IsNullOrEmpty(settings.RepositoryPluginTag))
         {
             AnsiConsole.MarkupLine(
@@ -28,7 +27,6 @@ internal sealed class GraphManyCommand : AsyncCommand<GraphManyCommandSettings>
         }
         Serilog.Log.Information("MAP TO GRAPH: " +
                      $"Database: {settings.DatabaseName}, " +
-                     $"Mappings: {settings.MappingsPath}, " +
                      $"Repository plugin tag: {settings.RepositoryPluginTag}\n");
 
         // repository
@@ -38,7 +36,7 @@ internal sealed class GraphManyCommand : AsyncCommand<GraphManyCommandSettings>
           CliAppContext.Configuration.GetConnectionString("Mongo")!,
           settings.DatabaseName);
         ICadmusRepository repository = CliHelper.GetCadmusRepository(
-            settings.RepositoryPluginTag!, cs);
+            settings.RepositoryPluginTag, cs);
 
         IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
             settings.DatabaseName!);
@@ -106,10 +104,6 @@ internal class GraphManyCommandSettings : CommandSettings
     [CommandArgument(0, "<DatabaseName>")]
     [Description("The database name")]
     public string? DatabaseName { get; set; }
-
-    [CommandArgument(1, "<MappingsPath>")]
-    [Description("The path to the mappings file")]
-    public string? MappingsPath { get; set; }
 
     [CommandOption("-t|--tag <RepositoryPluginTag>")]
     [Description("The repository factory plugin tag")]

@@ -72,7 +72,7 @@ This allows you to interactively build SQL code. Otherwise, add your query after
 Sample:
 
 ```ps1
-./cadmus-tool get-obj cadmus 8e5d5b5d-4b27-4d00-9038-f611a8e199b9 c:\users\dfusi\desktop\ -t repository-provider.pura -p -x
+./cadmus-tool get-obj cadmus 8e5d5b5d-4b27-4d00-9038-f611a8e199b9 c:\users\dfusi\desktop\ -t repository-provider.itinera -p -x
 ```
 
 ### Index Database Command
@@ -90,7 +90,7 @@ This requires a plugin with providers for the repository factory and the parts s
 Sample:
 
 ```bash
-./cadmus-tool index cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json -t repository-provider.pura
+./cadmus-tool index cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json -t repository-provider.itinera
 ```
 
 ### Seed Database Command
@@ -108,7 +108,7 @@ Sample:
 Sample:
 
 ```ps1
-./cadmus-tool seed cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json -t repository-provider.pura -s cli-seeder-factory-provider.pura -c 10 -d
+./cadmus-tool seed cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json -t repository-provider.itinera -s cli-seeder-factory-provider.itinera -c 10 -d
 ```
 
 ### Graph Dereference Mappings
@@ -184,7 +184,7 @@ Sample:
 🎯 Map a single item/part into graph.
 
 ```ps1
-./cadmus-tool graph-one <DatabaseName> <MappingsPath> <Id> [-t <RepositoryPluginTag>] [-p] [-d]
+./cadmus-tool graph-one <DatabaseName> <Id> [-t <RepositoryPluginTag>] [-p] [-d]
 ```
 
 - `-p`: the ID refers to a part rather than to an item.
@@ -193,7 +193,7 @@ Sample:
 Sample:
 
 ```ps1
-./cadmus-tool graph-one cadmus-pura c:/users/dfusi/desktop/mappings.json a47e233b-b50c-4110-af5b-343e12decdac -t repository-provider.pura
+./cadmus-tool graph-one cadmus-itinera a47e233b-b50c-4110-af5b-343e12decdac -t repository-provider.itinera
 ```
 
 ### Graph Many Command
@@ -201,13 +201,13 @@ Sample:
 🎯 Map all the items into graph.
 
 ```ps1
-./cadmus-tool graph-many <DatabaseName> <MappingsPath> [-t <RepositoryPluginTag>]
+./cadmus-tool graph-many <DatabaseName> [-t <RepositoryPluginTag>]
 ```
 
 Sample:
 
 ```ps1
-./cadmus-tool graph-many cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json repository-provider.pura
+./cadmus-tool graph-many cadmus-itinera repository-provider.itinera
 ```
 
 ### Import Graph Presets Command
@@ -215,7 +215,7 @@ Sample:
 🎯 Import preset nodes, triples, node mappings, or thesauri class nodes into graph.
 
 ```ps1
-./cadmus-tool graph-import <SourcePath> <DatabaseName> <JsonProfilePath> [-t <RepositoryPluginTag>] [-m] [-d] [-r] [-p <ThesaurusIdPrefix>]
+./cadmus-tool graph-import <SourcePath> <DatabaseName> [-t <RepositoryPluginTag>] [-m <ImportMode>] [-d] [-r] [-p <ThesaurusIdPrefix>]
 ```
 
 - `-m`: import mode: `n`odes (default), `t`riples, `m`appings, t`h`esauri.
@@ -226,10 +226,10 @@ Sample:
 Sample:
 
 ```ps1
-./cadmus-tool graph-import c:/users/dfusi/desktop/nodes.json cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json -t repository-provider.pura
+./cadmus-tool graph-import c:/users/dfusi/desktop/nodes.json cadmus-itinera -t repository-provider.itinera
 ```
 
-All data files are JSON documents, having as their root element an array of objects. For instance:
+All data files are JSON documents, having as their root element an **array** of objects. For instance:
 
 - **node** (omit all the properties you don't need):
 
@@ -305,7 +305,7 @@ All data files are JSON documents, having as their root element an array of obje
 Sample:
 
 ```ps1
-./cadmus-tool graph-cls cadmus-pura ./plugins/Cadmus.Cli.Plugin.Pura/seed-profile.json
+./cadmus-tool graph-cls cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json
 ```
 
 ## History

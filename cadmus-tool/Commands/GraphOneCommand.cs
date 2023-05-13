@@ -19,7 +19,6 @@ internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
     {
         AnsiConsole.MarkupLine("[red underline]MAP ITEM/PART TO GRAPH[/]");
         AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");
-        AnsiConsole.MarkupLine($"Mappings file: [cyan]{settings.MappingsPath}[/]");
         if (!string.IsNullOrEmpty(settings.RepositoryPluginTag))
         {
             AnsiConsole.MarkupLine(
@@ -30,7 +29,6 @@ internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
 
         Serilog.Log.Information("MAP TO GRAPH: " +
                      $"Database: {settings.DatabaseName}, " +
-                     $"Mappings file: {settings.MappingsPath}, " +
                      $"Repository plugin tag: {settings.RepositoryPluginTag}\n" +
                      $"{(settings.IsPart ? "Part" : "Item")} ID: {settings.Id}\n");
 
@@ -105,11 +103,7 @@ internal class GraphOneCommandSettings : CommandSettings
     [Description("The database name")]
     public string? DatabaseName { get; set; }
 
-    [CommandArgument(1, "<MappingsPath>")]
-    [Description("The path to the mappings file")]
-    public string? MappingsPath { get; set; }
-
-    [CommandArgument(2, "<ID>")]
+    [CommandArgument(1, "<ID>")]
     [Description("The item/part ID")]
     public string? Id { get; set; }
 
