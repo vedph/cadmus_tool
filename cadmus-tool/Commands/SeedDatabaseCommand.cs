@@ -26,7 +26,7 @@ internal sealed class SeedDatabaseCommand :
     public override Task<int> ExecuteAsync(CommandContext context,
         SeedDatabaseCommandSettings settings)
     {
-        AnsiConsole.MarkupLine("[green underline]BUILD INDEX SQL[/]");
+        AnsiConsole.MarkupLine("[red underline]SEED DATABASE[/]");
         AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");
         AnsiConsole.MarkupLine($"Profile file: [cyan]{settings.ProfilePath}[/]");
         if (!string.IsNullOrEmpty(settings.RepositoryPluginTag))

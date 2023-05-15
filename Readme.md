@@ -13,6 +13,7 @@
     - [Graph Many Command](#graph-many-command)
     - [Update Graph Classes Command](#update-graph-classes-command)
   - [History](#history)
+    - [6.1.1](#611)
     - [6.1.0](#610)
     - [6.0.1](#601)
     - [6.0.0](#600)
@@ -102,13 +103,13 @@ Sample:
 ```
 
 - `-c N`: the number of items to be seeded. Default is 100.
-- `-d`: dry run, i.e. create the items and parts, but do not create the database nor store anything into it. This is used to test for seeder issues before actually running it.
+- `-d`: dry run, i.e. create the items and parts, but do not create the database nor store anything into it. This is used to test for seeder issues before actually running the command.
 - `-h`: add history items and parts together with the seeded items and parts. Default is `false`. In a real-world database you should set this to `true`.
 
 Sample:
 
 ```ps1
-./cadmus-tool seed cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json -t repository-provider.itinera -s cli-seeder-factory-provider.itinera -c 10 -d
+./cadmus-tool seed cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json -t repository-provider.itinera -s seeder-factory-provider.itinera -c 10 -d
 ```
 
 ### Graph Dereference Mappings
@@ -313,6 +314,9 @@ Sample:
 
 ## History
 
+### 6.1.1
+
+- 2023-05-15: added hydration to triples import command.
 - 2023-05-13: updated packages.
 - 2023-05-12: updated packages.
 - 2023-04-28: updated packages.

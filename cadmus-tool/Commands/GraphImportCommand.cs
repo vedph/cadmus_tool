@@ -61,12 +61,48 @@ internal sealed class GraphImportCommand : AsyncCommand<GraphImportCommandSettin
         }
     }
 
+    private static void HydrateTriple(UriTriple triple,
+        IGraphRepository repository)
+    {
+        // subject
+        if (triple.SubjectId == 0)
+        {
+            if (triple.SubjectUri == null)
+                throw new ArgumentNullException("No subject for triple: " + triple);
+            triple.SubjectId = repository.LookupId(triple.SubjectUri);
+            if (triple.SubjectId == 0)
+                throw new ArgumentNullException("Missing URI " + triple.SubjectUri);
+        }
+
+        // predicate
+        if (triple.PredicateId == 0)
+        {
+            if (triple.PredicateUri == null)
+                throw new ArgumentNullException("No predicate for triple: " + triple);
+            triple.PredicateId = repository.LookupId(triple.PredicateUri);
+            if (triple.PredicateId == 0)
+                throw new ArgumentNullException("Missing URI " + triple.PredicateUri);
+        }
+
+        // object
+        if (triple.ObjectLiteral == null && triple.ObjectId == 0)
+        {
+            if (triple.ObjectUri == null)
+                throw new ArgumentNullException("No object for triple: " + triple);
+            triple.ObjectId = repository.LookupId(triple.ObjectUri);
+            if (triple.ObjectId == 0)
+                throw new ArgumentNullException("Missing URI " + triple.ObjectUri);
+        }
+    }
+
     private static void ImportTriples(Stream source, IGraphRepository repository,
         GraphImportCommandSettings settings)
     {
         JsonGraphPresetReader reader = new();
-        foreach (Triple triple in reader.ReadTriples(source))
+        foreach (UriTriple triple in reader.ReadTriples(source))
         {
+            HydrateTriple(triple, repository);
+            Console.WriteLine(triple);
             if (!settings.IsDry) repository.AddTriple(triple);
             else Console.WriteLine(triple);
         }
@@ -84,13 +120,13 @@ internal sealed class GraphImportCommand : AsyncCommand<GraphImportCommandSettin
             })!;
         foreach (Thesaurus thesaurus in thesauri)
         {
+            Console.WriteLine(thesaurus);
             if (!settings.IsDry)
             {
                 repository.AddThesaurus(thesaurus,
                     settings.ThesaurusIdAsRoot,
                     settings.ThesaurusIdPrefix);
             }
-            Console.WriteLine(thesaurus);
         }
     }
 
