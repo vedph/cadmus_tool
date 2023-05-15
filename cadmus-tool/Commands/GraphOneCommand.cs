@@ -116,8 +116,22 @@ internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
             AnsiConsole.MarkupLine("\n[yellow]Mappings[/]");
             for (int i = 0; i < explanation.Mappings.Count; i++)
             {
-                AnsiConsole.Markup($"[cyan]{i + 1}.[/] ");
+                AnsiConsole.Markup($"[cyan]{i + 1:000}.[/] ");
                 AnsiConsole.WriteLine(explanation.Mappings[i].ToString());
+            }
+
+            AnsiConsole.MarkupLine("\n[yellow]Nodes[/]");
+            for (int i = 0; i < explanation.Set.Nodes.Count; i++)
+            {
+                AnsiConsole.Markup($"[cyan]{i + 1:000}.[/] ");
+                AnsiConsole.WriteLine(explanation.Set.Nodes[i].ToString());
+            }
+
+            AnsiConsole.MarkupLine("\n[yellow]Triples[/]");
+            for (int i = 0; i < explanation.Set.Triples.Count; i++)
+            {
+                AnsiConsole.Markup($"[cyan]{i + 1:000}.[/] ");
+                AnsiConsole.WriteLine(explanation.Set.Triples[i].ToString());
             }
         }
         else

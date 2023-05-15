@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": "graph-import c:/users/dfusi/desktop/itinera/triples.json cadmus-itinera -t repository-provider.itinera -m t -d"
+      "commandLineArgs": "graph-one cadmus-itinera 5d2dcf26-1103-496c-af8f-e9c56614fb09 -t repository-provider.itinera -p -x"
     }
   }
 }
