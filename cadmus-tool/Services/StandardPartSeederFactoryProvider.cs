@@ -1,6 +1,6 @@
 ﻿using Cadmus.Core.Config;
 using Cadmus.Seed;
-using Cadmus.Seed.Parts.General;
+using Cadmus.Seed.General.Parts;
 using Cadmus.Seed.Philology.Parts;
 using Fusi.Microsoft.Extensions.Configuration.InMemoryJson;
 using Microsoft.Extensions.Hosting;

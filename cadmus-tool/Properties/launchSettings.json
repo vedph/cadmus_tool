@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": "graph-one cadmus-itinera 5d2dcf26-1103-496c-af8f-e9c56614fb09 -t repository-provider.itinera -p -x"
+      "commandLineArgs": "index cadmus-itinera D:\\Projects\\Cadmus\\Itinera\\CadmusItineraApi\\CadmusItineraApi\\wwwroot\\seed-profile.json"
     }
   }
 }

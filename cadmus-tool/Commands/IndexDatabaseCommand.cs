@@ -1,6 +1,5 @@
 ﻿using Cadmus.Cli.Core;
 using Cadmus.Cli.Services;
-using Cadmus.Core;
 using Cadmus.Core.Storage;
 using Cadmus.Index;
 using Cadmus.Index.Config;
@@ -19,13 +18,6 @@ namespace Cadmus.Cli.Commands;
 internal sealed class IndexDatabaseCommand :
     AsyncCommand<IndexDatabaseCommandSettings>
 {
-    private readonly IndexDatabaseCommandSettings _options;
-
-    public IndexDatabaseCommand(IndexDatabaseCommandSettings options)
-    {
-        _options = options;
-    }
-
     private static string LoadProfile(string path)
     {
         using StreamReader reader = File.OpenText(path);
@@ -36,25 +28,25 @@ internal sealed class IndexDatabaseCommand :
         IndexDatabaseCommandSettings settings)
     {
         AnsiConsole.MarkupLine("[red underline]INDEX DATABASE[/]");
-        AnsiConsole.MarkupLine($"Database: [cyan]{_options.DatabaseName}[/]");
-        AnsiConsole.MarkupLine($"Profile file: [cyan]{_options.ProfilePath}[/]");
-        if (!string.IsNullOrEmpty(_options.RepositoryPluginTag))
+        AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");
+        AnsiConsole.MarkupLine($"Profile file: [cyan]{settings.ProfilePath}[/]");
+        if (!string.IsNullOrEmpty(settings.RepositoryPluginTag))
         {
             AnsiConsole.MarkupLine(
-                $"Repository plugin tag: [cyan]{_options.RepositoryPluginTag}[/]");
+                $"Repository plugin tag: [cyan]{settings.RepositoryPluginTag}[/]");
         }
-        AnsiConsole.MarkupLine($"Clear: [cyan]{_options.ClearDatabase}[/]\n");
+        AnsiConsole.MarkupLine($"Clear: [cyan]{settings.ClearDatabase}[/]\n");
 
         Serilog.Log.Information("INDEX DATABASE: " +
-                     $"Database: {_options.DatabaseName}, " +
-                     $"Profile file: {_options.ProfilePath}, " +
-                     $"Repository plugin tag: {_options.RepositoryPluginTag}\n" +
-                     $"Clear: {_options.ClearDatabase}");
+                     $"Database: {settings.DatabaseName}, " +
+                     $"Profile file: {settings.ProfilePath}, " +
+                     $"Repository plugin tag: {settings.RepositoryPluginTag}\n" +
+                     $"Clear: {settings.ClearDatabase}");
 
-        string profileContent = LoadProfile(_options.ProfilePath!);
+        string profileContent = LoadProfile(settings.ProfilePath!);
 
         string cs = string.Format(CliAppContext.Configuration
-            .GetConnectionString("Index")!, _options.DatabaseName);
+            .GetConnectionString("Index")!, settings.DatabaseName);
         IItemIndexFactoryProvider provider =
             new StandardItemIndexFactoryProvider(cs);
         ItemIndexFactory factory = provider.GetFactory(profileContent);
@@ -76,7 +68,7 @@ internal sealed class IndexDatabaseCommand :
                 {
                     Logger = CliAppContext.Logger
                 };
-                if (_options.ClearDatabase) await indexer.Clear();
+                if (settings.ClearDatabase) await indexer.Clear();
 
                 indexer.Build(repository, new ItemFilter(),
                     CancellationToken.None,

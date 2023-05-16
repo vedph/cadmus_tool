@@ -3,8 +3,8 @@ using System.Reflection;
 using Cadmus.Core;
 using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
+using Cadmus.General.Parts;
 using Cadmus.Mongo;
-using Cadmus.Parts.General;
 using Cadmus.Philology.Parts;
 using Fusi.Tools.Configuration;
 
@@ -33,7 +33,7 @@ public sealed class StandardRepositoryProvider : IRepositoryProvider
         TagAttributeToTypeMap map = new();
         map.Add(new[]
         {
-            // Cadmus.Parts
+            // Cadmus.General.Parts
             typeof(NotePart).GetTypeInfo().Assembly,
             // Cadmus.Philology.Parts
             typeof(ApparatusLayerFragment).GetTypeInfo().Assembly,
