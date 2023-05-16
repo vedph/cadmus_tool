@@ -55,11 +55,14 @@ internal sealed class IndexDatabaseCommand :
                 "Unable to instantiate item index writer");
 
         // repository
-        Console.WriteLine("Creating repository...");
-
+        AnsiConsole.WriteLine("Creating repository...");
         ICadmusRepository repository = CliHelper.GetCadmusRepository(
             settings.RepositoryPluginTag,
             CliAppContext.Configuration.GetConnectionString("Mongo")!);
+
+        // index
+        AnsiConsole.WriteLine("Ensuring that index is created...");
+        await writer.CreateIndex();
 
         await AnsiConsole.Progress().StartAsync(async ctx =>
             {
