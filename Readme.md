@@ -13,6 +13,7 @@
     - [Graph Many Command](#graph-many-command)
     - [Update Graph Classes Command](#update-graph-classes-command)
   - [History](#history)
+    - [6.1.2](#612)
     - [6.1.1](#611)
     - [6.1.0](#610)
     - [6.0.1](#601)
@@ -313,6 +314,8 @@ Sample:
 ```
 
 ## History
+
+### 6.1.2
 
 - 2023-05-16:
   - updated packages.
