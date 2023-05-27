@@ -315,6 +315,10 @@ Sample:
 
 ## History
 
+### 7.0.0
+
+- 2023-05-27: updated packages (breaking changes for `AssertedCompositeId`).
+
 ### 6.1.2
 
 - 2023-05-16:
