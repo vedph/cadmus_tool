@@ -41,10 +41,10 @@
     <PackageReference Include="Cadmus.General.Parts" Version="5.0.2" />
     <PackageReference Include="Cadmus.Graph" Version="2.2.5" />
     <PackageReference Include="Cadmus.Graph.Extras" Version="2.2.5" />
-    <PackageReference Include="Cadmus.Index" Version="6.1.0" />
-    <PackageReference Include="Cadmus.Index.MySql" Version="6.1.1" />
-    <PackageReference Include="Cadmus.Index.Sql" Version="6.1.1" />
-    <PackageReference Include="Cadmus.Mongo" Version="6.1.0" />
+    <PackageReference Include="Cadmus.Index" Version="6.1.2" />
+    <PackageReference Include="Cadmus.Index.MySql" Version="6.1.2" />
+    <PackageReference Include="Cadmus.Index.Sql" Version="6.1.2" />
+    <PackageReference Include="Cadmus.Mongo" Version="6.1.2" />
     <PackageReference Include="Cadmus.Philology.Parts" Version="7.0.0" />
     <PackageReference Include="Cadmus.Seed" Version="6.1.0" />
     <PackageReference Include="Cadmus.Seed.General.Parts" Version="5.0.2" />
