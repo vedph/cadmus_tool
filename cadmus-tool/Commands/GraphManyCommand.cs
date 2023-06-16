@@ -39,7 +39,7 @@ internal sealed class GraphManyCommand : AsyncCommand<GraphManyCommandSettings>
             settings.RepositoryPluginTag, cs);
 
         IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
-            settings.DatabaseName!);
+            settings.DatabaseName!, settings.DatabaseType);
         GraphUpdater updater = new(graphRepository)
         {
             // we want item-eid as an additional metadatum, derived from
@@ -105,7 +105,17 @@ internal class GraphManyCommandSettings : CommandSettings
     [Description("The database name")]
     public string? DatabaseName { get; set; }
 
-    [CommandOption("-t|--tag <RepositoryPluginTag>")]
+    [CommandOption("-t|--db-type <pgsql|mysql>")]
+    [Description("The database type (pgsql or mysql)")]
+    [DefaultValue("pgsql")]
+    public string DatabaseType { get; set; }
+
+    [CommandOption("-g|--tag <RepositoryPluginTag>")]
     [Description("The repository factory plugin tag")]
     public string? RepositoryPluginTag { get; set; }
+
+    public GraphManyCommandSettings()
+    {
+        DatabaseType = "pgsql";
+    }
 }

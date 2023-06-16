@@ -75,7 +75,7 @@ internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
 
         // update graph
         IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
-            settings.DatabaseName!);
+            settings.DatabaseName!, settings.DatabaseType);
         GraphUpdater updater = new(graphRepository)
         {
             // we want item-eid as an additional metadatum, derived from
@@ -153,7 +153,12 @@ internal class GraphOneCommandSettings : CommandSettings
     [Description("The item/part ID")]
     public string? Id { get; set; }
 
-    [CommandOption("-t|--tag <RepositoryPluginTag>")]
+    [CommandOption("-t|--db-type <pgsql|mysql>")]
+    [Description("The database type (pgsql or mysql)")]
+    [DefaultValue("pgsql")]
+    public string DatabaseType { get; set; }
+
+    [CommandOption("-g|--tag <RepositoryPluginTag>")]
     [Description("The repository factory plugin tag")]
     public string? RepositoryPluginTag { get; set; }
 
@@ -168,4 +173,9 @@ internal class GraphOneCommandSettings : CommandSettings
     [CommandOption("-x|--explain")]
     [Description("Explain the graph update")]
     public bool Explain { get; set; }
+
+    public GraphOneCommandSettings()
+    {
+        DatabaseType = "pgsql";
+    }
 }

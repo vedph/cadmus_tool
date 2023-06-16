@@ -137,6 +137,7 @@ internal sealed class GraphImportCommand : AsyncCommand<GraphImportCommandSettin
         AnsiConsole.MarkupLine($"Source: [cyan]{settings.SourcePath}[/]");
         AnsiConsole.MarkupLine($"Mode: [cyan]{settings.Mode}[/]");
         AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");
+        AnsiConsole.MarkupLine($"Database type: [cyan]{settings.DatabaseType}[/]");
         if (!string.IsNullOrEmpty(settings.RepositoryPluginTag))
         {
             AnsiConsole.MarkupLine(
@@ -154,7 +155,7 @@ internal sealed class GraphImportCommand : AsyncCommand<GraphImportCommandSettin
         }
 
         IGraphRepository repository = GraphHelper.GetGraphRepository(
-            settings.DatabaseName!);
+            settings.DatabaseName!, settings.DatabaseType);
         if (repository != null)
         {
             using Stream source = new FileStream(settings.SourcePath!,
@@ -194,7 +195,12 @@ internal class GraphImportCommandSettings : CommandSettings
     [Description("The database name")]
     public string? DatabaseName { get; set; }
 
-    [CommandOption("-t|--tag <RepositoryPluginTag>")]
+    [CommandOption("-t|--db-type <pgsql|mysql>")]
+    [Description("The database type (pgsql or mysql)")]
+    [DefaultValue("pgsql")]
+    public string DatabaseType { get; set; }
+
+    [CommandOption("-g|--tag <RepositoryPluginTag>")]
     [Description("The repository factory plugin tag")]
     public string? RepositoryPluginTag { get; set; }
 
@@ -220,5 +226,6 @@ internal class GraphImportCommandSettings : CommandSettings
     public GraphImportCommandSettings()
     {
         Mode = 'n';
+        DatabaseType = "pgsql";
     }
 }

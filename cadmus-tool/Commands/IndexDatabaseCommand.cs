@@ -45,10 +45,14 @@ internal sealed class IndexDatabaseCommand :
 
         string profileContent = LoadProfile(settings.ProfilePath!);
 
-        string cs = string.Format(CliAppContext.Configuration
-            .GetConnectionString("Index")!, settings.DatabaseName);
+        string cs = string.Format(
+            CliAppContext.Configuration.GetConnectionString(
+                settings.DatabaseType == "mysql" ? "MyIndex" : "PgIndex")!,
+            settings.DatabaseName);
+
         IItemIndexFactoryProvider provider =
             new StandardItemIndexFactoryProvider(cs);
+
         ItemIndexFactory factory = provider.GetFactory(profileContent);
         IItemIndexWriter? writer = factory.GetItemIndexWriter()
             ?? throw new InvalidOperationException(
@@ -95,11 +99,21 @@ internal class IndexDatabaseCommandSettings : CommandSettings
     [Description("The indexer profile JSON file path")]
     public string? ProfilePath { get; set; }
 
-    [CommandOption("-t|--tag <RepositoryPluginTag>")]
+    [CommandOption("-t|--db-type <pgsql|mysql>")]
+    [Description("The database type (pgsql or mysql)")]
+    [DefaultValue("pgsql")]
+    public string DatabaseType { get; set; }
+
+    [CommandOption("-g|--tag <RepositoryPluginTag>")]
     [Description("The repository factory plugin tag")]
     public string? RepositoryPluginTag { get; set; }
 
     [CommandOption("-c|--clear")]
     [Description("Clear before indexing")]
     public bool ClearDatabase { get; set; }
+
+    public IndexDatabaseCommandSettings()
+    {
+        DatabaseType = "pgsql";
+    }
 }

@@ -1,7 +1,8 @@
 ﻿using Cadmus.Cli.Services;
 using Cadmus.Graph;
-using Cadmus.Graph.MySql;
-using Cadmus.Index.Sql;
+using Cadmus.Graph.Ef;
+using Cadmus.Graph.Ef.MySql;
+using Cadmus.Graph.Ef.PgSql;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -43,19 +44,24 @@ internal static class GraphHelper
         return ParseMappings(LoadText(path));
     }
 
-    public static IGraphRepository GetGraphRepository(string dbName)
+    public static IGraphRepository GetGraphRepository(string dbName,
+        string dbType = "pgsql")
     {
         if (dbName is null) throw new ArgumentNullException(nameof(dbName));
+        if (dbType is null) throw new ArgumentNullException(nameof(dbType));
 
         string cs = string.Format(CliAppContext.Configuration
-            .GetConnectionString("Index")!, dbName);
+            .GetConnectionString(dbType == "mysql" ? "MyGraph" : "PgGraph")!,
+                                 dbName);
 
-        var repository = new MySqlGraphRepository();
-        repository.Configure(new SqlOptions
+        EfGraphRepository repository = dbType == "mysql"
+            ? new EfMySqlGraphRepository()
+            : new EfPgSqlGraphRepository();
+        repository.Configure(new EfGraphRepositoryOptions
         {
             ConnectionString = cs
         });
-        return repository;
+        return (IGraphRepository)repository;
     }
 
     public static void UpdateGraphForDeletion(string id, string dbName)

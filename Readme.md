@@ -13,6 +13,7 @@
     - [Graph Many Command](#graph-many-command)
     - [Update Graph Classes Command](#update-graph-classes-command)
   - [History](#history)
+    - [7.0.0](#700)
     - [6.1.2](#612)
     - [6.1.1](#611)
     - [6.1.0](#610)
@@ -49,10 +50,12 @@ To add a plugin:
 🎯 Build SQL code for querying the Cadmus index database, once or interactively.
 
 ```ps1
-./cadmus-tool build-sql [-q query]
+./cadmus-tool build-sql [-q query] [-t <pgsql|mysql>] [-l legacy]
 ```
 
 - `-q`: the query (for non-interactive mode).
+- `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
+- `-l`: use legacy syntax for the query. Default is `false`.
 
 This allows you to interactively build SQL code. Otherwise, add your query after a `-q` option, e.g.:
 
@@ -84,9 +87,11 @@ Sample:
 This requires a plugin with providers for the repository factory and the parts seeders factory. Each project has its own plugin, which must be placed in a subfolder of the tool's `plugins` folder.
 
 ```ps1
-./cadmus-tool index <DatabaseName> <JsonProfilePath> [-t <RepositoryPluginTag>] [-c]
+./cadmus-tool index <DatabaseName> <JsonProfilePath> [-t <pgsql|mysql>] [-g <RepositoryPluginTag>] [-c]
 ```
 
+- `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
+- `-g`: the target repository provider plugin tag (e.g. `repository-provider.itinera`).
 - `-c`=clear the target database when it exists.
 
 Sample:
@@ -189,6 +194,7 @@ Sample:
 ./cadmus-tool graph-import <SourcePath> <DatabaseName> [-t <RepositoryPluginTag>] [-m <ImportMode>] [-d] [-r] [-p <ThesaurusIdPrefix>]
 ```
 
+- `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
 - `-m`: import mode: `n`odes (default), `t`riples, `m`appings, t`h`esauri.
 - `-r`: when importing thesauri, make the thesaurus' ID the root class node.
 - `-p <ThesaurusIdPrefix>`: when importing thesauri, set the prefix to be added to each class node.
@@ -272,9 +278,11 @@ All data files are JSON documents, having as their root element an **array** of 
 🎯 Map a single item/part into graph.
 
 ```ps1
-./cadmus-tool graph-one <DatabaseName> <Id> [-t <RepositoryPluginTag>] [-p] [-d]
+./cadmus-tool graph-one <DatabaseName> <Id> [-t <pgsql|mysql>] [-g <RepositoryPluginTag>] [-p] [-d]
 ```
 
+- `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
+- `-g`: the target repository provider plugin tag (e.g. `repository-provider.itinera`).
 - `-p`: the ID refers to a part rather than to an item.
 - `-d`: the ID refers to an item/part which was deleted.
 - `-x`: explain the update without actually performing it.
@@ -290,8 +298,11 @@ Sample:
 🎯 Map all the items into graph.
 
 ```ps1
-./cadmus-tool graph-many <DatabaseName> [-t <RepositoryPluginTag>]
+./cadmus-tool graph-many <DatabaseName> [-t <pgsql|mysql>] [-g <RepositoryPluginTag>]
 ```
+
+- `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
+- `-g`: the target repository provider plugin tag (e.g. `repository-provider.itinera`).
 
 Sample:
 
@@ -304,8 +315,10 @@ Sample:
 🎯 Update the index of nodes classes in the index database. This is a potentially long task, depending on the number of nodes and the depth of class hierarchies.
 
 ```ps1
-./cadmus-tool graph-cls <DatabaseName> <ProfilePath>
+./cadmus-tool graph-cls <DatabaseName> <ProfilePath> [-t <pgsql|mysql>]
 ```
+
+- `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
 
 Sample:
 
@@ -315,6 +328,7 @@ Sample:
 
 ## History
 
+- 2023-06-16: included EF-based PgSql/MySql components to update to [RDBMS refactoring](https://myrmex.github.io/overview/cadmus/dev/history/b-rdbms/).
 - 2023-05-29: updated packages.
 
 ### 7.0.0
