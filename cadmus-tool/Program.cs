@@ -85,6 +85,9 @@ public static class Program
                 config.AddCommand<GraphDerefMappingsCommand>("graph-deref")
                     .WithDescription("Dereferences graph mappings from a file " +
                     "into another one.");
+
+                config.AddCommand<ThesaurusImportCommand>("thes-import")
+                    .WithDescription("Import thesauri into the database.");
             });
 
             int result = await app.RunAsync(args);
