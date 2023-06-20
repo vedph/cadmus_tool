@@ -12,6 +12,7 @@
     - [Graph One Command](#graph-one-command)
     - [Graph Many Command](#graph-many-command)
     - [Update Graph Classes Command](#update-graph-classes-command)
+    - [Thesaurus Import Command](#thesaurus-import-command)
   - [History](#history)
     - [7.0.0](#700)
     - [6.1.2](#612)
@@ -326,8 +327,30 @@ Sample:
 ./cadmus-tool graph-cls cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json
 ```
 
+### Thesaurus Import Command
+
+🎯 Import one or more thesauri from JSON file(s) into a Cadmus database.
+
+```ps1
+./cadmus-tool thes-import <InputFileMask> <DatabaseName> [-t <pgsql|mysql>] [-m <R|P|S>] [-d]
+```
+
+- `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
+- `-m`: the import mode, specifying how to deal when importing onto existing thesauri:
+  - `R` = replace (default): if the imported thesaurus already exists, it is fully replaced by the new one.
+  - `P` = patch: the existing thesaurus is patched with the imported one: any existing entry has its value overwritten; any non existing entry is just added.
+  - `S` = synch: the existing thesaurus is synched with the imported one: this is equal to patch, with the addition that any existing entry not found in the imported thesaurus is removed.
+- `-d`: dry run (don't write to database).
+
+Sample:
+
+```ps1
+./cadmus-tool thes-import c:/users/dfusi/desktop/thesauri/*.json cadmus-itinera -d
+```
+
 ## History
 
+- 2023-06-20: added Thesaurus import command.
 - 2023-06-16: included EF-based PgSql/MySql components to update to [RDBMS refactoring](https://myrmex.github.io/overview/cadmus/dev/history/b-rdbms/).
 - 2023-05-29: updated packages.
 

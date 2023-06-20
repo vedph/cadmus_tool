@@ -1,6 +1,7 @@
 ﻿using Cadmus.Cli.Services;
 using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
+using Cadmus.Import;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -8,7 +9,6 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
@@ -16,47 +16,16 @@ namespace Cadmus.Cli.Commands;
 public sealed class ThesaurusImportCommand :
     AsyncCommand<ThesaurusImportCommandSettings>
 {
-    private static Thesaurus CopyThesaurus(Thesaurus source, Thesaurus? target,
-        char mode)
+    private static ImportUpdateMode GetMode(char c)
     {
-        Thesaurus result = new();
-
-        // replace: just copy
-        if (mode == 'R')
+        // return ImportUpdateMode enum according to c R P S
+        return char.ToUpperInvariant(c) switch
         {
-            foreach (ThesaurusEntry se in source.Entries) result.AddEntry(se);
-            return result;
-        }
-
-        // patch/synch thesaurus target with source:
-        // - add source entries missing in target,
-        // - update source entries existing in target.
-        if (target != null)
-        {
-            foreach (ThesaurusEntry te in target.Entries) result.AddEntry(te);
-        }
-
-        foreach (ThesaurusEntry se in source.Entries)
-        {
-            ThesaurusEntry? te = result.Entries.FirstOrDefault(
-                e => e.Id == se.Id);
-            if (te == null) result.Entries.Add(se);
-            else te.Value = se.Value;
-        }
-
-        // synch thesaurus target with source:
-        // - remove target entries missing in source.
-        if (mode == 'S')
-        {
-            foreach (ThesaurusEntry te in
-                from ThesaurusEntry te in result.Entries
-                where source.Entries.All(e => e.Id != te.Id)
-                select te)
-            {
-                result.Entries.Remove(te);
-            }
-        }
-        return result;
+            'R' => ImportUpdateMode.Replace,
+            'P' => ImportUpdateMode.Patch,
+            'S' => ImportUpdateMode.Synch,
+            _ => throw new ArgumentException("Invalid mode", nameof(c)),
+        };
     }
 
     public override Task<int> ExecuteAsync(
@@ -76,11 +45,6 @@ public sealed class ThesaurusImportCommand :
             CliAppContext.Configuration.GetConnectionString("Mongo")!,
             settings.DatabaseName);
         ICadmusRepository repository = CliHelper.GetCadmusRepository(null, cs);
-        JsonSerializerOptions options = new()
-        {
-            AllowTrailingCommas = true,
-            PropertyNameCaseInsensitive = true,
-        };
 
         // import
         int n = 0;
@@ -91,23 +55,21 @@ public sealed class ThesaurusImportCommand :
         {
             // load thesaurus
             AnsiConsole.MarkupLine($"[yellow]{++n:000}[/] [green]{path}[/]");
-            Thesaurus? source =
-                Path.GetExtension(path).ToLowerInvariant() switch
-                {
-                    ".json" => JsonSerializer.Deserialize<Thesaurus>(
-                        File.ReadAllText(path), options),
-                    _ => throw new InvalidOperationException(
-                        "Unsupported file type: " + path),
-                } ?? throw new InvalidOperationException("Invalid thesaurus in "
-                    + path);
 
-            // fetch from repository
-            Thesaurus? target = repository.GetThesaurus(source.Id);
-            Thesaurus result = CopyThesaurus(source, target,
-                char.ToUpperInvariant(settings.Mode));
+            using JsonThesaurusReader reader = new(File.ReadAllText(path));
+            Thesaurus? source;
+            while ((source = reader.Next()) != null)
+            {
+                // fetch from repository
+                Thesaurus? target = repository.GetThesaurus(source.Id);
 
-            // save
-            if (!settings.IsDryRun) repository.AddThesaurus(result);
+                // import
+                Thesaurus result = ThesaurusHelper.CopyThesaurus(source, target,
+                    GetMode(settings.Mode));
+
+                // save
+                if (!settings.IsDryRun) repository.AddThesaurus(result);
+            }
         }
         return Task.FromResult(0);
     }
@@ -115,13 +77,13 @@ public sealed class ThesaurusImportCommand :
 
 public class ThesaurusImportCommandSettings : CommandSettings
 {
-    [CommandArgument(0, "<DatabaseName>")]
-    [Description("The database name")]
-    public string? DatabaseName { get; set; }
-
-    [CommandArgument(1, "<InputFileMask>")]
+    [CommandArgument(0, "<InputFileMask>")]
     [Description("The input files mask")]
     public string? InputFileMask { get; set; }
+
+    [CommandArgument(1, "<DatabaseName>")]
+    [Description("The database name")]
+    public string? DatabaseName { get; set; }
 
     [CommandOption("-t|--db-type <pgsql|mysql>")]
     [Description("The database type (pgsql or mysql)")]
