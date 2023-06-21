@@ -39,11 +39,11 @@ public sealed class StandardItemIndexFactoryProvider :
                     // Cadmus.Index.Ef.MySql
                     typeof(EfMySqlItemIndexWriter).Assembly,
                     // Cadmus.Index.Ef.PgSql
-                    typeof(EfPgSqlItemIndexWriter).Assembly,
+                    typeof(EfPgSqlItemIndexWriter).Assembly);
                     // Cadmus.Index.MySql
-                    typeof(MySqlItemIndexWriter).Assembly,
+                    //typeof(MySqlItemIndexWriter).Assembly,
                     // Cadmus.Graph.MySql
-                    typeof(MySqlGraphRepository).Assembly);
+                    //typeof(MySqlGraphRepository).Assembly);
             })
             // extension method from Fusi library
             .AddInMemoryJson(config)
