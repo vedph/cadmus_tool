@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": "thes-import c:/users/dfusi/desktop/thes.json cadmus-chgc -d"
+      "commandLineArgs": "thes-import c:/users/dfusi/desktop/thes.json cadmus-chgc"
     }
   }
 }

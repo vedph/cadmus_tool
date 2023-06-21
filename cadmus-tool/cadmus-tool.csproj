@@ -43,8 +43,8 @@
     <PackageReference Include="Cadmus.Graph.Ef.MySql" Version="2.2.12" />
     <PackageReference Include="Cadmus.Graph.Ef.PgSql" Version="2.2.12" />
     <PackageReference Include="Cadmus.Graph.Extras" Version="2.2.12" />
-    <PackageReference Include="Cadmus.Import" Version="3.0.3" />
-    <PackageReference Include="Cadmus.Import.Excel" Version="3.0.3" />
+    <PackageReference Include="Cadmus.Import" Version="3.0.5" />
+    <PackageReference Include="Cadmus.Import.Excel" Version="3.0.5" />
     <PackageReference Include="Cadmus.Index" Version="6.1.8" />
     <PackageReference Include="Cadmus.Index.Ef.MySql" Version="6.1.8" />
     <PackageReference Include="Cadmus.Index.Ef.PgSql" Version="6.1.8" />
