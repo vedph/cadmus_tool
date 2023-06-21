@@ -84,6 +84,8 @@ public sealed class ThesaurusImportCommand :
             Thesaurus? source;
             while ((source = reader.Next()) != null)
             {
+                AnsiConsole.MarkupLine($"  [cyan]{source}[/]");
+
                 // fetch from repository
                 Thesaurus? target = repository.GetThesaurus(source.Id);
 
