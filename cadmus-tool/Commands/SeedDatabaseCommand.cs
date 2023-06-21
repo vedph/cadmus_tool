@@ -136,7 +136,7 @@ internal class SeedDatabaseCommandSettings : CommandSettings
     [Description("Add history data")]
     public bool HasHistory { get; set; }
 
-    [CommandOption("-t|--tag <RepositoryPluginTag>")]
+    [CommandOption("-g|--tag <RepositoryPluginTag>")]
     [Description("The repository factory plugin tag")]
     public string? RepositoryPluginTag { get; set; }
 

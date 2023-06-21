@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": "thes-import c:/users/dfusi/desktop/thes.json cadmus-chgc"
+      "commandLineArgs": "index cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json -g repository-provider.itinera"
     }
   }
 }

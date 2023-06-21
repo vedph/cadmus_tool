@@ -70,7 +70,7 @@ This allows you to interactively build SQL code. Otherwise, add your query after
 🎯 Get the JSON code representing an item or a part's content, optionally also converted in XML.
 
 ```ps1
-./cadmus-tool get-obj <DatabaseName> <ID> <OutputDir> [-t <RepositoryPluginTag>] [-p] [-x]
+./cadmus-tool get-obj <DatabaseName> <ID> <OutputDir> [-g <RepositoryPluginTag>] [-p] [-x]
 ```
 
 - `p`: the ID refers to a part rather than to an item.
@@ -79,12 +79,12 @@ This allows you to interactively build SQL code. Otherwise, add your query after
 Sample:
 
 ```ps1
-./cadmus-tool get-obj cadmus 8e5d5b5d-4b27-4d00-9038-f611a8e199b9 c:\users\dfusi\desktop\ -t repository-provider.itinera -p -x
+./cadmus-tool get-obj cadmus 8e5d5b5d-4b27-4d00-9038-f611a8e199b9 c:\users\dfusi\desktop\ -g repository-provider.itinera -p -x
 ```
 
 ### Index Database Command
 
-🎯 Index the specified Cadmus database into a MySql database. If the MySql database does not exist, it will be created; if it exists, it will be cleared if requested.
+🎯 Index the specified Cadmus database. If the index database does not exist, it will be created; if it exists, it will be cleared if requested.
 
 This requires a plugin with providers for the repository factory and the parts seeders factory. Each project has its own plugin, which must be placed in a subfolder of the tool's `plugins` folder.
 
@@ -99,7 +99,7 @@ This requires a plugin with providers for the repository factory and the parts s
 Sample:
 
 ```bash
-./cadmus-tool index cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json -t repository-provider.itinera
+./cadmus-tool index cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json -g repository-provider.itinera
 ```
 
 ### Seed Database Command
@@ -107,7 +107,7 @@ Sample:
 🎯 Create a new Cadmus MongoDB database (if the specified database does not already exists), and seed it with a specified number of random items.
 
 ```ps1
-./cadmus-tool seed <DatabaseName> <JsonProfilePath> [-t <RepositoryPluginTag>] [-s <SeedersFactoryPluginTag>] [-c count] [-d] [-h]
+./cadmus-tool seed <DatabaseName> <JsonProfilePath> [-g <RepositoryPluginTag>] [-s <SeedersFactoryPluginTag>] [-c count] [-d] [-h]
 ```
 
 - `-c N`: the number of items to be seeded. Default is 100.
@@ -117,7 +117,7 @@ Sample:
 Sample:
 
 ```ps1
-./cadmus-tool seed cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json -t repository-provider.itinera -s seeder-factory-provider.itinera -c 10 -d
+./cadmus-tool seed cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json -g repository-provider.itinera -s seeder-factory-provider.itinera -c 10 -d
 ```
 
 ### Graph Dereference Mappings
@@ -193,7 +193,7 @@ Sample:
 🎯 Import preset nodes, triples, node mappings, or thesauri class nodes into graph.
 
 ```ps1
-./cadmus-tool graph-import <SourcePath> <DatabaseName> [-t <RepositoryPluginTag>] [-m <ImportMode>] [-d] [-r] [-p <ThesaurusIdPrefix>]
+./cadmus-tool graph-import <SourcePath> <DatabaseName> [-g <RepositoryPluginTag>] [-m <ImportMode>] [-d] [-r] [-p <ThesaurusIdPrefix>]
 ```
 
 - `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.

@@ -123,7 +123,7 @@ internal sealed class GetObjectCommandSettings : CommandSettings
     [Description("The output directory")]
     public string? OutputDir { get; set; }
 
-    [CommandOption("-t|--tag <RepositoryPluginTag>")]
+    [CommandOption("-g|--tag <RepositoryPluginTag>")]
     [Description("The repository factory plugin tag")]
     public string? RepositoryPluginTag { get; set; }
 
