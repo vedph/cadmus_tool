@@ -2,6 +2,7 @@
 using Cadmus.Core.Config;
 using Cadmus.Core.Storage;
 using Cadmus.Import;
+using Cadmus.Import.Excel;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -38,6 +39,12 @@ public sealed class ThesaurusImportCommand :
         AnsiConsole.MarkupLine($"Mode: [cyan]{settings.Mode}[/]");
         AnsiConsole.MarkupLine(
             $"Dry run: [cyan]{(settings.IsDryRun ? "yes" : "no")}[/]");
+        if (settings.ExcelSheet != 1)
+            AnsiConsole.MarkupLine($"Excel sheet: [cyan]{settings.ExcelSheet}[/]");
+        if (settings.ExcelRow != 1)
+            AnsiConsole.MarkupLine($"Excel row: [cyan]{settings.ExcelRow}[/]");
+        if (settings.ExcelColumn != 1)
+            AnsiConsole.MarkupLine($"Excel column: [cyan]{settings.ExcelColumn}[/]");
 
         // repository
         AnsiConsole.MarkupLine("Creating repository...");
@@ -45,6 +52,13 @@ public sealed class ThesaurusImportCommand :
             CliAppContext.Configuration.GetConnectionString("Mongo")!,
             settings.DatabaseName);
         ICadmusRepository repository = CliHelper.GetCadmusRepository(null, cs);
+
+        ExcelThesaurusReaderOptions xlsOptions = new()
+        {
+            SheetIndex = settings.ExcelSheet - 1,
+            RowOffset = settings.ExcelRow - 1,
+            ColumnOffset = settings.ExcelColumn - 1
+        };
 
         // import
         int n = 0;
@@ -56,7 +70,17 @@ public sealed class ThesaurusImportCommand :
             // load thesaurus
             AnsiConsole.MarkupLine($"[yellow]{++n:000}[/] [green]{path}[/]");
 
-            using JsonThesaurusReader reader = new(File.ReadAllText(path));
+            using Stream stream = new FileStream(path, FileMode.Open,
+                FileAccess.Read, FileShare.Read);
+            using IThesaurusReader reader =
+                Path.GetExtension(path).ToLowerInvariant() switch
+                {
+                    ".csv" => new CsvThesaurusReader(stream),
+                    ".xls" => new ExcelThesaurusReader(stream, xlsOptions),
+                    ".xlsx" => new ExcelThesaurusReader(stream),
+                    _ => new JsonThesaurusReader(stream)
+                };
+
             Thesaurus? source;
             while ((source = reader.Next()) != null)
             {
@@ -99,9 +123,27 @@ public class ThesaurusImportCommandSettings : CommandSettings
     [Description("Dry run")]
     public bool IsDryRun { get; set; }
 
+    [CommandOption("-s|--sheet <Number>")]
+    [Description("The ordinal number of the sheet to read data from in an Excel file")]
+    [DefaultValue(1)]
+    public int ExcelSheet { get; set; }
+
+    [CommandOption("-r|--row <Number>")]
+    [Description("The first row number to read data from in an Excel sheet")]
+    [DefaultValue(1)]
+    public int ExcelRow { get; set; }
+
+    [CommandOption("-c|--col <Number>")]
+    [Description("The first column number to read data from in an Excel sheet")]
+    [DefaultValue(1)]
+    public int ExcelColumn { get; set; }
+
     public ThesaurusImportCommandSettings()
     {
         DatabaseType = "pgsql";
         Mode = 'R';
+        ExcelSheet = 1;
+        ExcelRow = 1;
+        ExcelColumn = 1;
     }
 }

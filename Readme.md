@@ -13,6 +13,7 @@
     - [Graph Many Command](#graph-many-command)
     - [Update Graph Classes Command](#update-graph-classes-command)
     - [Thesaurus Import Command](#thesaurus-import-command)
+      - [File Format](#file-format)
   - [History](#history)
     - [7.0.0](#700)
     - [6.1.2](#612)
@@ -329,7 +330,7 @@ Sample:
 
 ### Thesaurus Import Command
 
-🎯 Import one or more thesauri from JSON file(s) into a Cadmus database.
+🎯 Import one or more thesauri from one or more file(s) into a Cadmus database. Files can be JSON, CSV, XLS, XLSX and are selected according to their extension. Any unknown extension is treated as a JSON source.
 
 ```ps1
 ./cadmus-tool thes-import <InputFileMask> <DatabaseName> [-t <pgsql|mysql>] [-m <R|P|S>] [-d]
@@ -341,12 +342,81 @@ Sample:
   - `P` = patch: the existing thesaurus is patched with the imported one: any existing entry has its value overwritten; any non existing entry is just added.
   - `S` = synch: the existing thesaurus is synched with the imported one: this is equal to patch, with the addition that any existing entry not found in the imported thesaurus is removed.
 - `-d`: dry run (don't write to database).
+- `-s`: for Excel sources, the ordinal number of the sheet to read data from (1-N; default=1).
+- `-r`: for Excel sources, the ordinal number of the first row to read data from (1-N; default=1).
+- `-c`: for Excel sources, the ordinal number of the first column to read data from (1-N; default=1).
 
 Sample:
 
 ```ps1
 ./cadmus-tool thes-import c:/users/dfusi/desktop/thesauri/*.json cadmus-itinera -d
 ```
+
+#### File Format
+
+- **JSON**: a single thesaurus as an _object_, or a list of thesauri as an _array of objects_. Each object is encoded like in this sample:
+
+```json
+{
+  "id": "colors@en",
+  "entries": [
+    {
+      "id": "r",
+      "value": "red"
+    },
+    {
+      "id": "g",
+      "value": "green"
+    },
+    {
+      "id": "b",
+      "value": "blue"
+    },
+  ]
+}
+```
+
+An alias thesaurus is encoded like:
+
+```json
+{
+  "id": "colours@en",
+  "targetId": "colors"
+}
+```
+
+- **CSV**: a comma-delimited UTF8 text file, like in this sample:
+
+```csv
+thesaurusId,id,value,targetId
+colors@en,r,red,
+colors@en,g,green,
+colors@en,b,blue,
+shapes@en,trg,triangle,
+shapes@en,rct,rectangle,
+```
+
+You can omit the thesaurus ID if equal to the previous row, e.g.:
+
+```csv
+thesaurusId,id,value,targetId
+colors@en,r,red,
+,g,green,
+,b,blue,
+shapes@en,trg,triangle,
+,rct,rectangle,
+```
+
+You must include the header row as the first row of the file. This allows changing the column order at will, as they will be identified by their name.
+
+- **Excel**: XLSX or XLS files. It is assumed that your columns are in this order:
+
+1. thesaurus
+2. id
+3. value
+4. target
+
+You can add a header row or not, and use whatever name you want, as columns get identified by their order. You can anyway specify the sheet number, the first row number, and the first column number.
 
 ## History
 
