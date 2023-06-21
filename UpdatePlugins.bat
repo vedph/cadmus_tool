@@ -12,11 +12,6 @@ md %target%
 del %target%\*.* /q
 REM Itinera
 xcopy ..\Itinera\CadmusItinera\Cadmus.Itinera.Services\bin\Debug\net7.0\publish\*.* %target%\Cadmus.Itinera.Services\ /y
-REM xcopy ..\Itinera\CadmusItinera\Cadmus.Itinera.Services\bin\Debug\net7.0\*.* %target%\Cadmus.Itinera.Services\ /y
-REM xcopy ..\CadmusBricks\Cadmus.Refs.Bricks\bin\Debug\net7.0\*.* %target%\Cadmus.Itinera.Services\ /y
-REM xcopy ..\Codicology\Cadmus.Codicology.Parts\Cadmus.Codicology.Parts\bin\Debug\net7.0\ %target%\Cadmus.Itinera.Services\ /y
-REM xcopy ..\Geography\CadmusGeo\Cadmus.Geo.Parts\bin\Debug\net7.0\ %target%\Cadmus.Itinera.Services\ /y
-REM xcopy ..\Itinera\CadmusItineraApi\CadmusItineraApi\wwwroot\seed-profile.json %target%\Cadmus.Itinera.Services\ /y
 REM Pura
 xcopy ..\Pura\CadmusPuraApi\CadmusPuraApi\wwwroot\seed-profile.json %target%\Cadmus.Pura.Services\ /y
 xcopy ..\Tgr\CadmusTgr\Cadmus.Seed.Tgr.Parts\bin\Debug\net7.0\*.* %target%\Cadmus.Pura.Services\ /y

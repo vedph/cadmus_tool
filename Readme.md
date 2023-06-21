@@ -15,6 +15,7 @@
     - [Thesaurus Import Command](#thesaurus-import-command)
       - [File Format](#file-format)
   - [History](#history)
+    - [8.0.0](#800)
     - [7.0.0](#700)
     - [6.1.2](#612)
     - [6.1.1](#611)
@@ -34,6 +35,8 @@ Cadmus configuration and utility tool.
 Since version 2, this tool requires plugin providers under its `plugins` folder. The plugin architecture makes the tool independent from Cadmus projects, each having its own models. Otherwise, every Cadmus project should be included as a dependency in the CLI tool, thus defeating the purpose of a generic and universal tool.
 
 Plugins are used to get Cadmus factory providers. A Cadmus factory provider plugin acts as a hub entry point for all the components to be packed in the CLI tool for a specific project.
+
+>You can build your plugin with all its dependencies by publishing the library you wish to use as the import target. For instance, if you are going to use library `Cadmus.Itinera.Services` as a plugin, publish it and then copy published files into the corresponding plugin folder.
 
 The tool is like an empty shell, where project-dependent components are demanded to plugins under its `plugins` folder. The commands requiring plugins are those used to build a full Cadmus MySql index from its Mongo database, or to seed a Mongo Cadmus database with mock data. To this end, the CLI tool requires two factory objects: one for the repository, acting as the hub for all its parts and fragments; and another for the part and fragment seeders.
 
@@ -419,6 +422,8 @@ You must include the header row as the first row of the file. This allows changi
 You can add a header row or not, and use whatever name you want, as columns get identified by their order. You can anyway specify the sheet number, the first row number, and the first column number.
 
 ## History
+
+### 8.0.0
 
 - 2023-06-20: added Thesaurus import command.
 - 2023-06-16: included EF-based PgSql/MySql components to update to [RDBMS refactoring](https://myrmex.github.io/overview/cadmus/dev/history/b-rdbms/).
