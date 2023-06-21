@@ -9,6 +9,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -62,7 +63,9 @@ internal sealed class IndexDatabaseCommand :
         AnsiConsole.WriteLine("Creating repository...");
         ICadmusRepository repository = CliHelper.GetCadmusRepository(
             settings.RepositoryPluginTag,
-            CliAppContext.Configuration.GetConnectionString("Mongo")!);
+            string.Format(CultureInfo.InvariantCulture,
+                CliAppContext.Configuration.GetConnectionString("Mongo")!,
+                settings.DatabaseName));
 
         // index
         AnsiConsole.WriteLine("Ensuring that index is created...");

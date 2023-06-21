@@ -1,17 +1,22 @@
 @echo off
 REM This batch is used in my workstation to collect plugins and profiles
 REM from several Cadmus solutions.
+REM Please notice that when compiling the libraries to load as plugins,
+REM you must ensure to include all their dependencies. The safest way is
+REM publishing the library into a directory and then use this directory as
+REM the source in this batch.
 echo UPDATE PLUGINS
 set target=.\cadmus-tool\bin\Debug\net7.0\plugins
 
 md %target%
 del %target%\*.* /q
 REM Itinera
-xcopy ..\Itinera\CadmusItinera\Cadmus.Itinera.Services\bin\Debug\net7.0\*.* %target%\Cadmus.Itinera.Services\ /y
-xcopy ..\CadmusBricks\Cadmus.Refs.Bricks\bin\Debug\net7.0\*.* %target%\Cadmus.Itinera.Services\ /y
-xcopy ..\Codicology\Cadmus.Codicology.Parts\Cadmus.Codicology.Parts\bin\Debug\net7.0\ %target%\Cadmus.Itinera.Services\ /y
-xcopy ..\Geography\CadmusGeo\Cadmus.Geo.Parts\bin\Debug\net7.0\ %target%\Cadmus.Itinera.Services\ /y
-xcopy ..\Itinera\CadmusItineraApi\CadmusItineraApi\wwwroot\seed-profile.json %target%\Cadmus.Itinera.Services\ /y
+xcopy ..\Itinera\CadmusItinera\Cadmus.Itinera.Services\bin\Debug\net7.0\publish\*.* %target%\Cadmus.Itinera.Services\ /y
+REM xcopy ..\Itinera\CadmusItinera\Cadmus.Itinera.Services\bin\Debug\net7.0\*.* %target%\Cadmus.Itinera.Services\ /y
+REM xcopy ..\CadmusBricks\Cadmus.Refs.Bricks\bin\Debug\net7.0\*.* %target%\Cadmus.Itinera.Services\ /y
+REM xcopy ..\Codicology\Cadmus.Codicology.Parts\Cadmus.Codicology.Parts\bin\Debug\net7.0\ %target%\Cadmus.Itinera.Services\ /y
+REM xcopy ..\Geography\CadmusGeo\Cadmus.Geo.Parts\bin\Debug\net7.0\ %target%\Cadmus.Itinera.Services\ /y
+REM xcopy ..\Itinera\CadmusItineraApi\CadmusItineraApi\wwwroot\seed-profile.json %target%\Cadmus.Itinera.Services\ /y
 REM Pura
 xcopy ..\Pura\CadmusPuraApi\CadmusPuraApi\wwwroot\seed-profile.json %target%\Cadmus.Pura.Services\ /y
 xcopy ..\Tgr\CadmusTgr\Cadmus.Seed.Tgr.Parts\bin\Debug\net7.0\*.* %target%\Cadmus.Pura.Services\ /y
