@@ -58,7 +58,7 @@ public class BuildIndexSqlCommandSettings : CommandSettings
     [Description("The query text")]
     public string? Query { get; set; }
 
-    [CommandOption("-t|--db-type <pgsql|mysql>")]
+    [CommandOption("-t|--db-type <DatabaseType>")]
     [Description("The database type (pgsql or mysql)")]
     [DefaultValue("pgsql")]
     public string DatabaseType { get; set; }

@@ -99,7 +99,7 @@ internal class IndexDatabaseCommandSettings : CommandSettings
     [Description("The indexer profile JSON file path")]
     public string? ProfilePath { get; set; }
 
-    [CommandOption("-t|--db-type <pgsql|mysql>")]
+    [CommandOption("-t|--db-type <DatabaseType>")]
     [Description("The database type (pgsql or mysql)")]
     [DefaultValue("pgsql")]
     public string DatabaseType { get; set; }

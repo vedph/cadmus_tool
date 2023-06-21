@@ -153,7 +153,7 @@ internal class GraphOneCommandSettings : CommandSettings
     [Description("The item/part ID")]
     public string? Id { get; set; }
 
-    [CommandOption("-t|--db-type <pgsql|mysql>")]
+    [CommandOption("-t|--db-type <DatabaseType>")]
     [Description("The database type (pgsql or mysql)")]
     [DefaultValue("pgsql")]
     public string DatabaseType { get; set; }

@@ -111,12 +111,12 @@ public class ThesaurusImportCommandSettings : CommandSettings
     [Description("The database name")]
     public string? DatabaseName { get; set; }
 
-    [CommandOption("-t|--db-type <pgsql|mysql>")]
+    [CommandOption("-t|--db-type <DatabaseType>")]
     [Description("The database type (pgsql or mysql)")]
     [DefaultValue("pgsql")]
     public string DatabaseType { get; set; }
 
-    [CommandOption("-m|--mode <Mode:R|P|S>")]
+    [CommandOption("-m|--mode <Mode>")]
     [Description("The import mode: R=replace, P=patch, S=synch")]
     [DefaultValue('R')]
     public char Mode { get; set; }
