@@ -208,7 +208,7 @@ Sample:
 Sample:
 
 ```ps1
-./cadmus-tool graph-import c:/users/dfusi/desktop/nodes.json cadmus-itinera -t repository-provider.itinera
+./cadmus-tool graph-import c:/users/dfusi/desktop/nodes.json cadmus-itinera -g repository-provider.itinera
 ```
 
 >Note: if you are importing mappings, ensure that the JSON document has a root array property including mappings. When working with a compact mappings document using cross-references, dereference all the referenced mappings via the [apposite command](#graph-dereference-mappings) before importing.
@@ -295,7 +295,7 @@ All data files are JSON documents, having as their root element an **array** of 
 Sample:
 
 ```ps1
-./cadmus-tool graph-one cadmus-itinera 4a0ce97e-84d1-417d-9fb0-a91d9dfc4da7 -t repository-provider.itinera -p -x
+./cadmus-tool graph-one cadmus-itinera 4a0ce97e-84d1-417d-9fb0-a91d9dfc4da7 -g repository-provider.itinera -p -x
 ```
 
 ### Graph Many Command
