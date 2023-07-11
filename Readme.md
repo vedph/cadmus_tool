@@ -200,7 +200,7 @@ Sample:
 ```
 
 - `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
-- `-m`: import mode: `n`odes (default), `t`riples, `m`appings, t`h`esauri.
+- `-m`: import mode: `n`odes (default), `t`riples, `m`appings, t`h`esauri. Mappings are imported by their _name_, so if you import a mapping with a name equal to one already present in the database, the old one will be updated.
 - `-r`: when importing thesauri, make the thesaurus' ID the root class node.
 - `-p <ThesaurusIdPrefix>`: when importing thesauri, set the prefix to be added to each class node.
 - `-d`: dry mode - don't write to database.
@@ -422,6 +422,8 @@ You must include the header row as the first row of the file. This allows changi
 You can add a header row or not, and use whatever name you want, as columns get identified by their order. You can anyway specify the sheet number, the first row number, and the first column number.
 
 ## History
+
+- 2023-07-11: use `AddMappingByName` in mappings import.
 
 ### 8.0.0
 

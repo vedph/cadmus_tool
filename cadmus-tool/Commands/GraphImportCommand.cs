@@ -35,7 +35,7 @@ internal sealed class GraphImportCommand : AsyncCommand<GraphImportCommandSettin
                 mapping.Id = 0;
                 if (mapping.ParentId != 0)
                     mapping.ParentId = ids[mapping.ParentId];
-                repository.AddMapping(mapping);
+                repository.AddMappingByName(mapping);
                 ids[sourceId] = mapping.Id;
             }
         }
