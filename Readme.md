@@ -15,6 +15,7 @@
     - [Thesaurus Import Command](#thesaurus-import-command)
       - [File Format](#file-format)
   - [History](#history)
+    - [8.0.1](#801)
     - [8.0.0](#800)
     - [7.0.0](#700)
     - [6.1.2](#612)
@@ -423,6 +424,9 @@ You can add a header row or not, and use whatever name you want, as columns get 
 
 ## History
 
+### 8.0.1
+
+- 2023-07-17: updated packages.
 - 2023-07-11: use `AddMappingByName` in mappings import.
 
 ### 8.0.0

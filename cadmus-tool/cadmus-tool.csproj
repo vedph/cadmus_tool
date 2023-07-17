@@ -12,9 +12,9 @@
 	  <Copyright>by Daniele Fusi</Copyright>
 	  <NeutralLanguage>en-US</NeutralLanguage>
 	  <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-	  <Version>8.0.0</Version>
-	  <FileVersion>8.0.0</FileVersion>
-	  <AssemblyVersion>8.0.0</AssemblyVersion>
+	  <Version>8.0.1</Version>
+	  <FileVersion>8.0.1</FileVersion>
+	  <AssemblyVersion>8.0.1</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,10 +39,10 @@
     <PackageReference Include="Bogus" Version="34.0.2" />
     <PackageReference Include="Cadmus.Core" Version="6.1.4" />
     <PackageReference Include="Cadmus.General.Parts" Version="5.0.4" />
-    <PackageReference Include="Cadmus.Graph" Version="2.3.3" />
-    <PackageReference Include="Cadmus.Graph.Ef.MySql" Version="2.3.3" />
-    <PackageReference Include="Cadmus.Graph.Ef.PgSql" Version="2.3.3" />
-    <PackageReference Include="Cadmus.Graph.Extras" Version="2.3.3" />
+    <PackageReference Include="Cadmus.Graph" Version="2.3.4" />
+    <PackageReference Include="Cadmus.Graph.Ef.MySql" Version="2.3.4" />
+    <PackageReference Include="Cadmus.Graph.Ef.PgSql" Version="2.3.4" />
+    <PackageReference Include="Cadmus.Graph.Extras" Version="2.3.4" />
     <PackageReference Include="Cadmus.Import" Version="3.0.7" />
     <PackageReference Include="Cadmus.Import.Excel" Version="3.0.7" />
     <PackageReference Include="Cadmus.Index" Version="6.1.13" />
