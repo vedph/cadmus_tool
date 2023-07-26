@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": "index cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json -g repository-provider.itinera"
+      "commandLineArgs": "graph-deref c:/users/dfusi/Desktop/cadmus-itinera/work-mappings.json c:/users/dfusi/Desktop/cadmus-itinera/work-mappings-d.json"
     }
   }
 }
