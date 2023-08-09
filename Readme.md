@@ -15,6 +15,7 @@
     - [Thesaurus Import Command](#thesaurus-import-command)
       - [File Format](#file-format)
   - [History](#history)
+    - [8.0.4](#804)
     - [8.0.3](#803)
     - [8.0.2](#802)
     - [8.0.1](#801)
@@ -425,6 +426,8 @@ You must include the header row as the first row of the file. This allows changi
 You can add a header row or not, and use whatever name you want, as columns get identified by their order. You can anyway specify the sheet number, the first row number, and the first column number.
 
 ## History
+
+### 8.0.4
 
 - 2023-08-09:
   - fix to triples import in command.
