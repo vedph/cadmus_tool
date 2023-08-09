@@ -39,10 +39,10 @@
     <PackageReference Include="Bogus" Version="34.0.2" />
     <PackageReference Include="Cadmus.Core" Version="6.1.4" />
     <PackageReference Include="Cadmus.General.Parts" Version="5.0.4" />
-    <PackageReference Include="Cadmus.Graph" Version="3.0.4" />
-    <PackageReference Include="Cadmus.Graph.Ef.MySql" Version="3.0.4" />
-    <PackageReference Include="Cadmus.Graph.Ef.PgSql" Version="3.0.4" />
-    <PackageReference Include="Cadmus.Graph.Extras" Version="3.0.4" />
+    <PackageReference Include="Cadmus.Graph" Version="3.0.5" />
+    <PackageReference Include="Cadmus.Graph.Ef.MySql" Version="3.0.5" />
+    <PackageReference Include="Cadmus.Graph.Ef.PgSql" Version="3.0.5" />
+    <PackageReference Include="Cadmus.Graph.Extras" Version="3.0.5" />
     <PackageReference Include="Cadmus.Import" Version="3.0.7" />
     <PackageReference Include="Cadmus.Import.Excel" Version="3.0.7" />
     <PackageReference Include="Cadmus.Index" Version="6.1.14" />

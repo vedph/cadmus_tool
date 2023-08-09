@@ -85,7 +85,8 @@ internal sealed class GraphImportCommand : AsyncCommand<GraphImportCommandSettin
         }
 
         // object
-        if (triple.ObjectLiteral == null && triple.ObjectId == 0)
+        if (triple.ObjectLiteral == null &&
+            (triple.ObjectId == 0 || triple.ObjectId == null))
         {
             if (triple.ObjectUri == null)
                 throw new ArgumentNullException("No object for triple: " + triple);

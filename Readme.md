@@ -426,6 +426,10 @@ You can add a header row or not, and use whatever name you want, as columns get 
 
 ## History
 
+- 2023-08-09:
+  - fix to triples import in command.
+  - updated packages.
+
 ### 8.0.3
 
 - 2023-08-03: updated packages.
