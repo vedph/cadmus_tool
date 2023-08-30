@@ -2,6 +2,7 @@
 
 - [Cadmus Tool](#cadmus-tool)
   - [Plugin Architecture](#plugin-architecture)
+  - [Setup](#setup)
   - [Commands](#commands)
     - [Build SQL Command](#build-sql-command)
     - [Get Object Command](#get-object-command)
@@ -52,6 +53,46 @@ To add a plugin:
 1. create a subfolder of this folder, named after the DLL plugin filename (usually `Cadmus.PRJ.Services`, where `PRJ` is your project name). For instance, the plugin `Cadmus.Tgr.Services.dll` should be placed in a subfolder of this folder named `Cadmus.Tgr.Services`.
 2. copy the plugin files including all its dependencies in this folder.
 3. it is also useful to copy the project configuration file (`seed-profile.json`) in this folder, so you can have it at hand when required.
+
+## Setup
+
+In this sample I setup the tool with a plugin in an Ubuntu server.
+
+(1) download the tool (change the version to the latest one):
+
+```bash
+wget https://github.com/vedph/cadmus_tool/releases/download/v.8.0.7/App-v.8.0.7-linux-x64.tar.gz
+```
+
+(2) unzip it and remove the archive:
+
+```bash
+tar -xf App-v.8.0.7-linux-x64.tar.gz
+rm App-v.8.0.7-linux-x64.tar.gz
+```
+
+(3) rename the folder and grant permissions to the tool (change 777 as you wish):
+
+```bash
+mv App-v.8.0.7-linux-x64 cadmus-tool
+cd cadmus-tool
+chmod 777 cadmus-tool
+```
+
+(4) get the plugin and unzip it:
+
+```bash
+cd plugins
+wget http://www.fusisoft.it/xfer/cadmus/cli/plugins/Cadmus.Itinera.Services.zip
+unzip Cadmus.Itinera.Services.zip
+rm Cadmus.Itinera.Services.zip
+```
+
+To run the tool, enter its folder and run:
+
+```bash
+./cadmus-tool
+```
 
 ## Commands
 
