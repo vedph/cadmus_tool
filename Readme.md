@@ -15,7 +15,7 @@
     - [Thesaurus Import Command](#thesaurus-import-command)
       - [File Format](#file-format)
   - [History](#history)
-    - [8.0.4](#805)
+    - [8.0.5](#805)
     - [8.0.4](#804)
     - [8.0.3](#803)
     - [8.0.2](#802)
