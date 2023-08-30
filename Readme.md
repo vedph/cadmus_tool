@@ -427,6 +427,12 @@ You can add a header row or not, and use whatever name you want, as columns get 
 
 ## History
 
+### 8.0.5
+
+- 2023-08-30:
+  - minor aesthetic changes.
+  - trying to fix GitHub action.
+
 ### 8.0.4
 
 - 2023-08-09:

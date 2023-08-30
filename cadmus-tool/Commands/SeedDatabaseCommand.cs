@@ -62,7 +62,7 @@ internal sealed class SeedDatabaseCommand :
             if (!settings.IsDryRun)
             {
                 ctx.Status("Preparing database...");
-                ctx.Spinner(Spinner.Known.Star);
+                ctx.Spinner(Spinner.Known.Ascii);
 
                 string connection = string.Format(CultureInfo.InvariantCulture,
                     CliAppContext.Configuration.GetConnectionString("Mongo")!,
@@ -91,7 +91,7 @@ internal sealed class SeedDatabaseCommand :
                 CliHelper.GetSeederFactoryProvider(settings.SeederPluginTag);
 
             ctx.Status("Seeding items");
-            ctx.Spinner(Spinner.Known.Star);
+            ctx.Spinner(Spinner.Known.Ascii);
             PartSeederFactory factory = seederProvider.GetFactory(profileContent);
             CadmusSeeder seeder = new(factory);
 
