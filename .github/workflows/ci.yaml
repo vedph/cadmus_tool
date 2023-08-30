@@ -28,7 +28,7 @@ jobs:
           fetch-depth: 0
 
       - name: Fetch tags
-        run: git fetch --tags
+        run: git fetch --tags --unshallow
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v3
