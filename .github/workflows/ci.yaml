@@ -39,7 +39,7 @@ jobs:
         shell: bash
         run: |
           #tag=$(git describe --tags --abbrev=0)
-          tag=${GITHUB_REF##*/}
+          tag=$(git describe --tags --abbrev=0 ${GITHUB_REF})
           release_name="App-$tag-${{ matrix.target }}"
 
           # Build everything
