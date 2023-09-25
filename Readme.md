@@ -16,6 +16,7 @@
     - [Thesaurus Import Command](#thesaurus-import-command)
       - [File Format](#file-format)
   - [History](#history)
+    - [8.0.8](#808)
     - [8.0.6](#806)
     - [8.0.4](#804)
     - [8.0.3](#803)
@@ -61,20 +62,20 @@ In this sample I setup the tool with a plugin in an Ubuntu server.
 (1) download the tool (change the version to the latest one):
 
 ```bash
-wget https://github.com/vedph/cadmus_tool/releases/download/v.8.0.7/App-v.8.0.7-linux-x64.tar.gz
+wget https://github.com/vedph/cadmus_tool/releases/download/v.8.0.8/App-v.8.0.8-linux-x64.tar.gz
 ```
 
 (2) unzip it and remove the archive:
 
 ```bash
-tar -xf App-v.8.0.7-linux-x64.tar.gz
-rm App-v.8.0.7-linux-x64.tar.gz
+tar -xf App-v.8.0.8-linux-x64.tar.gz
+rm App-v.8.0.8-linux-x64.tar.gz
 ```
 
 (3) rename the folder and grant permissions to the tool (change 777 as you wish):
 
 ```bash
-mv App-v.8.0.7-linux-x64 cadmus-tool
+mv App-v.8.0.8-linux-x64 cadmus-tool
 cd cadmus-tool
 chmod 777 cadmus-tool
 ```
@@ -468,6 +469,10 @@ You must include the header row as the first row of the file. This allows changi
 You can add a header row or not, and use whatever name you want, as columns get identified by their order. You can anyway specify the sheet number, the first row number, and the first column number.
 
 ## History
+
+### 8.0.8
+
+- 2023-09-25: updated packages.
 
 ### 8.0.6
 
