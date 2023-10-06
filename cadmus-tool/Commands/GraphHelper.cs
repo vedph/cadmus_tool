@@ -3,6 +3,8 @@ using Cadmus.Graph;
 using Cadmus.Graph.Ef;
 using Cadmus.Graph.Ef.MySql;
 using Cadmus.Graph.Ef.PgSql;
+using Fusi.DbManager.MySql;
+using Fusi.DbManager.PgSql;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -42,6 +44,25 @@ internal static class GraphHelper
     public static IList<NodeMapping> LoadMappings(string path)
     {
         return ParseMappings(LoadText(path));
+    }
+
+    public static void CreateGraphDatabase(string dbName, string dbType = "pgsql")
+    {
+        if (dbName is null) throw new ArgumentNullException(nameof(dbName));
+        if (dbType is null) throw new ArgumentNullException(nameof(dbType));
+
+        string cst = CliAppContext.Configuration.GetConnectionString(
+            dbType == "mysql" ? "MyGraph" : "PgGraph")!;
+        if (dbType == "mysql")
+        {
+            MySqlDbManager mgr = new(cst);
+            mgr.CreateDatabase(dbName, EfMySqlGraphRepository.GetSchema(), null);
+        }
+        else
+        {
+            PgSqlDbManager mgr = new(cst);
+            mgr.CreateDatabase(dbName, EfPgSqlGraphRepository.GetSchema(), null);
+        }
     }
 
     public static IGraphRepository GetGraphRepository(string dbName,

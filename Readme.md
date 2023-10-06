@@ -5,6 +5,7 @@
   - [Setup](#setup)
   - [Commands](#commands)
     - [Build SQL Command](#build-sql-command)
+    - [Create Database Command](#create-database-command)
     - [Get Object Command](#get-object-command)
     - [Index Database Command](#index-database-command)
     - [Seed Database Command](#seed-database-command)
@@ -16,6 +17,7 @@
     - [Thesaurus Import Command](#thesaurus-import-command)
       - [File Format](#file-format)
   - [History](#history)
+    - [8.0.10](#8010)
     - [8.0.9](#809)
     - [8.0.8](#808)
     - [8.0.6](#806)
@@ -114,6 +116,24 @@ This allows you to interactively build SQL code. Otherwise, add your query after
 
 ```bash
 ./cadmus-tool build-sql [dsc*=even]
+```
+
+### Create Database Command
+
+🎯 Create an index or graph database with its own schema.
+
+```ps1
+./cadmus-tool create-db <index|graph> <DatabaseName> [-t <pgsql|mysql>]
+```
+
+- `t`: the database type: `pgsql`=PostgreSql (default) or `mysql`=MySql.
+
+Sample:
+
+```ps1
+./cadmus-tool create-db index cadmus-itinera
+
+./cadmus-tool create-db graph cadmus-itinera-graph
 ```
 
 ### Get Object Command
@@ -470,6 +490,10 @@ You must include the header row as the first row of the file. This allows changi
 You can add a header row or not, and use whatever name you want, as columns get identified by their order. You can anyway specify the sheet number, the first row number, and the first column number.
 
 ## History
+
+### 8.0.10
+
+- 2023-10-06: added `create-db` command to CLI to create index or graph databases.
 
 ### 8.0.9
 

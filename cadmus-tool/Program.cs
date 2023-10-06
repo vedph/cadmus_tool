@@ -60,24 +60,11 @@ public static class Program
                 config.AddCommand<BuildIndexSqlCommand>("build-sql")
                     .WithDescription("Build SQL code from an index query.");
 
+                config.AddCommand<CreateDatabaseCommand>("create-db")
+                    .WithDescription("Create index/graph database.");
+
                 config.AddCommand<GetObjectCommand>("get-obj")
                     .WithDescription("Get the item/part with the specified ID.");
-
-                config.AddCommand<GraphManyCommand>("graph-many")
-                    .WithDescription("Map all the items into graph.");
-
-                config.AddCommand<GraphOneCommand>("graph-one")
-                    .WithDescription("Map a single item/part into graph.");
-
-                config.AddCommand<GraphImportCommand>("graph-import")
-                    .WithDescription(
-                    "Import nodes, triples, mappings or thesauri into graph.");
-
-                config.AddCommand<IndexDatabaseCommand>("index")
-                    .WithDescription("Build the database index.");
-
-                config.AddCommand<SeedDatabaseCommand>("seed")
-                    .WithDescription("Seed the database with mock items.");
 
                 config.AddCommand<GraphUpdateClassesCommand>("graph-cls")
                     .WithDescription("Updates graph classes hierarchy.");
@@ -85,6 +72,22 @@ public static class Program
                 config.AddCommand<GraphDerefMappingsCommand>("graph-deref")
                     .WithDescription("Dereferences graph mappings from a file " +
                     "into another one.");
+
+                config.AddCommand<GraphImportCommand>("graph-import")
+                    .WithDescription(
+                    "Import nodes, triples, mappings or thesauri into graph.");
+
+                config.AddCommand<GraphManyCommand>("graph-many")
+                    .WithDescription("Map all the items into graph.");
+
+                config.AddCommand<GraphOneCommand>("graph-one")
+                    .WithDescription("Map a single item/part into graph.");
+
+                config.AddCommand<IndexDatabaseCommand>("index")
+                    .WithDescription("Build the database index.");
+
+                config.AddCommand<SeedDatabaseCommand>("seed")
+                    .WithDescription("Seed the database with mock items.");
 
                 config.AddCommand<ThesaurusImportCommand>("thes-import")
                     .WithDescription("Import thesauri into the database.");
