@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
 	<Nullable>enable</Nullable>
     <RootNamespace>Cadmus.Cli</RootNamespace>
 	  <Authors>Daniele Fusi</Authors>
@@ -37,37 +37,37 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="34.0.2" />
-    <PackageReference Include="Cadmus.Core" Version="6.1.18" />
-    <PackageReference Include="Cadmus.General.Parts" Version="5.0.5" />
-    <PackageReference Include="Cadmus.Graph" Version="4.0.0" />
-    <PackageReference Include="Cadmus.Graph.Ef.MySql" Version="4.0.0" />
-    <PackageReference Include="Cadmus.Graph.Ef.PgSql" Version="4.0.0" />
-    <PackageReference Include="Cadmus.Graph.Extras" Version="4.0.0" />
-    <PackageReference Include="Cadmus.Import" Version="3.0.8" />
-    <PackageReference Include="Cadmus.Import.Excel" Version="3.0.8" />
-    <PackageReference Include="Cadmus.Index" Version="6.1.19" />
-    <PackageReference Include="Cadmus.Index.Ef.MySql" Version="6.1.19" />
-    <PackageReference Include="Cadmus.Index.Ef.PgSql" Version="6.1.19" />
+    <PackageReference Include="Cadmus.Core" Version="7.0.0" />
+    <PackageReference Include="Cadmus.General.Parts" Version="6.0.1" />
+    <PackageReference Include="Cadmus.Graph" Version="5.0.1" />
+    <PackageReference Include="Cadmus.Graph.Ef.MySql" Version="5.0.1" />
+    <PackageReference Include="Cadmus.Graph.Ef.PgSql" Version="5.0.1" />
+    <PackageReference Include="Cadmus.Graph.Extras" Version="5.0.1" />
+    <PackageReference Include="Cadmus.Import" Version="4.0.8" />
+    <PackageReference Include="Cadmus.Import.Excel" Version="4.0.8" />
+    <PackageReference Include="Cadmus.Index" Version="7.0.0" />
+    <PackageReference Include="Cadmus.Index.Ef.MySql" Version="7.0.0" />
+    <PackageReference Include="Cadmus.Index.Ef.PgSql" Version="7.0.0" />
     <PackageReference Include="Cadmus.Index.MySql" Version="6.1.19" />
     <PackageReference Include="Cadmus.Index.PgSql" Version="6.1.19" />
-    <PackageReference Include="Cadmus.Index.Sql" Version="6.1.19" />
-    <PackageReference Include="Cadmus.Mongo" Version="6.1.18" />
-    <PackageReference Include="Cadmus.Philology.Parts" Version="7.0.3" />
-    <PackageReference Include="Cadmus.Seed" Version="6.1.18" />
-    <PackageReference Include="Cadmus.Seed.General.Parts" Version="5.0.5" />
-    <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="7.0.3" />
+    <PackageReference Include="Cadmus.Index.Sql" Version="7.0.0" />
+    <PackageReference Include="Cadmus.Mongo" Version="7.0.0" />
+    <PackageReference Include="Cadmus.Philology.Parts" Version="8.0.1" />
+    <PackageReference Include="Cadmus.Seed" Version="7.0.0" />
+    <PackageReference Include="Cadmus.Seed.General.Parts" Version="6.0.1" />
+    <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="8.0.1" />
     <PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="3.0.0" />
-    <PackageReference Include="Fusi.Text" Version="3.0.0" />
-    <PackageReference Include="Fusi.Tools" Version="3.1.1" />
-    <PackageReference Include="Fusi.Tools.Configuration" Version="3.1.1" />
+    <PackageReference Include="Fusi.Text" Version="4.0.0" />
+    <PackageReference Include="Fusi.Tools" Version="4.0.0" />
+    <PackageReference Include="Fusi.Tools.Configuration" Version="4.0.0" />
     <PackageReference Include="McMaster.NETCore.Plugins" Version="1.4.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
-    <PackageReference Include="Serilog" Version="3.0.1" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <PackageReference Include="Serilog" Version="3.1.1" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="Spectre.Console" Version="0.47.0" />
     <PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />

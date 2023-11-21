@@ -491,6 +491,10 @@ You can add a header row or not, and use whatever name you want, as columns get 
 
 ## History
 
+### 9.0.0
+
+- 2023-11-21: ⚠️ upgraded to NET 8.
+
 ### 8.0.10
 
 - 2023-10-06: added `create-db` command to CLI to create index or graph databases.
