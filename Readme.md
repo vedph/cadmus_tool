@@ -17,6 +17,7 @@
     - [Thesaurus Import Command](#thesaurus-import-command)
       - [File Format](#file-format)
   - [History](#history)
+    - [9.0.3](#903)
     - [9.0.2](#902)
     - [9.0.1](#901)
     - [9.0.0](#900)
@@ -493,6 +494,10 @@ You must include the header row as the first row of the file. This allows changi
 You can add a header row or not, and use whatever name you want, as columns get identified by their order. You can anyway specify the sheet number, the first row number, and the first column number.
 
 ## History
+
+### 9.0.3
+
+- 2024-01-31: updated packages.
 
 ### 9.0.2
 
