@@ -49,7 +49,9 @@ internal static class NumberToWords
             };
 
             if (number < 20)
+            {
                 words += unitsMap[number];
+            }
             else
             {
                 words += tensMap[number / 10];

@@ -51,62 +51,71 @@ internal sealed class GetObjectCommand : AsyncCommand<GetObjectCommandSettings>
                           $"Item/part: {(settings.IsPart ? "part" : "item")}, " +
                           $"XML: {(settings.IsXml ? "yes" : "no")}");
 
-        if (!Directory.Exists(settings.OutputDir))
-            Directory.CreateDirectory(settings.OutputDir!);
-
-        // repository
-        AnsiConsole.WriteLine("Creating repository...");
-        string cs = string.Format(
-            CliAppContext.Configuration.GetConnectionString("Mongo")!,
-            settings.DatabaseName);
-        ICadmusRepository repository = CliHelper.GetCadmusRepository(
-            settings.RepositoryPluginTag, cs);
-
-        // get object
-        string? json;
-        if (settings.IsPart)
+        try
         {
-            json = repository.GetPartContent(settings.Id!);
-            if (json == null)
+            if (!Directory.Exists(settings.OutputDir))
+                Directory.CreateDirectory(settings.OutputDir!);
+
+            // repository
+            AnsiConsole.WriteLine("Creating repository...");
+            string cs = string.Format(
+                CliAppContext.Configuration.GetConnectionString("Mongo")!,
+                settings.DatabaseName);
+            ICadmusRepository repository = CliHelper.GetCadmusRepository(
+                settings.RepositoryPluginTag, cs);
+
+            // get object
+            string? json;
+            if (settings.IsPart)
             {
-                AnsiConsole.MarkupLine("[red]Part not found[/]");
-                return Task.FromResult(2);
+                json = repository.GetPartContent(settings.Id!);
+                if (json == null)
+                {
+                    AnsiConsole.MarkupLine("[red]Part not found[/]");
+                    return Task.FromResult(2);
+                }
             }
-        }
-        else
-        {
-            IItem? item = repository.GetItem(settings.Id!, false);
-            if (item == null)
+            else
             {
-                AnsiConsole.MarkupLine("[red]Item not found[/]");
-                return Task.FromResult(2);
+                IItem? item = repository.GetItem(settings.Id!, false);
+                if (item == null)
+                {
+                    AnsiConsole.MarkupLine("[red]Item not found[/]");
+                    return Task.FromResult(2);
+                }
+                json = JsonSerializer.Serialize(item, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
             }
-            json = JsonSerializer.Serialize(item, new JsonSerializerOptions
+
+            // write JSON
+            string path = Path.Combine(settings.OutputDir ?? "",
+                settings.Id + ".json");
+            AnsiConsole.MarkupLine("[yellow]  -> [/]" + path);
+            WriteText(path, json);
+
+            // convert and write XML if requested
+            if (settings.IsXml)
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            });
+                // convert to XML
+                json = "{\"root\":" + json + "}";
+                XmlDocument? doc = JsonConvert.DeserializeXmlNode(json);
+                string xml = doc?.OuterXml ?? "";
+                path = Path.Combine(settings.OutputDir ?? "",
+                    settings.Id + ".xml");
+                Console.WriteLine("  -> " + path);
+                WriteText(path, xml);
+            }
+
+            return Task.FromResult(0);
         }
-
-        // write JSON
-        string path = Path.Combine(settings.OutputDir ?? "",
-            settings.Id + ".json");
-        AnsiConsole.MarkupLine("[yellow]  -> [/]" + path);
-        WriteText(path, json);
-
-        // convert and write XML if requested
-        if (settings.IsXml)
+        catch (Exception ex)
         {
-            // convert to XML
-            json = "{\"root\":" + json + "}";
-            XmlDocument? doc = JsonConvert.DeserializeXmlNode(json);
-            string xml = doc?.OuterXml ?? "";
-            path = Path.Combine(settings.OutputDir ?? "",
-                settings.Id + ".xml");
-            Console.WriteLine("  -> " + path);
-            WriteText(path, xml);
+            AnsiConsole.MarkupLineInterpolated($"[red]{ex.Message}[/]");
+            AnsiConsole.MarkupLineInterpolated($"[yellow]{ex.StackTrace}[/]");
+            return Task.FromResult(2);
         }
-
-        return Task.FromResult(0);
     }
 }
 

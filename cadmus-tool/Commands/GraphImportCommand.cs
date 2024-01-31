@@ -151,35 +151,44 @@ internal sealed class GraphImportCommand : AsyncCommand<GraphImportCommandSettin
         {
             AnsiConsole.MarkupLine("Thesaurus ID as root: [cyan]" +
                 $"{(settings.ThesaurusIdAsRoot ? "yes" : "no")}[/]");
-            AnsiConsole.MarkupLine($"Thesaurus ID prefix: " +
+            AnsiConsole.MarkupLine("Thesaurus ID prefix: " +
                 $"[cyan]{settings.ThesaurusIdPrefix}[/]");
         }
 
-        IGraphRepository repository = GraphHelper.GetGraphRepository(
-            settings.DatabaseName!, settings.DatabaseType);
-        if (repository != null)
+        try
         {
-            using Stream source = new FileStream(settings.SourcePath!,
-                FileMode.Open, FileAccess.Read, FileShare.Read);
-
-            switch (char.ToLowerInvariant(settings.Mode))
+            IGraphRepository repository = GraphHelper.GetGraphRepository(
+                settings.DatabaseName!, settings.DatabaseType);
+            if (repository != null)
             {
-                case 'm':
-                    ImportMappings(source, repository, settings);
-                    break;
-                case 't':
-                    ImportTriples(source, repository, settings);
-                    break;
-                case 'h':
-                    ImportThesauri(source, repository, settings);
-                    break;
-                default:
-                    ImportNodes(source, repository, settings);
-                    break;
-            }
-        }
+                using Stream source = new FileStream(settings.SourcePath!,
+                    FileMode.Open, FileAccess.Read, FileShare.Read);
 
-        return Task.FromResult(0);
+                switch (char.ToLowerInvariant(settings.Mode))
+                {
+                    case 'm':
+                        ImportMappings(source, repository, settings);
+                        break;
+                    case 't':
+                        ImportTriples(source, repository, settings);
+                        break;
+                    case 'h':
+                        ImportThesauri(source, repository, settings);
+                        break;
+                    default:
+                        ImportNodes(source, repository, settings);
+                        break;
+                }
+            }
+
+            return Task.FromResult(0);
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]{ex.Message}[/]");
+            AnsiConsole.MarkupLineInterpolated($"[yellow]{ex.StackTrace}[/]");
+            return Task.FromResult(2);
+        }
     }
 }
 

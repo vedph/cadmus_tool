@@ -17,7 +17,7 @@ internal static class GraphHelper
 {
     public static string LoadText(string path)
     {
-        if (path == null) throw new ArgumentNullException(nameof(path));
+        ArgumentNullException.ThrowIfNull(path);
 
         using StreamReader reader = File.OpenText(path);
         return reader.ReadToEnd();
@@ -48,8 +48,8 @@ internal static class GraphHelper
 
     public static void CreateGraphDatabase(string dbName, string dbType = "pgsql")
     {
-        if (dbName is null) throw new ArgumentNullException(nameof(dbName));
-        if (dbType is null) throw new ArgumentNullException(nameof(dbType));
+        ArgumentNullException.ThrowIfNull(dbName);
+        ArgumentNullException.ThrowIfNull(dbType);
 
         string cst = CliAppContext.Configuration.GetConnectionString(
             dbType == "mysql" ? "MyGraph" : "PgGraph")!;
@@ -68,8 +68,8 @@ internal static class GraphHelper
     public static IGraphRepository GetGraphRepository(string dbName,
         string dbType = "pgsql")
     {
-        if (dbName is null) throw new ArgumentNullException(nameof(dbName));
-        if (dbType is null) throw new ArgumentNullException(nameof(dbType));
+        ArgumentNullException.ThrowIfNull(dbName);
+        ArgumentNullException.ThrowIfNull(dbType);
 
         string cs = string.Format(CliAppContext.Configuration
             .GetConnectionString(dbType == "mysql" ? "MyGraph" : "PgGraph")!,
@@ -87,8 +87,8 @@ internal static class GraphHelper
 
     public static void UpdateGraphForDeletion(string id, string dbName)
     {
-        if (id == null) throw new ArgumentNullException(nameof(id));
-        if (dbName is null) throw new ArgumentNullException(nameof(dbName));
+        ArgumentNullException.ThrowIfNull(id);
+        ArgumentNullException.ThrowIfNull(dbName);
 
         IGraphRepository graphRepository = GetGraphRepository(dbName);
         if (graphRepository == null) return;

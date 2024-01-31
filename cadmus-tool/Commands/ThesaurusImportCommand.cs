@@ -46,58 +46,67 @@ public sealed class ThesaurusImportCommand :
         if (settings.ExcelColumn != 1)
             AnsiConsole.MarkupLine($"Excel column: [cyan]{settings.ExcelColumn}[/]");
 
-        // repository
-        AnsiConsole.MarkupLine("Creating repository...");
-        string cs = string.Format(
-            CliAppContext.Configuration.GetConnectionString("Mongo")!,
-            settings.DatabaseName);
-        ICadmusRepository repository = CliHelper.GetCadmusRepository(null, cs);
-
-        ExcelThesaurusReaderOptions xlsOptions = new()
+        try
         {
-            SheetIndex = settings.ExcelSheet - 1,
-            RowOffset = settings.ExcelRow - 1,
-            ColumnOffset = settings.ExcelColumn - 1
-        };
+            // repository
+            AnsiConsole.MarkupLine("Creating repository...");
+            string cs = string.Format(
+                CliAppContext.Configuration.GetConnectionString("Mongo")!,
+                settings.DatabaseName);
+            ICadmusRepository repository = CliHelper.GetCadmusRepository(null, cs);
 
-        // import
-        int n = 0;
-        foreach (string path in Directory.EnumerateFiles(
-            Path.GetDirectoryName(settings.InputFileMask) ?? "",
-            Path.GetFileName(settings.InputFileMask)!)
-            .OrderBy(s => s))
-        {
-            // load thesaurus
-            AnsiConsole.MarkupLine($"[yellow]{++n:000}[/] [green]{path}[/]");
-
-            using Stream stream = new FileStream(path, FileMode.Open,
-                FileAccess.Read, FileShare.Read);
-            using IThesaurusReader reader =
-                Path.GetExtension(path).ToLowerInvariant() switch
-                {
-                    ".csv" => new CsvThesaurusReader(stream),
-                    ".xls" => new ExcelThesaurusReader(stream, xlsOptions),
-                    ".xlsx" => new ExcelThesaurusReader(stream),
-                    _ => new JsonThesaurusReader(stream)
-                };
-
-            Thesaurus? source;
-            while ((source = reader.Next()) != null)
+            ExcelThesaurusReaderOptions xlsOptions = new()
             {
-                AnsiConsole.MarkupLine($"  [cyan]{source}[/]");
+                SheetIndex = settings.ExcelSheet - 1,
+                RowOffset = settings.ExcelRow - 1,
+                ColumnOffset = settings.ExcelColumn - 1
+            };
 
-                // fetch from repository
-                Thesaurus? target = repository.GetThesaurus(source.Id);
+            // import
+            int n = 0;
+            foreach (string path in Directory.EnumerateFiles(
+                Path.GetDirectoryName(settings.InputFileMask) ?? "",
+                Path.GetFileName(settings.InputFileMask)!)
+                .OrderBy(s => s))
+            {
+                // load thesaurus
+                AnsiConsole.MarkupLine($"[yellow]{++n:000}[/] [green]{path}[/]");
 
-                // import
-                Thesaurus result = ThesaurusHelper.CopyThesaurus(source, target,
-                    GetMode(settings.Mode));
+                using Stream stream = new FileStream(path, FileMode.Open,
+                    FileAccess.Read, FileShare.Read);
+                using IThesaurusReader reader =
+                    Path.GetExtension(path).ToLowerInvariant() switch
+                    {
+                        ".csv" => new CsvThesaurusReader(stream),
+                        ".xls" => new ExcelThesaurusReader(stream, xlsOptions),
+                        ".xlsx" => new ExcelThesaurusReader(stream),
+                        _ => new JsonThesaurusReader(stream)
+                    };
 
-                // save
-                if (!settings.IsDryRun) repository.AddThesaurus(result);
+                Thesaurus? source;
+                while ((source = reader.Next()) != null)
+                {
+                    AnsiConsole.MarkupLine($"  [cyan]{source}[/]");
+
+                    // fetch from repository
+                    Thesaurus? target = repository.GetThesaurus(source.Id);
+
+                    // import
+                    Thesaurus result = ThesaurusHelper.CopyThesaurus(source, target,
+                        GetMode(settings.Mode));
+
+                    // save
+                    if (!settings.IsDryRun) repository.AddThesaurus(result);
+                }
             }
+            return Task.FromResult(0);
         }
-        return Task.FromResult(0);
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]{ex.Message}[/]");
+            AnsiConsole.MarkupLineInterpolated($"[yellow]{ex.StackTrace}[/]");
+            return Task.FromResult(2);
+        }
     }
 }
 

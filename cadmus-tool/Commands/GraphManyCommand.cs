@@ -7,6 +7,7 @@ using Fusi.Tools.Data;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -29,73 +30,82 @@ internal sealed class GraphManyCommand : AsyncCommand<GraphManyCommandSettings>
                      $"Database: {settings.DatabaseName}, " +
                      $"Repository plugin tag: {settings.RepositoryPluginTag}\n");
 
-        // repository
-        AnsiConsole.MarkupLine("Creating repository...");
-        Serilog.Log.Information("Creating repository...");
-        string cs = string.Format(
-          CliAppContext.Configuration.GetConnectionString("Mongo")!,
-          settings.DatabaseName);
-        ICadmusRepository repository = CliHelper.GetCadmusRepository(
-            settings.RepositoryPluginTag, cs);
-
-        IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
-            settings.DatabaseName!, settings.DatabaseType);
-        GraphUpdater updater = new(graphRepository)
+        try
         {
-            // we want item-eid as an additional metadatum, derived from
-            // eid in the role-less MetadataPart of the item, when present
-            MetadataSupplier = new MetadataSupplier()
-                .SetCadmusRepository(repository)
-                .AddItemEid()
-        };
+            // repository
+            AnsiConsole.MarkupLine("Creating repository...");
+            Serilog.Log.Information("Creating repository...");
+            string cs = string.Format(
+              CliAppContext.Configuration.GetConnectionString("Mongo")!,
+              settings.DatabaseName);
+            ICadmusRepository repository = CliHelper.GetCadmusRepository(
+                settings.RepositoryPluginTag, cs);
 
-        int oldPercent = 0;
-        ItemFilter filter = new() { PageSize = 100 };
-        DataPage<ItemInfo> page = repository.GetItems(filter);
-        if (page.Total == 0) return Task.FromResult(0);
-
-        bool error = false;
-        AnsiConsole.Progress().Start(ctx =>
-        {
-            ProgressTask task = ctx.AddTask("Mapping items to graph");
-
-            // first page
-            do
+            IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
+                settings.DatabaseName!, settings.DatabaseType);
+            GraphUpdater updater = new(graphRepository)
             {
-                foreach (ItemInfo info in page.Items)
+                // we want item-eid as an additional metadatum, derived from
+                // eid in the role-less MetadataPart of the item, when present
+                MetadataSupplier = new MetadataSupplier()
+                    .SetCadmusRepository(repository)
+                    .AddItemEid()
+            };
+
+            int oldPercent = 0;
+            ItemFilter filter = new() { PageSize = 100 };
+            DataPage<ItemInfo> page = repository.GetItems(filter);
+            if (page.Total == 0) return Task.FromResult(0);
+
+            bool error = false;
+            AnsiConsole.Progress().Start(ctx =>
+            {
+                ProgressTask task = ctx.AddTask("Mapping items to graph");
+
+                // first page
+                do
                 {
-                    IItem? item = repository.GetItem(info.Id!, true);
-                    if (item == null) continue;
-                    if (item == null)
+                    foreach (ItemInfo info in page.Items)
                     {
-                        AnsiConsole.MarkupLine("[red]Item not found[/]");
-                        error = true;
-                        break;
+                        IItem? item = repository.GetItem(info.Id!, true);
+                        if (item == null) continue;
+                        if (item == null)
+                        {
+                            AnsiConsole.MarkupLine("[red]Item not found[/]");
+                            error = true;
+                            break;
+                        }
+
+                        // update graph for item
+                        updater.Update(item);
+
+                        // update graph for its parts
+                        foreach (IPart part in item.Parts)
+                            updater.Update(item, part);
                     }
 
-                    // update graph for item
-                    updater.Update(item);
+                    // progress
+                    int percent = filter.PageNumber * 100 / page.PageCount;
+                    if (percent != oldPercent)
+                    {
+                        task.Increment(percent - oldPercent);
+                        oldPercent = percent;
+                    }
 
-                    // update graph for its parts
-                    foreach (IPart part in item.Parts)
-                        updater.Update(item, part);
-                }
+                    // next page
+                    if (++filter.PageNumber > page.PageCount) break;
+                    page = repository.GetItems(filter);
+                } while (!error && page.Items.Count != 0);
+            });
 
-                // progress
-                int percent = filter.PageNumber * 100 / page.PageCount;
-                if (percent != oldPercent)
-                {
-                    task.Increment(percent - oldPercent);
-                    oldPercent = percent;
-                }
-
-                // next page
-                if (++filter.PageNumber > page.PageCount) break;
-                page = repository.GetItems(filter);
-            } while (!error && page.Items.Count != 0);
-        });
-
-        return error? Task.FromResult(2) : Task.FromResult(0);
+            return error ? Task.FromResult(2) : Task.FromResult(0);
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]{ex.Message}[/]");
+            AnsiConsole.MarkupLineInterpolated($"[yellow]{ex.StackTrace}[/]");
+            return Task.FromResult(2);
+        }
     }
 }
 

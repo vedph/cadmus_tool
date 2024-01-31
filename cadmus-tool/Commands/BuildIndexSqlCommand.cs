@@ -24,31 +24,42 @@ internal sealed class BuildIndexSqlCommand :
         BuildIndexSqlCommandSettings settings)
     {
         AnsiConsole.MarkupLine("[green underline]BUILD INDEX SQL[/]");
-        SqlQueryBuilderBase builder =
-            settings.DatabaseType.ToLowerInvariant() == "mysql"
-            ? new MySqlQueryBuilder(settings.IsLegacy)
-            : new PgSqlQueryBuilder();
 
-        if (!string.IsNullOrEmpty(settings.Query))
+        try
         {
-            AnsiConsole.MarkupLine($"Query: [cyan]{settings.Query}[/]");
-            var sql = builder.BuildForItem(settings.Query, _options);
-            AnsiConsole.MarkupLine($"[yellow]{sql.Item1}[/]");
+            SqlQueryBuilderBase builder =
+                settings.DatabaseType.Equals("mysql",
+                    StringComparison.InvariantCultureIgnoreCase)
+                ? new MySqlQueryBuilder(settings.IsLegacy)
+                : new PgSqlQueryBuilder();
+
+            if (!string.IsNullOrEmpty(settings.Query))
+            {
+                AnsiConsole.MarkupLine($"Query: [cyan]{settings.Query}[/]");
+                var sql = builder.BuildForItem(settings.Query, _options);
+                AnsiConsole.MarkupLine($"[yellow]{sql.Item1}[/]");
+                return Task.FromResult(0);
+            }
+
+            while (true)
+            {
+                AnsiConsole.MarkupLine("Enter query: ");
+                string? query = Console.ReadLine();
+                if (string.IsNullOrEmpty(query) || query == "quit") break;
+                Console.WriteLine();
+
+                var sql = builder.BuildForItem(query, _options);
+                AnsiConsole.MarkupLine($"[yellow]{sql.Item1}[/]");
+            }
+
             return Task.FromResult(0);
         }
-
-        while (true)
+        catch (Exception ex)
         {
-            AnsiConsole.MarkupLine("Enter query: ");
-            string? query = Console.ReadLine();
-            if (string.IsNullOrEmpty(query) || query == "quit") break;
-            Console.WriteLine();
-
-            var sql = builder.BuildForItem(query, _options);
-            AnsiConsole.MarkupLine($"[yellow]{sql.Item1}[/]");
+            AnsiConsole.MarkupLineInterpolated($"[red]{ex.Message}[/]");
+            AnsiConsole.MarkupLineInterpolated($"[yellow]{ex.StackTrace}[/]");
+            return Task.FromResult(2);
         }
-
-        return Task.FromResult(0);
     }
 }
 

@@ -6,6 +6,7 @@ using Cadmus.Graph.Extras;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,114 +33,127 @@ internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
                      $"Repository plugin tag: {settings.RepositoryPluginTag}\n" +
                      $"{(settings.IsPart ? "Part" : "Item")} ID: {settings.Id}\n");
 
-        // repository
-        AnsiConsole.MarkupLine("Creating repository...");
-
-        string cs = string.Format(
-          CliAppContext.Configuration.GetConnectionString("Mongo")!,
-          settings.DatabaseName);
-        ICadmusRepository repository = CliHelper.GetCadmusRepository(
-            settings.RepositoryPluginTag, cs);
-
-        if (settings.IsDeleted)
+        try
         {
-            GraphHelper.UpdateGraphForDeletion(settings.Id!,
-                settings.DatabaseName!);
-            return Task.FromResult(0);
-        }
+            // repository
+            AnsiConsole.MarkupLine("Creating repository...");
 
-        IItem? item;
-        IPart? part = null;
+            string cs = string.Format(
+              CliAppContext.Configuration.GetConnectionString("Mongo")!,
+              settings.DatabaseName);
+            ICadmusRepository repository = CliHelper.GetCadmusRepository(
+                settings.RepositoryPluginTag, cs);
 
-        // get item and part
-        if (settings.IsPart)
-        {
-            part = repository.GetPart<IPart>(settings.Id!);
-            if (part == null)
+            if (settings.IsDeleted)
             {
-                AnsiConsole.MarkupLine("[red]Part not found[/]");
-                return Task.FromResult(2);
+                GraphHelper.UpdateGraphForDeletion(settings.Id!,
+                    settings.DatabaseName!);
+                return Task.FromResult(0);
             }
-            item = repository.GetItem(part.ItemId, false);
-        }
-        else
-        {
-            item = repository.GetItem(settings.Id!, false);
-        }
 
-        if (item == null)
-        {
-            AnsiConsole.MarkupLine("[red]Item not found[/]");
-            return Task.FromResult(2);
-        }
+            IItem? item;
+            IPart? part = null;
 
-        // update graph
-        IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
-            settings.DatabaseName!, settings.DatabaseType);
-        GraphUpdater updater = new(graphRepository)
-        {
-            // we want item-eid as an additional metadatum, derived from
-            // eid in the role-less MetadataPart of the item, when present
-            MetadataSupplier = new MetadataSupplier()
-                .SetCadmusRepository(repository)
-                .AddItemEid()
-        };
+            // get item and part
+            if (settings.IsPart)
+            {
+                part = repository.GetPart<IPart>(settings.Id!);
+                if (part == null)
+                {
+                    AnsiConsole.MarkupLine("[red]Part not found[/]");
+                    return Task.FromResult(2);
+                }
+                item = repository.GetItem(part.ItemId, false);
+            }
+            else
+            {
+                item = repository.GetItem(settings.Id!, false);
+            }
 
-        if (settings.Explain)
-        {
-            GraphUpdaterExplanation? explanation = settings.IsPart
-                ? updater.Explain(item, part!)
-                : updater.Explain(item);
-            if (explanation == null)
+            if (item == null)
             {
                 AnsiConsole.MarkupLine("[red]Item not found[/]");
                 return Task.FromResult(2);
             }
 
-            AnsiConsole.MarkupLine("[yellow]Filter[/]");
-            RunNodeMappingFilter f = explanation.Filter;
-            AnsiConsole.MarkupLine($"- [cyan]source type[/]: {f.SourceType}");
-            AnsiConsole.MarkupLine($"- [cyan]facet[/]: {f.Facet}");
-            AnsiConsole.MarkupLine($"- [cyan]group[/]: {f.Group}");
-            AnsiConsole.MarkupLine($"- [cyan]flags[/]: {f.Flags}");
-            AnsiConsole.MarkupLine($"- [cyan]part type[/]: {f.PartType}");
-            AnsiConsole.MarkupLine($"- [cyan]role[/]: {f.PartRole}");
-            AnsiConsole.MarkupLineInterpolated($"- [cyan]title[/]: {f.Title}");
-
-            AnsiConsole.MarkupLine("\n[yellow]Metadata[/]");
-            foreach (string k in explanation.Metadata.Keys.OrderBy(s => s))
+            // update graph
+            IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
+                settings.DatabaseName!, settings.DatabaseType);
+            GraphUpdater updater = new(graphRepository)
             {
-                AnsiConsole.MarkupLineInterpolated(
-                    $"- [cyan]{k}[/]: {explanation.Metadata[k]}");
+                // we want item-eid as an additional metadatum, derived from
+                // eid in the role-less MetadataPart of the item, when present
+                MetadataSupplier = new MetadataSupplier()
+                    .SetCadmusRepository(repository)
+                    .AddItemEid()
+            };
+
+            if (settings.Explain)
+            {
+                GraphUpdaterExplanation? explanation = settings.IsPart
+                    ? updater.Explain(item, part!)
+                    : updater.Explain(item);
+                if (explanation == null)
+                {
+                    AnsiConsole.MarkupLine("[red]Item not found[/]");
+                    return Task.FromResult(2);
+                }
+
+                AnsiConsole.MarkupLine("[yellow]Filter[/]");
+                RunNodeMappingFilter f = explanation.Filter;
+                AnsiConsole.MarkupLine($"- [cyan]source type[/]: {f.SourceType}");
+                AnsiConsole.MarkupLine($"- [cyan]facet[/]: {f.Facet}");
+                AnsiConsole.MarkupLine($"- [cyan]group[/]: {f.Group}");
+                AnsiConsole.MarkupLine($"- [cyan]flags[/]: {f.Flags}");
+                AnsiConsole.MarkupLine($"- [cyan]part type[/]: {f.PartType}");
+                AnsiConsole.MarkupLine($"- [cyan]role[/]: {f.PartRole}");
+                AnsiConsole.MarkupLineInterpolated($"- [cyan]title[/]: {f.Title}");
+
+                AnsiConsole.MarkupLine("\n[yellow]Metadata[/]");
+                foreach (string k in explanation.Metadata.Keys.OrderBy(s => s))
+                {
+                    AnsiConsole.MarkupLineInterpolated(
+                        $"- [cyan]{k}[/]: {explanation.Metadata[k]}");
+                }
+
+                AnsiConsole.MarkupLine("\n[yellow]Mappings[/]");
+                for (int i = 0; i < explanation.Mappings.Count; i++)
+                {
+                    AnsiConsole.Markup($"[cyan]{i + 1:000}.[/] ");
+                    AnsiConsole.WriteLine(explanation.Mappings[i].ToString());
+                }
+
+                AnsiConsole.MarkupLine("\n[yellow]Nodes[/]");
+                for (int i = 0; i < explanation.Set.Nodes.Count; i++)
+                {
+                    AnsiConsole.Markup($"[cyan]{i + 1:000}.[/] ");
+                    AnsiConsole.WriteLine(explanation.Set.Nodes[i].ToString());
+                }
+
+                AnsiConsole.MarkupLine("\n[yellow]Triples[/]");
+                for (int i = 0; i < explanation.Set.Triples.Count; i++)
+                {
+                    AnsiConsole.Markup($"[cyan]{i + 1:000}.[/] ");
+                    AnsiConsole.WriteLine(explanation.Set.Triples[i].ToString());
+                }
+            }
+            else if (settings.IsPart)
+            {
+                updater.Update(item, part!);
+            }
+            else
+            {
+                updater.Update(item);
             }
 
-            AnsiConsole.MarkupLine("\n[yellow]Mappings[/]");
-            for (int i = 0; i < explanation.Mappings.Count; i++)
-            {
-                AnsiConsole.Markup($"[cyan]{i + 1:000}.[/] ");
-                AnsiConsole.WriteLine(explanation.Mappings[i].ToString());
-            }
-
-            AnsiConsole.MarkupLine("\n[yellow]Nodes[/]");
-            for (int i = 0; i < explanation.Set.Nodes.Count; i++)
-            {
-                AnsiConsole.Markup($"[cyan]{i + 1:000}.[/] ");
-                AnsiConsole.WriteLine(explanation.Set.Nodes[i].ToString());
-            }
-
-            AnsiConsole.MarkupLine("\n[yellow]Triples[/]");
-            for (int i = 0; i < explanation.Set.Triples.Count; i++)
-            {
-                AnsiConsole.Markup($"[cyan]{i + 1:000}.[/] ");
-                AnsiConsole.WriteLine(explanation.Set.Triples[i].ToString());
-            }
+            return Task.FromResult(0);
         }
-        else
+        catch (Exception ex)
         {
-            if (settings.IsPart) updater.Update(item, part!);
-            else updater.Update(item);
+            AnsiConsole.MarkupLineInterpolated($"[red]{ex.Message}[/]");
+            AnsiConsole.MarkupLineInterpolated($"[yellow]{ex.StackTrace}[/]");
+            return Task.FromResult(2);
         }
-        return Task.FromResult(0);
     }
 }
 

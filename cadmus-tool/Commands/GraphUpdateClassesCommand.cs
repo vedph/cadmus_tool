@@ -20,21 +20,30 @@ internal sealed class GraphUpdateClassesCommand :
         AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");
         AnsiConsole.MarkupLine($"Profile file: [cyan]{settings.ProfilePath}[/]");
 
-        IGraphRepository repository = GraphHelper.GetGraphRepository(
-            settings.DatabaseName!, settings.DatabaseType);
-        if (repository == null) return 2;
-
-        await AnsiConsole.Progress().StartAsync(async ctx =>
+        try
         {
-            var task = ctx.AddTask("[green]Updating...[/]");
-            await repository.UpdateNodeClassesAsync(CancellationToken.None,
-                new Progress<ProgressReport>(r =>
-                {
-                    task.Increment(r.Percent - task.Value);
-                }));
-        });
-        AnsiConsole.MarkupLine("Completed.");
-        return 0;
+            IGraphRepository repository = GraphHelper.GetGraphRepository(
+                settings.DatabaseName!, settings.DatabaseType);
+            if (repository == null) return 2;
+
+            await AnsiConsole.Progress().StartAsync(async ctx =>
+            {
+                var task = ctx.AddTask("[green]Updating...[/]");
+                await repository.UpdateNodeClassesAsync(CancellationToken.None,
+                    new Progress<ProgressReport>(r =>
+                    {
+                        task.Increment(r.Percent - task.Value);
+                    }));
+            });
+            AnsiConsole.MarkupLine("Completed.");
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]{ex.Message}[/]");
+            AnsiConsole.MarkupLineInterpolated($"[yellow]{ex.StackTrace}[/]");
+            return 2;
+        }
     }
 }
 

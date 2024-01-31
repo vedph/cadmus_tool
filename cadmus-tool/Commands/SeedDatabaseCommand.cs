@@ -7,6 +7,7 @@ using Cadmus.Seed;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -52,65 +53,74 @@ internal sealed class SeedDatabaseCommand :
                      $"Dry: {settings.IsDryRun}, " +
                      $"History: {settings.HasHistory}");
 
-        AnsiConsole.Status().Start("Initializing...", ctx =>
+        try
         {
-            // profile
-            ctx.Status("Loading profile...");
-            string profileContent = LoadProfile(settings.ProfilePath!);
-
-            // database
-            if (!settings.IsDryRun)
+            AnsiConsole.Status().Start("Initializing...", ctx =>
             {
-                ctx.Status("Preparing database...");
-                ctx.Spinner(Spinner.Known.Ascii);
+                // profile
+                ctx.Status("Loading profile...");
+                string profileContent = LoadProfile(settings.ProfilePath!);
 
-                string connection = string.Format(CultureInfo.InvariantCulture,
-                    CliAppContext.Configuration.GetConnectionString("Mongo")!,
-                    settings.DatabaseName);
-
-                IDatabaseManager manager = new MongoDatabaseManager();
-                IDataProfileSerializer serializer = new JsonDataProfileSerializer();
-                DataProfile profile = serializer.Read(profileContent);
-
-                if (!manager.DatabaseExists(connection))
-                {
-                    manager.CreateDatabase(connection, profile);
-                    Serilog.Log.Information("Database created.");
-                }
-            }
-
-            // repository
-            ctx.Status("Creating repository...");
-            ICadmusRepository repository = CliHelper.GetCadmusRepository(
-                settings.RepositoryPluginTag,
-                CliAppContext.Configuration.GetConnectionString("Mongo")!);
-
-            // seeder
-            ctx.Status("Creating seeders factory...");
-            IPartSeederFactoryProvider seederProvider =
-                CliHelper.GetSeederFactoryProvider(settings.SeederPluginTag);
-
-            ctx.Status("Seeding items");
-            ctx.Spinner(Spinner.Known.Ascii);
-            PartSeederFactory factory = seederProvider.GetFactory(profileContent);
-            CadmusSeeder seeder = new(factory);
-
-            foreach (IItem item in seeder.GetItems(settings.Count))
-            {
-                ctx.Status($"{item}: {item.Parts.Count} parts");
+                // database
                 if (!settings.IsDryRun)
                 {
-                    repository?.AddItem(item,settings.HasHistory);
-                    foreach (IPart part in item.Parts)
+                    ctx.Status("Preparing database...");
+                    ctx.Spinner(Spinner.Known.Ascii);
+
+                    string connection = string.Format(CultureInfo.InvariantCulture,
+                        CliAppContext.Configuration.GetConnectionString("Mongo")!,
+                        settings.DatabaseName);
+
+                    MongoDatabaseManager manager = new();
+                    JsonDataProfileSerializer serializer = new();
+                    DataProfile profile = serializer.Read(profileContent);
+
+                    if (!manager.DatabaseExists(connection))
                     {
-                        repository?.AddPart(part, settings.HasHistory);
+                        manager.CreateDatabase(connection, profile);
+                        Serilog.Log.Information("Database created.");
                     }
                 }
-            }
-            ctx.Status("Completed.");
-        });
 
-        return Task.FromResult(0);
+                // repository
+                ctx.Status("Creating repository...");
+                ICadmusRepository repository = CliHelper.GetCadmusRepository(
+                    settings.RepositoryPluginTag,
+                    CliAppContext.Configuration.GetConnectionString("Mongo")!);
+
+                // seeder
+                ctx.Status("Creating seeders factory...");
+                IPartSeederFactoryProvider seederProvider =
+                    CliHelper.GetSeederFactoryProvider(settings.SeederPluginTag);
+
+                ctx.Status("Seeding items");
+                ctx.Spinner(Spinner.Known.Ascii);
+                PartSeederFactory factory = seederProvider.GetFactory(profileContent);
+                CadmusSeeder seeder = new(factory);
+
+                foreach (IItem item in seeder.GetItems(settings.Count))
+                {
+                    ctx.Status($"{item}: {item.Parts.Count} parts");
+                    if (!settings.IsDryRun)
+                    {
+                        repository?.AddItem(item, settings.HasHistory);
+                        foreach (IPart part in item.Parts)
+                        {
+                            repository?.AddPart(part, settings.HasHistory);
+                        }
+                    }
+                }
+                ctx.Status("Completed.");
+            });
+
+            return Task.FromResult(0);
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]{ex.Message}[/]");
+            AnsiConsole.MarkupLineInterpolated($"[yellow]{ex.StackTrace}[/]");
+            return Task.FromResult(2);
+        }
     }
 }
 

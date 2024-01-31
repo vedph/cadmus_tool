@@ -1,5 +1,4 @@
-﻿using Cadmus.Cli.Core;
-using Cadmus.Cli.Services;
+﻿using Cadmus.Cli.Services;
 using Cadmus.Core.Storage;
 using Cadmus.Index;
 using Cadmus.Index.Config;
@@ -44,51 +43,59 @@ internal sealed class IndexDatabaseCommand :
                      $"Repository plugin tag: {settings.RepositoryPluginTag}\n" +
                      $"Clear: {settings.ClearDatabase}");
 
-        string profileContent = LoadProfile(settings.ProfilePath!);
+        try
+        {
+            string profileContent = LoadProfile(settings.ProfilePath!);
 
-        string cs = string.Format(
-            CliAppContext.Configuration.GetConnectionString(
-                settings.DatabaseType == "mysql" ? "MyIndex" : "PgIndex")!,
-            settings.DatabaseName);
+            string cs = string.Format(
+                CliAppContext.Configuration.GetConnectionString(
+                    settings.DatabaseType == "mysql" ? "MyIndex" : "PgIndex")!,
+                settings.DatabaseName);
 
-        IItemIndexFactoryProvider provider =
-            new StandardItemIndexFactoryProvider(cs);
+            StandardItemIndexFactoryProvider provider = new(cs);
 
-        ItemIndexFactory factory = provider.GetFactory(profileContent);
-        IItemIndexWriter? writer = factory.GetItemIndexWriter()
-            ?? throw new InvalidOperationException(
-                "Unable to instantiate item index writer");
+            ItemIndexFactory factory = provider.GetFactory(profileContent);
+            IItemIndexWriter? writer = factory.GetItemIndexWriter()
+                ?? throw new InvalidOperationException(
+                    "Unable to instantiate item index writer");
 
-        // repository
-        AnsiConsole.WriteLine("Creating repository...");
-        ICadmusRepository repository = CliHelper.GetCadmusRepository(
-            settings.RepositoryPluginTag,
-            string.Format(CultureInfo.InvariantCulture,
-                CliAppContext.Configuration.GetConnectionString("Mongo")!,
-                settings.DatabaseName));
+            // repository
+            AnsiConsole.WriteLine("Creating repository...");
+            ICadmusRepository repository = CliHelper.GetCadmusRepository(
+                settings.RepositoryPluginTag,
+                string.Format(CultureInfo.InvariantCulture,
+                    CliAppContext.Configuration.GetConnectionString("Mongo")!,
+                    settings.DatabaseName));
 
-        // index
-        AnsiConsole.WriteLine("Ensuring that index is created...");
-        await writer.CreateIndex();
+            // index
+            AnsiConsole.WriteLine("Ensuring that index is created...");
+            await writer.CreateIndex();
 
-        await AnsiConsole.Progress().StartAsync(async ctx =>
-            {
-                ProgressTask task = ctx.AddTask("Indexing database");
-                ItemIndexer indexer = new(writer)
+            await AnsiConsole.Progress().StartAsync(async ctx =>
                 {
-                    Logger = CliAppContext.Logger
-                };
-                if (settings.ClearDatabase) await indexer.Clear();
+                    ProgressTask task = ctx.AddTask("Indexing database");
+                    ItemIndexer indexer = new(writer)
+                    {
+                        Logger = CliAppContext.Logger
+                    };
+                    if (settings.ClearDatabase) await indexer.Clear();
 
-                indexer.Build(repository, new ItemFilter(),
-                    CancellationToken.None,
-                    new Progress<ProgressReport>(
-                        r => task.Increment(r.Percent - task.Value)));
+                    indexer.Build(repository, new ItemFilter(),
+                        CancellationToken.None,
+                        new Progress<ProgressReport>(
+                            r => task.Increment(r.Percent - task.Value)));
 
-                task.Increment(100 - task.Value);
-            });
-        writer.Close();
-        return 0;
+                    task.Increment(100 - task.Value);
+                });
+            writer.Close();
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]{ex.Message}[/]");
+            AnsiConsole.MarkupLineInterpolated($"[yellow]{ex.StackTrace}[/]");
+            return 2;
+        }
     }
 }
 

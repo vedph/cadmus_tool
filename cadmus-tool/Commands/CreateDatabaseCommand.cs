@@ -6,6 +6,7 @@ using Fusi.DbManager.PgSql;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -41,34 +42,43 @@ internal sealed class CreateDatabaseCommand :
         AnsiConsole.MarkupLine($"Database role: [cyan]{settings.DatabaseRole}[/]");
         AnsiConsole.MarkupLine($"Database name: [cyan]{settings.DatabaseName}[/]");
 
-        int result = 0;
-        AnsiConsole.Status().Start("Preparing...", ctx =>
+        try
         {
-            switch (settings.DatabaseRole.ToLowerInvariant())
+            int result = 0;
+            AnsiConsole.Status().Start("Preparing...", ctx =>
             {
-                case "index":
-                    AnsiConsole.MarkupLine(
-                        $"Creating index {settings.DatabaseName}...");
-                    CreateIndexDatabase(settings.DatabaseName,
-                        settings.DatabaseType);
-                    break;
-                case "graph":
-                    AnsiConsole.MarkupLine(
-                        $"Creating graph {settings.DatabaseName}...");
-                    GraphHelper.CreateGraphDatabase(settings.DatabaseName,
-                        settings.DatabaseType);
-                    break;
-                default:
-                    AnsiConsole.MarkupLine("[red]Invalid database role[/]: " +
-                        settings.DatabaseRole);
-                    result = 1;
+                switch (settings.DatabaseRole.ToLowerInvariant())
+                {
+                    case "index":
+                        AnsiConsole.MarkupLine(
+                            $"Creating index {settings.DatabaseName}...");
+                        CreateIndexDatabase(settings.DatabaseName,
+                            settings.DatabaseType);
                         break;
-            }
-        });
+                    case "graph":
+                        AnsiConsole.MarkupLine(
+                            $"Creating graph {settings.DatabaseName}...");
+                        GraphHelper.CreateGraphDatabase(settings.DatabaseName,
+                            settings.DatabaseType);
+                        break;
+                    default:
+                        AnsiConsole.MarkupLine("[red]Invalid database role[/]: " +
+                            settings.DatabaseRole);
+                        result = 1;
+                        break;
+                }
+            });
 
-        if (result == 0) AnsiConsole.MarkupLine("[green]Completed.[/]");
+            if (result == 0) AnsiConsole.MarkupLine("[green]Completed.[/]");
 
-        return Task.FromResult(result);
+            return Task.FromResult(result);
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]{ex.Message}[/]");
+            AnsiConsole.MarkupLineInterpolated($"[yellow]{ex.StackTrace}[/]");
+            return Task.FromResult(2);
+        }
     }
 }
 
