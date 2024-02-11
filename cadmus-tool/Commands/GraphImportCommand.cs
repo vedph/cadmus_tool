@@ -185,8 +185,7 @@ internal sealed class GraphImportCommand : AsyncCommand<GraphImportCommandSettin
         }
         catch (Exception ex)
         {
-            AnsiConsole.MarkupLineInterpolated($"[red]{ex.Message}[/]");
-            AnsiConsole.MarkupLineInterpolated($"[yellow]{ex.StackTrace}[/]");
+            CliHelper.DisplayException(ex);
             return Task.FromResult(2);
         }
     }

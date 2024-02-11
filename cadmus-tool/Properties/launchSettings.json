@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": "create-db graph cadmus-graph"
+      "commandLineArgs": "index cadmus-vela ./plugins/Cadmus.Vela.Services/seed-profile.json -g repository-provider.vela"
     }
   }
 }

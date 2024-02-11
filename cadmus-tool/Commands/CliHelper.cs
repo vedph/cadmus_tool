@@ -4,6 +4,8 @@ using System.IO;
 using Cadmus.Core;
 using Cadmus.Cli.Services;
 using Cadmus.Seed;
+using Spectre.Console;
+using System;
 
 namespace Cadmus.Cli.Commands;
 
@@ -36,5 +38,19 @@ internal static class CliHelper
                     tag +
                     " was not found among plugins in " +
                     PluginFactoryProvider.GetPluginsDir());
+    }
+
+    public static void DisplayException(Exception ex)
+    {
+        ArgumentNullException.ThrowIfNull(ex);
+
+        AnsiConsole.MarkupLineInterpolated($"[red]{ex.Message}[/]");
+        Exception? inner = ex.InnerException;
+        while (inner != null)
+        {
+            AnsiConsole.MarkupLineInterpolated($"- [red]{inner.Message}[/]");
+            inner = inner.InnerException;
+        }
+        AnsiConsole.MarkupLineInterpolated($"[yellow]{ex.StackTrace}[/]");
     }
 }
