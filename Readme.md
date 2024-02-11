@@ -498,7 +498,9 @@ You can add a header row or not, and use whatever name you want, as columns get 
 
 ### 9.0.4
 
-- 2024-02-11: updated packages.
+- 2024-02-11:
+  - updated packages.
+  - handle inner exception in CLI commands.
 
 ### 9.0.3
 

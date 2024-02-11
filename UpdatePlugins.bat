@@ -29,6 +29,8 @@ xcopy ..\Tgr\CadmusTgr\Cadmus.Tgr.Services\bin\Debug\net8.0\*.* %target%\Cadmus.
 REM VeLA
 xcopy ..\Vela\CadmusVelaApi\CadmusVelaApi\wwwroot\seed-profile.json %target%\Cadmus.Vela.Services\ /y
 xcopy ..\CadmusBricks\Cadmus.Refs.Bricks\bin\Debug\net8.0\*.* %target%\Cadmus.Vela.Services\ /y
+xcopy ..\Epigraphy\CadmusEpigraphy\Cadmus.Epigraphy.Parts\bin\Debug\net8.0\*.* %target%\Cadmus.Vela.Services\ /y
+xcopy ..\Geography\CadmusGeo\Cadmus.Geo.Parts\bin\Debug\net8.0\*.* %target%\Cadmus.Vela.Services\ /y
 xcopy ..\Vela\CadmusVela\Cadmus.Vela.Services\bin\Debug\net8.0\*.* %target%\Cadmus.Vela.Services\ /y
 
 pause
