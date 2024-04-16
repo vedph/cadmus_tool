@@ -12,9 +12,9 @@
 	  <Copyright>by Daniele Fusi</Copyright>
 	  <NeutralLanguage>en-US</NeutralLanguage>
 	  <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-	  <Version>9.0.4</Version>
-	  <FileVersion>9.0.4</FileVersion>
-	  <AssemblyVersion>9.0.4</AssemblyVersion>
+	  <Version>9.0.5</Version>
+	  <FileVersion>9.0.5</FileVersion>
+	  <AssemblyVersion>9.0.5</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="35.4.0" />
+    <PackageReference Include="Bogus" Version="35.5.0" />
     <PackageReference Include="Cadmus.Core" Version="7.0.2" />
     <PackageReference Include="Cadmus.General.Parts" Version="6.1.0" />
     <PackageReference Include="Cadmus.Graph" Version="7.0.2" />
@@ -58,8 +58,8 @@
     <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="8.2.0" />
     <PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="3.0.0" />
     <PackageReference Include="Fusi.Text" Version="4.0.1" />
-    <PackageReference Include="Fusi.Tools" Version="4.0.0" />
-    <PackageReference Include="Fusi.Tools.Configuration" Version="4.0.0" />
+    <PackageReference Include="Fusi.Tools" Version="5.0.0" />
+    <PackageReference Include="Fusi.Tools.Configuration" Version="5.0.0" />
     <PackageReference Include="McMaster.NETCore.Plugins" Version="1.4.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />

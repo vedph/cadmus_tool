@@ -17,31 +17,6 @@
     - [Thesaurus Import Command](#thesaurus-import-command)
       - [File Format](#file-format)
   - [History](#history)
-    - [9.0.4](#904)
-    - [9.0.3](#903)
-    - [9.0.2](#902)
-    - [9.0.1](#901)
-    - [9.0.0](#900)
-    - [8.0.10](#8010)
-    - [8.0.9](#809)
-    - [8.0.8](#808)
-    - [8.0.6](#806)
-    - [8.0.4](#804)
-    - [8.0.3](#803)
-    - [8.0.2](#802)
-    - [8.0.1](#801)
-    - [8.0.0](#800)
-    - [7.0.0](#700)
-    - [6.1.2](#612)
-    - [6.1.1](#611)
-    - [6.1.0](#610)
-    - [6.0.1](#601)
-    - [6.0.0](#600)
-    - [5.1.0](#510)
-    - [5.0.0](#500)
-    - [2.1.2](#212)
-    - [2.1.1](#211)
-    - [2.1.0](#210)
 
 Cadmus configuration and utility tool.
 
@@ -495,6 +470,10 @@ You must include the header row as the first row of the file. This allows changi
 You can add a header row or not, and use whatever name you want, as columns get identified by their order. You can anyway specify the sheet number, the first row number, and the first column number.
 
 ## History
+
+### 9.0.5
+
+- 2024-04-16: updated packages.
 
 ### 9.0.4
 
