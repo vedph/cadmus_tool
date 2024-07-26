@@ -36,27 +36,27 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="35.5.0" />
-    <PackageReference Include="Cadmus.Core" Version="7.0.2" />
-    <PackageReference Include="Cadmus.General.Parts" Version="6.1.0" />
-    <PackageReference Include="Cadmus.Graph" Version="7.0.2" />
-    <PackageReference Include="Cadmus.Graph.Ef.MySql" Version="7.0.2" />
-    <PackageReference Include="Cadmus.Graph.Ef.PgSql" Version="7.0.2" />
-    <PackageReference Include="Cadmus.Graph.Extras" Version="7.0.2" />
+    <PackageReference Include="Bogus" Version="35.6.0" />
+    <PackageReference Include="Cadmus.Core" Version="7.0.3" />
+    <PackageReference Include="Cadmus.General.Parts" Version="6.1.2" />
+    <PackageReference Include="Cadmus.Graph" Version="7.0.3" />
+    <PackageReference Include="Cadmus.Graph.Ef.MySql" Version="7.0.3" />
+    <PackageReference Include="Cadmus.Graph.Ef.PgSql" Version="7.0.3" />
+    <PackageReference Include="Cadmus.Graph.Extras" Version="7.0.3" />
     <PackageReference Include="Cadmus.Import" Version="4.0.17" />
     <PackageReference Include="Cadmus.Import.Excel" Version="4.0.17" />
-    <PackageReference Include="Cadmus.Index" Version="7.0.2" />
-    <PackageReference Include="Cadmus.Index.Ef.MySql" Version="7.0.2" />
-    <PackageReference Include="Cadmus.Index.Ef.PgSql" Version="7.0.2" />
-    <PackageReference Include="Cadmus.Index.MySql" Version="7.0.2" />
-    <PackageReference Include="Cadmus.Index.PgSql" Version="7.0.2" />
-    <PackageReference Include="Cadmus.Index.Sql" Version="7.0.2" />
-    <PackageReference Include="Cadmus.Mongo" Version="7.0.2" />
+    <PackageReference Include="Cadmus.Index" Version="7.0.3" />
+    <PackageReference Include="Cadmus.Index.Ef.MySql" Version="7.0.3" />
+    <PackageReference Include="Cadmus.Index.Ef.PgSql" Version="7.0.3" />
+    <PackageReference Include="Cadmus.Index.MySql" Version="7.0.3" />
+    <PackageReference Include="Cadmus.Index.PgSql" Version="7.0.3" />
+    <PackageReference Include="Cadmus.Index.Sql" Version="7.0.3" />
+    <PackageReference Include="Cadmus.Mongo" Version="7.0.3" />
     <PackageReference Include="Cadmus.Philology.Parts" Version="8.2.0" />
-    <PackageReference Include="Cadmus.Seed" Version="7.0.2" />
-    <PackageReference Include="Cadmus.Seed.General.Parts" Version="6.1.0" />
+    <PackageReference Include="Cadmus.Seed" Version="7.0.3" />
+    <PackageReference Include="Cadmus.Seed.General.Parts" Version="6.1.2" />
     <PackageReference Include="Cadmus.Seed.Philology.Parts" Version="8.2.0" />
-    <PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="3.0.0" />
+    <PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="3.0.1" />
     <PackageReference Include="Fusi.Text" Version="4.0.1" />
     <PackageReference Include="Fusi.Tools" Version="5.0.0" />
     <PackageReference Include="Fusi.Tools.Configuration" Version="5.0.0" />
@@ -66,11 +66,11 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
-    <PackageReference Include="Serilog" Version="3.1.1" />
+    <PackageReference Include="Serilog" Version="4.0.1" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-    <PackageReference Include="Spectre.Console" Version="0.48.0" />
-    <PackageReference Include="Spectre.Console.Cli" Version="0.48.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="Spectre.Console" Version="0.49.1" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.49.1" />
   </ItemGroup>
 
   <ItemGroup>
