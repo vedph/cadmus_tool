@@ -38,3 +38,4 @@ packages/
 *.scgdat
 PythiaApi/wwwroot/plugins/*.dll
 cadmus-log*.txt
+plugins/
