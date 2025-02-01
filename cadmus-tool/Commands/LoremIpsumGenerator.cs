@@ -23,7 +23,7 @@ internal static class LoremIpsumGenerator
 
     private static string[] RandomizeLines(string[] lines)
     {
-        List<KeyValuePair<int, string>> list = new();
+        List<KeyValuePair<int, string>> list = [];
         foreach (string line in lines)
             list.Add(new KeyValuePair<int, string>(_random.Next(), line));
 

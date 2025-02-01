@@ -34,7 +34,6 @@ public sealed class ThesaurusImportCommand :
     {
         AnsiConsole.MarkupLine("[red underline]IMPORT THESAURI[/]");
         AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");
-        AnsiConsole.MarkupLine($"Database Type: [cyan]{settings.DatabaseType}[/]");
         AnsiConsole.MarkupLine($"Input: [cyan]{settings.InputFileMask}[/]");
         AnsiConsole.MarkupLine($"Mode: [cyan]{settings.Mode}[/]");
         AnsiConsole.MarkupLine(
@@ -119,11 +118,6 @@ public class ThesaurusImportCommandSettings : CommandSettings
     [Description("The database name")]
     public string? DatabaseName { get; set; }
 
-    [CommandOption("-t|--db-type <DatabaseType>")]
-    [Description("The database type (pgsql or mysql)")]
-    [DefaultValue("pgsql")]
-    public string DatabaseType { get; set; }
-
     [CommandOption("-m|--mode <Mode>")]
     [Description("The import mode: R=replace, P=patch, S=synch")]
     [DefaultValue('R')]
@@ -150,7 +144,6 @@ public class ThesaurusImportCommandSettings : CommandSettings
 
     public ThesaurusImportCommandSettings()
     {
-        DatabaseType = "pgsql";
         Mode = 'R';
         ExcelSheet = 1;
         ExcelRow = 1;

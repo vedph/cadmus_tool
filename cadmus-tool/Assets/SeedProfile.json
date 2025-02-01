@@ -189,7 +189,7 @@
     }
   ],
   "indexer": {
-    "id": "item-index-writer.mysql"
+    "id": "item-index-writer.pgsql"
   },
   "thesauri": [
     {

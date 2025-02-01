@@ -27,8 +27,10 @@ internal sealed class GraphManyCommand : AsyncCommand<GraphManyCommandSettings>
                 $"Repository plugin tag: [cyan]{settings.RepositoryPluginTag}[/]");
         }
         Serilog.Log.Information("MAP TO GRAPH: " +
-                     $"Database: {settings.DatabaseName}, " +
-                     $"Repository plugin tag: {settings.RepositoryPluginTag}\n");
+                     "Database: {DatabaseName}, " +
+                     "Repository plugin tag: {RepositoryPluginTag}\n",
+                     settings.DatabaseName,
+                     settings.RepositoryPluginTag);
 
         try
         {
@@ -42,7 +44,7 @@ internal sealed class GraphManyCommand : AsyncCommand<GraphManyCommandSettings>
                 settings.RepositoryPluginTag, cs);
 
             IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
-                settings.DatabaseName!, settings.DatabaseType);
+                settings.DatabaseName!);
             GraphUpdater updater = new(graphRepository)
             {
                 // we want item-eid as an additional metadatum, derived from
@@ -114,17 +116,7 @@ internal class GraphManyCommandSettings : CommandSettings
     [Description("The database name")]
     public string? DatabaseName { get; set; }
 
-    [CommandOption("-t|--db-type <DatabaseType>")]
-    [Description("The database type (pgsql or mysql)")]
-    [DefaultValue("pgsql")]
-    public string DatabaseType { get; set; }
-
     [CommandOption("-g|--tag <RepositoryPluginTag>")]
     [Description("The repository factory plugin tag")]
     public string? RepositoryPluginTag { get; set; }
-
-    public GraphManyCommandSettings()
-    {
-        DatabaseType = "pgsql";
-    }
 }

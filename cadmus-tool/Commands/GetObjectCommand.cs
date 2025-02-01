@@ -44,12 +44,18 @@ internal sealed class GetObjectCommand : AsyncCommand<GetObjectCommandSettings>
             $"Item/part: [cyan]{(settings.IsPart ? "part" : "item")}[/]");
         AnsiConsole.MarkupLine($"XML: [cyan]{(settings.IsXml ? "yes" : "no")}[/]");
         Serilog.Log.Information("GET OBJECT: " +
-                          $"Database: {settings.DatabaseName}, " +
-                          $"ID: {settings.Id}, " +
-                          $"Repository plugin tag: {settings.RepositoryPluginTag}, " +
-                          $"Output: {settings.OutputDir}" +
-                          $"Item/part: {(settings.IsPart ? "part" : "item")}, " +
-                          $"XML: {(settings.IsXml ? "yes" : "no")}");
+                          "Database: {DatabaseName}, " +
+                          "ID: {Id}, " +
+                          "Repository plugin tag: {RepositoryPluginTag}, " +
+                          "Output: {OutputDir}, " +
+                          "IsPart: {IsPart}, " +
+                          "XML: {IsXml}",
+                          settings.DatabaseName,
+                          settings.Id,
+                          settings.RepositoryPluginTag,
+                          settings.OutputDir,
+                          settings.IsPart,
+                          settings.IsXml);
 
         try
         {

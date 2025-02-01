@@ -1,5 +1,4 @@
-﻿using Cadmus.Index.MySql;
-using Cadmus.Index.PgSql;
+﻿using Cadmus.Index.PgSql;
 using Cadmus.Index.Sql;
 using Fusi.Tools.Data;
 using Spectre.Console;
@@ -27,11 +26,7 @@ internal sealed class BuildIndexSqlCommand :
 
         try
         {
-            SqlQueryBuilderBase builder =
-                settings.DatabaseType.Equals("mysql",
-                    StringComparison.InvariantCultureIgnoreCase)
-                ? new MySqlQueryBuilder(settings.IsLegacy)
-                : new PgSqlQueryBuilder();
+            SqlQueryBuilderBase builder = new PgSqlQueryBuilder();
 
             if (!string.IsNullOrEmpty(settings.Query))
             {
@@ -67,18 +62,4 @@ public class BuildIndexSqlCommandSettings : CommandSettings
     [CommandOption("-q|--query <QUERY>")]
     [Description("The query text")]
     public string? Query { get; set; }
-
-    [CommandOption("-t|--db-type <DatabaseType>")]
-    [Description("The database type (pgsql or mysql)")]
-    [DefaultValue("pgsql")]
-    public string DatabaseType { get; set; }
-
-    [CommandOption("-l|--legacy")]
-    [Description("Whether the query uses legacy field names (MySql only)")]
-    public bool IsLegacy { get; set; }
-
-    public BuildIndexSqlCommandSettings()
-    {
-        DatabaseType = "pgsql";
-    }
 }

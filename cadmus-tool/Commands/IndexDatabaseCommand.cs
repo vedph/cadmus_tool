@@ -38,18 +38,21 @@ internal sealed class IndexDatabaseCommand :
         AnsiConsole.MarkupLine($"Clear: [cyan]{settings.ClearDatabase}[/]\n");
 
         Serilog.Log.Information("INDEX DATABASE: " +
-                     $"Database: {settings.DatabaseName}, " +
-                     $"Profile file: {settings.ProfilePath}, " +
-                     $"Repository plugin tag: {settings.RepositoryPluginTag}\n" +
-                     $"Clear: {settings.ClearDatabase}");
+                     "Database: {DatabaseName}, " +
+                     "Profile file: {ProfilePath}, " +
+                     "Repository plugin tag: {RepositoryPluginTag}\n" +
+                     "Clear: {settings.ClearDatabase}",
+                     settings.DatabaseName,
+                     settings.ProfilePath,
+                     settings.RepositoryPluginTag,
+                     settings.ClearDatabase);
 
         try
         {
             string profileContent = LoadProfile(settings.ProfilePath!);
 
             string cs = string.Format(
-                CliAppContext.Configuration.GetConnectionString(
-                    settings.DatabaseType == "mysql" ? "MyIndex" : "PgIndex")!,
+                CliAppContext.Configuration.GetConnectionString("Index")!,
                 settings.DatabaseName);
 
             StandardItemIndexFactoryProvider provider = new(cs);
@@ -108,11 +111,6 @@ internal class IndexDatabaseCommandSettings : CommandSettings
     [Description("The indexer profile JSON file path")]
     public string? ProfilePath { get; set; }
 
-    [CommandOption("-t|--db-type <DatabaseType>")]
-    [Description("The database type (pgsql or mysql)")]
-    [DefaultValue("pgsql")]
-    public string DatabaseType { get; set; }
-
     [CommandOption("-g|--tag <RepositoryPluginTag>")]
     [Description("The repository factory plugin tag")]
     public string? RepositoryPluginTag { get; set; }
@@ -120,9 +118,4 @@ internal class IndexDatabaseCommandSettings : CommandSettings
     [CommandOption("-c|--clear")]
     [Description("Clear before indexing")]
     public bool ClearDatabase { get; set; }
-
-    public IndexDatabaseCommandSettings()
-    {
-        DatabaseType = "pgsql";
-    }
 }

@@ -45,13 +45,20 @@ internal sealed class SeedDatabaseCommand :
         AnsiConsole.MarkupLine($"History: [cyan]{settings.HasHistory}[/]");
 
         Serilog.Log.Information("SEED DATABASE: " +
-                     $"Database: {settings.DatabaseName}, " +
-                     $"Profile file: {settings.ProfilePath}, " +
-                     $"Repository plugin tag: {settings.RepositoryPluginTag}\n" +
-                     $"Seeders plugin tag: {settings.SeederPluginTag}\n" +
-                     $"Count: {settings.Count}, " +
-                     $"Dry: {settings.IsDryRun}, " +
-                     $"History: {settings.HasHistory}");
+                     "Database: {DatabaseName}, " +
+                     "Profile file: {ProfilePath}, " +
+                     "Repository plugin tag: {RepositoryPluginTag}\n" +
+                     "Seeders plugin tag: {SeederPluginTag}\n" +
+                     "Count: {Count}, " +
+                     "Dry: {IsDryRun}, " +
+                     "History: {HasHistory}",
+                     settings.DatabaseName,
+                     settings.ProfilePath,
+                     settings.RepositoryPluginTag,
+                     settings.SeederPluginTag,
+                     settings.Count,
+                     settings.IsDryRun,
+                     settings.HasHistory);
 
         try
         {

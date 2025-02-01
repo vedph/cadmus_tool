@@ -28,7 +28,7 @@ Plugins are used to get Cadmus factory providers. A Cadmus factory provider plug
 
 >You can build your plugin with all its dependencies by publishing the library you wish to use as the import target. For instance, if you are going to use library `Cadmus.Itinera.Services` as a plugin, publish it and then copy published files into the corresponding plugin folder.
 
-The tool is like an empty shell, where project-dependent components are demanded to plugins under its `plugins` folder. The commands requiring plugins are those used to build a full Cadmus MySql index from its Mongo database, or to seed a Mongo Cadmus database with mock data. To this end, the CLI tool requires two factory objects: one for the repository, acting as the hub for all its parts and fragments; and another for the part and fragment seeders.
+The tool is like an empty shell, where project-dependent components are demanded to plugins under its `plugins` folder. The commands requiring plugins are those used to build a full Cadmus index from its Mongo database, or to seed a Mongo Cadmus database with mock data. To this end, the CLI tool requires two factory objects: one for the repository, acting as the hub for all its parts and fragments; and another for the part and fragment seeders.
 
 These providers glue together the composable Cadmus parts, and as such are surface components laid on top of each Cadmus solution, just like services in the web APIs. Usually they are located in the `Cadmus.PRJ.Services` (where `PRJ` is your project name) library of your project.Plugins are an easy solution for the CLI tool because runtime binding via reflection there is a viable option, which instead is not the case for the API backend (which gets packed into a different Docker image for each solution).
 
@@ -85,11 +85,10 @@ To run the tool, enter its folder and run:
 🎯 Build SQL code for querying the Cadmus index database, once or interactively.
 
 ```ps1
-./cadmus-tool build-sql [-q query] [-t <pgsql|mysql>] [-l legacy]
+./cadmus-tool build-sql [-q query] [-l legacy]
 ```
 
 - `-q`: the query (for non-interactive mode).
-- `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
 - `-l`: use legacy syntax for the query. Default is `false`.
 
 This allows you to interactively build SQL code. Otherwise, add your query after a `-q` option, e.g.:
@@ -103,10 +102,8 @@ This allows you to interactively build SQL code. Otherwise, add your query after
 🎯 Create an index or graph database with its own schema.
 
 ```ps1
-./cadmus-tool create-db <index|graph> <DatabaseName> [-t <pgsql|mysql>]
+./cadmus-tool create-db <index|graph> <DatabaseName>
 ```
-
-- `t`: the database type: `pgsql`=PostgreSql (default) or `mysql`=MySql.
 
 Sample:
 
@@ -140,10 +137,9 @@ Sample:
 This requires a plugin with providers for the repository factory and the parts seeders factory. Each project has its own plugin, which must be placed in a subfolder of the tool's `plugins` folder.
 
 ```ps1
-./cadmus-tool index <DatabaseName> <JsonProfilePath> [-t <pgsql|mysql>] [-g <RepositoryPluginTag>] [-c]
+./cadmus-tool index <DatabaseName> <JsonProfilePath> [-g <RepositoryPluginTag>] [-c]
 ```
 
-- `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
 - `-g`: the target repository provider plugin tag (e.g. `repository-provider.itinera`).
 - `-c`=clear the target database when it exists.
 
@@ -247,7 +243,6 @@ Sample:
 ./cadmus-tool graph-import <SourcePath> <DatabaseName> [-g <RepositoryPluginTag>] [-m <ImportMode>] [-d] [-r] [-p <ThesaurusIdPrefix>]
 ```
 
-- `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
 - `-m`: import mode: `n`odes (default), `t`riples, `m`appings, t`h`esauri. Mappings are imported by their _name_, so if you import a mapping with a name equal to one already present in the database, the old one will be updated.
 - `-r`: when importing thesauri, make the thesaurus' ID the root class node.
 - `-p <ThesaurusIdPrefix>`: when importing thesauri, set the prefix to be added to each class node.
@@ -331,10 +326,9 @@ All data files are JSON documents, having as their root element an **array** of 
 🎯 Map a single item/part into graph.
 
 ```ps1
-./cadmus-tool graph-one <DatabaseName> <Id> [-t <pgsql|mysql>] [-g <RepositoryPluginTag>] [-p] [-d]
+./cadmus-tool graph-one <DatabaseName> <Id> [-g <RepositoryPluginTag>] [-p] [-d]
 ```
 
-- `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
 - `-g`: the target repository provider plugin tag (e.g. `repository-provider.itinera`).
 - `-p`: the ID refers to a part rather than to an item.
 - `-d`: the ID refers to an item/part which was deleted.
@@ -351,10 +345,9 @@ Sample:
 🎯 Map all the items into graph.
 
 ```ps1
-./cadmus-tool graph-many <DatabaseName> [-t <pgsql|mysql>] [-g <RepositoryPluginTag>]
+./cadmus-tool graph-many <DatabaseName> [-g <RepositoryPluginTag>]
 ```
 
-- `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
 - `-g`: the target repository provider plugin tag (e.g. `repository-provider.itinera`).
 
 Sample:
@@ -368,10 +361,8 @@ Sample:
 🎯 Update the index of nodes classes in the index database. This is a potentially long task, depending on the number of nodes and the depth of class hierarchies.
 
 ```ps1
-./cadmus-tool graph-cls <DatabaseName> <ProfilePath> [-t <pgsql|mysql>]
+./cadmus-tool graph-cls <DatabaseName> <ProfilePath>
 ```
-
-- `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
 
 Sample:
 
@@ -384,10 +375,9 @@ Sample:
 🎯 Import one or more thesauri from one or more file(s) into a Cadmus database. Files can be JSON, CSV, XLS, XLSX and are selected according to their extension. Any unknown extension is treated as a JSON source.
 
 ```ps1
-./cadmus-tool thes-import <InputFileMask> <DatabaseName> [-t <pgsql|mysql>] [-m <R|P|S>] [-d]
+./cadmus-tool thes-import <InputFileMask> <DatabaseName> [-m <R|P|S>] [-d]
 ```
 
-- `-t`: the target database type (`pgsql` or `mysql`). Default is `pgsql`.
 - `-m`: the import mode, specifying how to deal when importing onto existing thesauri:
   - `R` = replace (default): if the imported thesaurus already exists, it is fully replaced by the new one.
   - `P` = patch: the existing thesaurus is patched with the imported one: any existing entry has its value overwritten; any non existing entry is just added.
@@ -471,6 +461,11 @@ You can add a header row or not, and use whatever name you want, as columns get 
 
 ## History
 
+### 10.0.0
+
+- 2025-02-01:
+  - ⚠️ upgraded to NET 9.
+  - removed legacy MySql support.
 - 2024-07-26: updated packages.
 
 ### 9.0.5

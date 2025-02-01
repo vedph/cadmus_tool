@@ -23,7 +23,7 @@ internal sealed class GraphUpdateClassesCommand :
         try
         {
             IGraphRepository repository = GraphHelper.GetGraphRepository(
-                settings.DatabaseName!, settings.DatabaseType);
+                settings.DatabaseName!);
             if (repository == null) return 2;
 
             await AnsiConsole.Progress().StartAsync(async ctx =>
@@ -55,14 +55,4 @@ internal class UpdateGraphClassesCommandSettings : CommandSettings
     [CommandArgument(1, "<ProfilePath>")]
     [Description("The indexer profile JSON file path")]
     public string? ProfilePath { get; set; }
-
-    [CommandOption("-t|--db-type <DatabaseType>")]
-    [Description("The database type (pgsql or mysql)")]
-    [DefaultValue("pgsql")]
-    public string DatabaseType { get; set; }
-
-    public UpdateGraphClassesCommandSettings()
-    {
-        DatabaseType = "pgsql";
-    }
 }

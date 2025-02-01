@@ -22,7 +22,7 @@ internal sealed class GraphImportCommand : AsyncCommand<GraphImportCommandSettin
         GraphImportCommandSettings settings)
     {
         // source id : graph id
-        Dictionary<int, int> ids = new();
+        Dictionary<int, int> ids = [];
 
         JsonGraphPresetReader reader = new();
         foreach (NodeMapping mapping in reader.LoadMappings(source))
@@ -131,14 +131,13 @@ internal sealed class GraphImportCommand : AsyncCommand<GraphImportCommandSettin
         }
     }
 
-    public override Task<int> ExecuteAsync(CommandContext context,
+    public override async Task<int> ExecuteAsync(CommandContext context,
         GraphImportCommandSettings settings)
     {
         AnsiConsole.MarkupLine("[red underline]IMPORT INTO GRAPH[/]");
         AnsiConsole.MarkupLine($"Source: [cyan]{settings.SourcePath}[/]");
         AnsiConsole.MarkupLine($"Mode: [cyan]{settings.Mode}[/]");
         AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");
-        AnsiConsole.MarkupLine($"Database type: [cyan]{settings.DatabaseType}[/]");
         if (!string.IsNullOrEmpty(settings.RepositoryPluginTag))
         {
             AnsiConsole.MarkupLine(
@@ -158,10 +157,10 @@ internal sealed class GraphImportCommand : AsyncCommand<GraphImportCommandSettin
         try
         {
             IGraphRepository repository = GraphHelper.GetGraphRepository(
-                settings.DatabaseName!, settings.DatabaseType);
+                settings.DatabaseName!);
             if (repository != null)
             {
-                using Stream source = new FileStream(settings.SourcePath!,
+                await using Stream source = new FileStream(settings.SourcePath!,
                     FileMode.Open, FileAccess.Read, FileShare.Read);
 
                 switch (char.ToLowerInvariant(settings.Mode))
@@ -181,12 +180,12 @@ internal sealed class GraphImportCommand : AsyncCommand<GraphImportCommandSettin
                 }
             }
 
-            return Task.FromResult(0);
+            return await Task.FromResult(0);
         }
         catch (Exception ex)
         {
             CliHelper.DisplayException(ex);
-            return Task.FromResult(2);
+            return await Task.FromResult(2);
         }
     }
 }
@@ -203,11 +202,6 @@ internal class GraphImportCommandSettings : CommandSettings
     [CommandArgument(1, "<DatabaseName>")]
     [Description("The database name")]
     public string? DatabaseName { get; set; }
-
-    [CommandOption("-t|--db-type <DatabaseType>")]
-    [Description("The database type (pgsql or mysql)")]
-    [DefaultValue("pgsql")]
-    public string DatabaseType { get; set; }
 
     [CommandOption("-g|--tag <RepositoryPluginTag>")]
     [Description("The repository factory plugin tag")]
@@ -235,6 +229,5 @@ internal class GraphImportCommandSettings : CommandSettings
     public GraphImportCommandSettings()
     {
         Mode = 'n';
-        DatabaseType = "pgsql";
     }
 }

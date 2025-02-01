@@ -1,9 +1,7 @@
 ﻿using Cadmus.Cli.Services;
 using Cadmus.Graph;
 using Cadmus.Graph.Ef;
-using Cadmus.Graph.Ef.MySql;
 using Cadmus.Graph.Ef.PgSql;
-using Fusi.DbManager.MySql;
 using Fusi.DbManager.PgSql;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -25,7 +23,7 @@ internal static class GraphHelper
 
     public static IList<NodeMapping> ParseMappings(string json)
     {
-        List<NodeMapping> mappings = new();
+        List<NodeMapping> mappings = [];
         JsonSerializerOptions options = new()
         {
             AllowTrailingCommas = true,
@@ -46,38 +44,23 @@ internal static class GraphHelper
         return ParseMappings(LoadText(path));
     }
 
-    public static void CreateGraphDatabase(string dbName, string dbType = "pgsql")
+    public static void CreateGraphDatabase(string dbName)
     {
         ArgumentNullException.ThrowIfNull(dbName);
-        ArgumentNullException.ThrowIfNull(dbType);
 
-        string cst = CliAppContext.Configuration.GetConnectionString(
-            dbType == "mysql" ? "MyGraph" : "PgGraph")!;
-        if (dbType == "mysql")
-        {
-            MySqlDbManager mgr = new(cst);
-            mgr.CreateDatabase(dbName, EfMySqlGraphRepository.GetSchema(), null);
-        }
-        else
-        {
-            PgSqlDbManager mgr = new(cst);
-            mgr.CreateDatabase(dbName, EfPgSqlGraphRepository.GetSchema(), null);
-        }
+        string cst = CliAppContext.Configuration.GetConnectionString("Graph")!;
+        PgSqlDbManager mgr = new(cst);
+        mgr.CreateDatabase(dbName, EfPgSqlGraphRepository.GetSchema(), null);
     }
 
-    public static IGraphRepository GetGraphRepository(string dbName,
-        string dbType = "pgsql")
+    public static IGraphRepository GetGraphRepository(string dbName)
     {
         ArgumentNullException.ThrowIfNull(dbName);
-        ArgumentNullException.ThrowIfNull(dbType);
 
         string cs = string.Format(CliAppContext.Configuration
-            .GetConnectionString(dbType == "mysql" ? "MyGraph" : "PgGraph")!,
-                                 dbName);
+            .GetConnectionString("Graph")!, dbName);
 
-        EfGraphRepository repository = dbType == "mysql"
-            ? new EfMySqlGraphRepository()
-            : new EfPgSqlGraphRepository();
+        EfGraphRepository repository = new EfPgSqlGraphRepository();
         repository.Configure(new EfGraphRepositoryOptions
         {
             ConnectionString = cs

@@ -29,9 +29,12 @@ internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
             $"{(settings.IsPart ? "Part" : "Item")} ID: [cyan]{settings.Id}[/]");
 
         Serilog.Log.Information("MAP TO GRAPH: " +
-                     $"Database: {settings.DatabaseName}, " +
-                     $"Repository plugin tag: {settings.RepositoryPluginTag}\n" +
-                     $"{(settings.IsPart ? "Part" : "Item")} ID: {settings.Id}\n");
+                     "Database: {DatabaseName}, " +
+                     "Repository plugin tag: {RepositoryPluginTag}\n" +
+                     "Model ID: {Id}\n",
+                     settings.DatabaseName,
+                     settings.RepositoryPluginTag,
+                     settings.Id);
 
         try
         {
@@ -78,7 +81,7 @@ internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
 
             // update graph
             IGraphRepository graphRepository = GraphHelper.GetGraphRepository(
-                settings.DatabaseName!, settings.DatabaseType);
+                settings.DatabaseName!);
             GraphUpdater updater = new(graphRepository)
             {
                 // we want item-eid as an additional metadatum, derived from
@@ -166,11 +169,6 @@ internal class GraphOneCommandSettings : CommandSettings
     [Description("The item/part ID")]
     public string? Id { get; set; }
 
-    [CommandOption("-t|--db-type <DatabaseType>")]
-    [Description("The database type (pgsql or mysql)")]
-    [DefaultValue("pgsql")]
-    public string DatabaseType { get; set; }
-
     [CommandOption("-g|--tag <RepositoryPluginTag>")]
     [Description("The repository factory plugin tag")]
     public string? RepositoryPluginTag { get; set; }
@@ -186,9 +184,4 @@ internal class GraphOneCommandSettings : CommandSettings
     [CommandOption("-x|--explain")]
     [Description("Explain the graph update")]
     public bool Explain { get; set; }
-
-    public GraphOneCommandSettings()
-    {
-        DatabaseType = "pgsql";
-    }
 }
