@@ -33,7 +33,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.101
+          dotnet-version: 9.0.x
 
       - name: Build
         shell: bash
@@ -43,7 +43,7 @@ jobs:
           release_name="App-$tag-${{ matrix.target }}"
 
           # Build everything
-          dotnet publish ./cadmus-tool/cadmus-tool.csproj --framework net8.0 --self-contained --runtime "${{ matrix.target }}" -c Release -o "$release_name"
+          dotnet publish ./cadmus-tool/cadmus-tool.csproj --framework net9.0 --self-contained --runtime "${{ matrix.target }}" -c Release -o "$release_name"
 
           # Pack files
           if [ "${{ matrix.target }}" == "win-x64" ]; then
