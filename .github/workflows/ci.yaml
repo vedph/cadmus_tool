@@ -30,51 +30,25 @@ jobs:
       - name: Fetch tags
         run: git fetch --tags
 
-      # Try downloading and installing .NET 9 SDK directly
-      - name: Download .NET 9 SDK
+      - name: Install .NET 9 SDK
         shell: bash
         run: |
-          if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            curl -Lo dotnet-install.ps1 https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.ps1
-            pwsh -Command "./dotnet-install.ps1 -Version 9.0.102 -InstallDir $env:DOTNET_ROOT"
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            Invoke-WebRequest 'https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.ps1' -OutFile dotnet-install.ps1
+            ./dotnet-install.ps1 -Channel 9.0 -Version 9.0.102 -InstallDir "$env:ProgramFiles\dotnet"
           else
-            curl -Lo dotnet-install.sh https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh
+            curl -L https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
             chmod +x ./dotnet-install.sh
-            ./dotnet-install.sh --version 9.0.102 --install-dir $DOTNET_ROOT
+            ./dotnet-install.sh --version 9.0.102 --install-dir /usr/share/dotnet
           fi
+          echo "PATH=$PATH:/usr/share/dotnet" >> $GITHUB_ENV
+          echo "DOTNET_ROOT=/usr/share/dotnet" >> $GITHUB_ENV
 
-      # Add diagnostic steps
-      - name: Check DOTNET_ROOT
+      - name: Verify .NET Installation
         shell: bash
         run: |
-          echo "DOTNET_ROOT: $DOTNET_ROOT"
-          if [ -d "$DOTNET_ROOT" ]; then
-            ls -la $DOTNET_ROOT
-          else
-            echo "DOTNET_ROOT directory not found"
-          fi
-
-      - name: Check installed SDKs before setup-dotnet
-        shell: bash
-        run: |
-          dotnet --list-sdks || echo "No SDKs found initially"
-
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: |
-            9.0.102
-            8.0.100
-
-      - name: Verify .NET installation
-        shell: bash
-        run: |
-          echo "Installed .NET SDKs:"
-          dotnet --list-sdks
-          echo "Current .NET version:"
           dotnet --version
-          echo "dotnet --info output:"
-          dotnet --info
+          dotnet --list-sdks
 
       - name: Build
         shell: bash
@@ -82,15 +56,18 @@ jobs:
           tag=$(git describe --tags --abbrev=0)
           release_name="App-$tag-${{ matrix.target }}"
 
-          echo "Starting build with dotnet publish..."
-          dotnet publish "./cadmus-tool/cadmus-tool.csproj" --framework net9.0 --self-contained --runtime "${{ matrix.target }}" -c Release -o "$release_name" -v detailed
+          # Build everything
+          dotnet publish "./cadmus-tool/cadmus-tool.csproj" --framework net9.0 --self-contained --runtime "${{ matrix.target }}" -c Release -o "$release_name"
 
+          # Pack files
           if [ "${{ matrix.target }}" == "win-x64" ]; then
+            # Pack to zip for Windows
             7z a -tzip "${release_name}.zip" "./${release_name}/*"
           else
             tar czvf "${release_name}.tar.gz" "$release_name"
           fi
 
+          # Delete output directory
           rm -r "$release_name"
 
       - name: Publish
