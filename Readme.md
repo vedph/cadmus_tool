@@ -55,12 +55,12 @@ tar -xf App-v.8.0.8-linux-x64.tar.gz
 rm App-v.8.0.8-linux-x64.tar.gz
 ```
 
-(3) rename the folder and grant permissions to the tool (change 777 as you wish):
+(3) rename the folder and grant permissions to the tool:
 
 ```bash
 mv App-v.8.0.8-linux-x64 cadmus-tool
 cd cadmus-tool
-chmod 777 cadmus-tool
+chmod +x cadmus-tool
 ```
 
 (4) get the plugin and unzip it:
@@ -460,6 +460,10 @@ You must include the header row as the first row of the file. This allows changi
 You can add a header row or not, and use whatever name you want, as columns get identified by their order. You can anyway specify the sheet number, the first row number, and the first column number.
 
 ## History
+
+### 10.0.1
+
+- 2025-03-15: updated packages.
 
 ### 10.0.0
 

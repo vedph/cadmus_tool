@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": "index cadmus-renovella ./plugins/Cadmus.Renovella.Services/seed-profile.json -g repository-provider.renovella"
+      "commandLineArgs": "index cadmus-vela ./plugins/Cadmus.Vela.Services/seed-profile.json -g repository-provider.vela"
     }
   }
 }
