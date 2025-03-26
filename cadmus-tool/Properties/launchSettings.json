@@ -2,7 +2,7 @@
   "profiles": {
     "cadmus-tool": {
       "commandName": "Project",
-      "commandLineArgs": "index cadmus-vela ./plugins/Cadmus.Vela.Services/seed-profile.json -g repository-provider.vela"
+      "commandLineArgs": "run-mongo cadmus -y -s \"db.getCollection(\"flags\").updateOne({ \"_id\": 4 },{ \"$set\":{\"isAdmin\": true }}\");\""
     }
   }
 }

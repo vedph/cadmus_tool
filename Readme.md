@@ -16,7 +16,37 @@
     - [Update Graph Classes Command](#update-graph-classes-command)
     - [Thesaurus Import Command](#thesaurus-import-command)
       - [File Format](#file-format)
+    - [Run Mongo Command](#run-mongo-command)
   - [History](#history)
+    - [10.0.2](#1002)
+    - [10.0.1](#1001)
+    - [10.0.0](#1000)
+    - [9.0.5](#905)
+    - [9.0.4](#904)
+    - [9.0.3](#903)
+    - [9.0.2](#902)
+    - [9.0.1](#901)
+    - [9.0.0](#900)
+    - [8.0.10](#8010)
+    - [8.0.9](#809)
+    - [8.0.8](#808)
+    - [8.0.6](#806)
+    - [8.0.4](#804)
+    - [8.0.3](#803)
+    - [8.0.2](#802)
+    - [8.0.1](#801)
+    - [8.0.0](#800)
+    - [7.0.0](#700)
+    - [6.1.2](#612)
+    - [6.1.1](#611)
+    - [6.1.0](#610)
+    - [6.0.1](#601)
+    - [6.0.0](#600)
+    - [5.1.0](#510)
+    - [5.0.0](#500)
+    - [2.1.2](#212)
+    - [2.1.1](#211)
+    - [2.1.0](#210)
 
 Cadmus configuration and utility tool.
 
@@ -459,7 +489,44 @@ You must include the header row as the first row of the file. This allows changi
 
 You can add a header row or not, and use whatever name you want, as columns get identified by their order. You can anyway specify the sheet number, the first row number, and the first column number.
 
+### Run Mongo Command
+
+🎯 Run Mongo a script targeting the specified database. This is an experimental feature. Note that not all the commands are supported.
+
+```ps1
+./cadmus-tool run-mongo <DatabaseName> [-s <Script>] [-f <ScriptFilePath>]
+```
+
+- `-s`: the script to run.
+- `-f`: the file with the script to run.
+
+Sample:
+
+```ps1
+./cadmus-tool run-mongo cadmus-vela -s "db.getCollection(flags).updateOne({ _id: 4 },{ $set:{isAdmin: true }})"
+```
+
+👉 Supported commands:
+
+1. Collection Operations:
+   - data manipulation: `find`, `findOne`, `insertOne`, `insertMany`, `updateOne`, `updateMany`, `replaceOne`, `deleteOne`, `deleteMany`.
+   - collection administration: `drop`, `createIndex`, `dropIndex`, `countDocuments`.
+2. Database Operations:
+   - administration: `createCollection`, `dropDatabase`, `getCollectionNames`, `listCollections`.
+   - information: `stats`, `runCommand`.
+3. Connection Operations:
+   - `use [database]` - switches to the specified database.
+4. Collection Access Methods:
+   - `db.collection` - directly access a collection with dot notation.
+   - `db.getCollection("name")` - access a collection by name.
+
 ## History
+
+### 10.0.2
+
+- 2025-03-26:
+  - ➕ added `run-mongo` command.
+  - updated packages.
 
 ### 10.0.1
 

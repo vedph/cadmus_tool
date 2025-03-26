@@ -91,6 +91,9 @@ public static class Program
 
                 config.AddCommand<ThesaurusImportCommand>("thes-import")
                     .WithDescription("Import thesauri into the database.");
+
+                config.AddCommand<RunMongoScriptCommand>("run-mongo")
+                    .WithDescription("Run a MongoDB script.");
             });
 
             int result = await app.RunAsync(args);
