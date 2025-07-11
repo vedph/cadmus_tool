@@ -8,9 +8,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D5047798-0FAE-493A-A822-90E49F6343E2}"
 	ProjectSection(SolutionItems) = preProject
 		build-cli.ps1 = build-cli.ps1
+		CHANGELOG.md = CHANGELOG.md
 		Pack.bat = Pack.bat
 		Push.bat = Push.bat
-		Readme.md = Readme.md
+		README.md = README.md
 		UpdatePlugins.bat = UpdatePlugins.bat
 	EndProjectSection
 EndProject

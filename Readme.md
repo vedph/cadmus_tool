@@ -17,36 +17,6 @@
     - [Thesaurus Import Command](#thesaurus-import-command)
       - [File Format](#file-format)
     - [Run Mongo Command](#run-mongo-command)
-  - [History](#history)
-    - [10.0.2](#1002)
-    - [10.0.1](#1001)
-    - [10.0.0](#1000)
-    - [9.0.5](#905)
-    - [9.0.4](#904)
-    - [9.0.3](#903)
-    - [9.0.2](#902)
-    - [9.0.1](#901)
-    - [9.0.0](#900)
-    - [8.0.10](#8010)
-    - [8.0.9](#809)
-    - [8.0.8](#808)
-    - [8.0.6](#806)
-    - [8.0.4](#804)
-    - [8.0.3](#803)
-    - [8.0.2](#802)
-    - [8.0.1](#801)
-    - [8.0.0](#800)
-    - [7.0.0](#700)
-    - [6.1.2](#612)
-    - [6.1.1](#611)
-    - [6.1.0](#610)
-    - [6.0.1](#601)
-    - [6.0.0](#600)
-    - [5.1.0](#510)
-    - [5.0.0](#500)
-    - [2.1.2](#212)
-    - [2.1.1](#211)
-    - [2.1.0](#210)
 
 Cadmus configuration and utility tool.
 
@@ -74,28 +44,28 @@ In this sample I setup the tool with a plugin in an Ubuntu server.
 
 (1) download the tool (change the version to the latest one):
 
-```bash
-wget https://github.com/vedph/cadmus_tool/releases/download/v.8.0.8/App-v.8.0.8-linux-x64.tar.gz
+```sh
+wget https://github.com/vedph/cadmus_tool/releases/download/v.10.0.3/App-v.10.0.3-linux-x64.tar.gz
 ```
 
 (2) unzip it and remove the archive:
 
-```bash
-tar -xf App-v.8.0.8-linux-x64.tar.gz
-rm App-v.8.0.8-linux-x64.tar.gz
+```sh
+tar -xf App-v.10.0.3-linux-x64.tar.gz
+rm App-v.10.0.3-linux-x64.tar.gz
 ```
 
 (3) rename the folder and grant permissions to the tool:
 
-```bash
-mv App-v.8.0.8-linux-x64 cadmus-tool
+```sh
+mv App-v.10.0.3-linux-x64 cadmus-tool
 cd cadmus-tool
 chmod +x cadmus-tool
 ```
 
 (4) get the plugin and unzip it:
 
-```bash
+```sh
 cd plugins
 wget http://www.fusisoft.it/xfer/cadmus/cli/plugins/Cadmus.Itinera.Services.zip
 unzip Cadmus.Itinera.Services.zip
@@ -104,7 +74,7 @@ rm Cadmus.Itinera.Services.zip
 
 To run the tool, enter its folder and run:
 
-```bash
+```sh
 ./cadmus-tool
 ```
 
@@ -112,9 +82,9 @@ To run the tool, enter its folder and run:
 
 ### Build SQL Command
 
-🎯 Build SQL code for querying the Cadmus index database, once or interactively.
+🎯 Build SQL code for querying the Cadmus index database, just once or interactively.
 
-```ps1
+```sh
 ./cadmus-tool build-sql [-q query] [-l legacy]
 ```
 
@@ -123,7 +93,7 @@ To run the tool, enter its folder and run:
 
 This allows you to interactively build SQL code. Otherwise, add your query after a `-q` option, e.g.:
 
-```bash
+```sh
 ./cadmus-tool build-sql [dsc*=even]
 ```
 
@@ -131,13 +101,13 @@ This allows you to interactively build SQL code. Otherwise, add your query after
 
 🎯 Create an index or graph database with its own schema.
 
-```ps1
+```sh
 ./cadmus-tool create-db <index|graph> <DatabaseName>
 ```
 
-Sample:
+👉 Sample:
 
-```ps1
+```sh
 ./cadmus-tool create-db index cadmus-itinera
 
 ./cadmus-tool create-db graph cadmus-itinera-graph
@@ -147,16 +117,16 @@ Sample:
 
 🎯 Get the JSON code representing an item or a part's content, optionally also converted in XML.
 
-```ps1
+```sh
 ./cadmus-tool get-obj <DatabaseName> <ID> <OutputDir> [-g <RepositoryPluginTag>] [-p] [-x]
 ```
 
 - `p`: the ID refers to a part rather than to an item.
 - `x`: also write an XML version of the result.
 
-Sample:
+👉 Sample:
 
-```ps1
+```sh
 ./cadmus-tool get-obj cadmus 8e5d5b5d-4b27-4d00-9038-f611a8e199b9 c:\users\dfusi\desktop\ -g repository-provider.itinera -p -x
 ```
 
@@ -166,16 +136,16 @@ Sample:
 
 This requires a plugin with providers for the repository factory and the parts seeders factory. Each project has its own plugin, which must be placed in a subfolder of the tool's `plugins` folder.
 
-```ps1
+```sh
 ./cadmus-tool index <DatabaseName> <JsonProfilePath> [-g <RepositoryPluginTag>] [-c]
 ```
 
 - `-g`: the target repository provider plugin tag (e.g. `repository-provider.itinera`).
 - `-c`=clear the target database when it exists.
 
-Sample:
+👉 Sample:
 
-```bash
+```sh
 ./cadmus-tool index cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json -g repository-provider.itinera
 ```
 
@@ -183,7 +153,7 @@ Sample:
 
 🎯 Create a new Cadmus MongoDB database (if the specified database does not already exists), and seed it with a specified number of random items.
 
-```ps1
+```sh
 ./cadmus-tool seed <DatabaseName> <JsonProfilePath> [-g <RepositoryPluginTag>] [-s <SeedersFactoryPluginTag>] [-c count] [-d] [-h]
 ```
 
@@ -191,85 +161,99 @@ Sample:
 - `-d`: dry run, i.e. create the items and parts, but do not create the database nor store anything into it. This is used to test for seeder issues before actually running the command.
 - `-h`: add history items and parts together with the seeded items and parts. Default is `false`. In a real-world database you should set this to `true`.
 
-Sample:
+👉 Sample:
 
-```ps1
+```sh
 ./cadmus-tool seed cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json -g repository-provider.itinera -s seeder-factory-provider.itinera -c 10 -d
 ```
 
 ### Graph Dereference Mappings
 
-🎯 Dereference mappings in a JSON mappings file by outputting a fully dereferenced list of mappings into another file. This can then be imported via [graph-import](#import-graph-presets-command).
+🎯 Dereference mappings in a JSON mappings file by outputting a fully dereferenced list of mappings into another file. This can then be imported via [graph-import](#graph-import-command).
 
-```ps1
+```sh
 ./cadmus-tool graph-deref <InputPath> <OutputPath>
 ```
 
-Sample:
+💡 A JSON mappings document has an object at its root with two main sections:
 
-```ps1
-./cadmus-tool graph-deref c:/users/dfusi/desktop/mappings.json c:/users/dfusi/desktop/mappings-d.json
-```
-
-💡 A mappings document can be used to avoid repeating the same mappings in different places as children mappings. In this JSON document, you have a dictionary of named mappings, where each mapping is keyed under an ID; and a list of document mappings, including all the mappings you want to use. Inside them, you can either specify an inline mapping via `Value`, or reference it via `ReferenceId`. For instance:
+- `namedMappings`, an optional object where each property is a named mapping template. This is used to avoid repeating the same mapping node in each mapping tree where it is used.
+- `documentMappings`: an array of mapping objects. Each is the root of a tree of mappings. Among the mapping's `children` property, you can reference a named mapping by just adding its name. For instance, here the first 5 children are just references, expected to be found in `namedMappings`:
 
 ```json
 {
-  "NamedMappings": {
-    "event_note": {
-      "name": "event's note",
-      "source": "note",
-      "sid": "{$eid-sid}/note",
+  "name": "person_birth_event",
+  "sourceType": 2,
+  "facetFilter": "person",
+  "partTypeFilter": "it.vedph.historical-events",
+  "description": "Map person birth event",
+  "source": "events[?type=='person.birth']",
+  "sid": "{$part-id}/{@eid}",
+  "output": {
+    "metadata": {
+      "sid": "{$part-id}/{@eid}",
+      "person": "x:persons/{$metadata-pid}/{$item-eid}"
+    },
+    "nodes": {
+      "event": "x:events/{$sid} [x:events/{@eid}]"
+    },
+    "triples": [
+      "{?event} a crm:E67_birth",
+      "{?event} crm:P2_has_type x:event-types/person.birth",
+      "{?event} crm:P98_brought_into_life {$person}"
+    ]
+  },
+  "children": [
+    {
+      "name": "event_description"
+    },
+    {
+      "name": "event_note"
+    },
+    {
+      "name": "event_chronotopes"
+    },
+    {
+      "name": "event_assertion"
+    },
+    {
+      "name": "event_tag"
+    },
+    {
+      "name": "person_birth_event/related/by_mother",
+      "source": "relatedEntities[?relation=='mother']",
       "output": {
         "nodes": {
-          "note": "x:notes/n"
+          "mother": "{@id.target.gid}"
         },
-        "triples": ["{?event} crm:P3_has_note \"{$.}\""]
+        "triples": ["{?event} crm:P96_by_mother {?mother}"]
       }
-    }
-  },
-  "DocumentMappings": [
+    },
     {
-      "name": "birth",
-      "sourceType": 2,
-      "facetFilter": "person",
-      "partTypeFilter": "it.vedph.historical-events",
-      "description": "Map birth event",
-      "source": "events[?type=='person.birth']",
+      "name": "person_birth_event/related/from_father",
+      "source": "relatedEntities[?relation=='father']",
       "output": {
-        "metadata": {
-          "eid-sid": "{$part-id}/{@eid}"
-        }
-      },
-      "children": [
-        {
-          "Value": {
-            "name": "birth event - eid",
-            "source": "eid",
-            "sid": "{$eid-sid}",
-            "output": {
-              "nodes": {
-                "event": "x:events/{$.}"
-              },
-              "triples": [
-                "{?event} a crm:E67_Birth",
-                "{?event} crm:P98_brought_into_life {$item-uri}"
-              ]
-            }
-          }
+        "nodes": {
+          "father": "{@id.target.gid}"
         },
-        { "ReferenceId": "event_note" }
-      ]
+        "triples": ["{?event} crm:P97_from_father {?father}"]
+      }
     }
   ]
 }
 ```
 
+👉 Sample:
+
+```sh
+./cadmus-tool graph-deref c:/users/dfusi/desktop/mappings.json c:/users/dfusi/desktop/mappings-d.json
+```
+
 ### Graph Import Command
 
-🎯 Import preset nodes, triples, node mappings, or thesauri class nodes into graph.
+🎯 Import preset nodes, triples, node mappings, or thesauri class nodes into graph (the JSON document references must be [dereferenced](#graph-dereference-mappings) first!).
 
-```ps1
+```sh
 ./cadmus-tool graph-import <SourcePath> <DatabaseName> [-g <RepositoryPluginTag>] [-m <ImportMode>] [-d] [-r] [-p <ThesaurusIdPrefix>]
 ```
 
@@ -278,13 +262,13 @@ Sample:
 - `-p <ThesaurusIdPrefix>`: when importing thesauri, set the prefix to be added to each class node.
 - `-d`: dry mode - don't write to database.
 
-Sample:
+👉 Sample:
 
-```ps1
+```sh
 ./cadmus-tool graph-import c:/users/dfusi/desktop/nodes.json cadmus-itinera -g repository-provider.itinera
 ```
 
->Note: if you are importing mappings, ensure that the JSON document has a root array property including mappings. When working with a compact mappings document using cross-references, dereference all the referenced mappings via the [apposite command](#graph-dereference-mappings) before importing.
+>Note: if you are importing mappings, ensure that the JSON document has a root array property including mappings. When working with a compact mappings document using references, dereference all the referenced mappings via the [apposite command](#graph-dereference-mappings) before importing.
 
 All data files are JSON documents, having as their root element an **array** of objects. For instance:
 
@@ -353,9 +337,9 @@ All data files are JSON documents, having as their root element an **array** of 
 
 ### Graph One Command
 
-🎯 Map a single item/part into graph.
+🎯 Map a single item/part into the graph database.
 
-```ps1
+```sh
 ./cadmus-tool graph-one <DatabaseName> <Id> [-g <RepositoryPluginTag>] [-p] [-d]
 ```
 
@@ -364,9 +348,9 @@ All data files are JSON documents, having as their root element an **array** of 
 - `-d`: the ID refers to an item/part which was deleted.
 - `-x`: explain the update without actually performing it.
 
-Sample:
+👉 Sample:
 
-```ps1
+```sh
 ./cadmus-tool graph-one cadmus-itinera 4a0ce97e-84d1-417d-9fb0-a91d9dfc4da7 -g repository-provider.itinera -p -x
 ```
 
@@ -374,15 +358,15 @@ Sample:
 
 🎯 Map all the items into graph.
 
-```ps1
+```sh
 ./cadmus-tool graph-many <DatabaseName> [-g <RepositoryPluginTag>]
 ```
 
 - `-g`: the target repository provider plugin tag (e.g. `repository-provider.itinera`).
 
-Sample:
+👉 Sample:
 
-```ps1
+```sh
 ./cadmus-tool graph-many cadmus-itinera repository-provider.itinera
 ```
 
@@ -390,13 +374,13 @@ Sample:
 
 🎯 Update the index of nodes classes in the index database. This is a potentially long task, depending on the number of nodes and the depth of class hierarchies.
 
-```ps1
+```sh
 ./cadmus-tool graph-cls <DatabaseName> <ProfilePath>
 ```
 
-Sample:
+👉 Sample:
 
-```ps1
+```sh
 ./cadmus-tool graph-cls cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json
 ```
 
@@ -404,7 +388,7 @@ Sample:
 
 🎯 Import one or more thesauri from one or more file(s) into a Cadmus database. Files can be JSON, CSV, XLS, XLSX and are selected according to their extension. Any unknown extension is treated as a JSON source.
 
-```ps1
+```sh
 ./cadmus-tool thes-import <InputFileMask> <DatabaseName> [-m <R|P|S>] [-d]
 ```
 
@@ -417,9 +401,9 @@ Sample:
 - `-r`: for Excel sources, the ordinal number of the first row to read data from (1-N; default=1).
 - `-c`: for Excel sources, the ordinal number of the first column to read data from (1-N; default=1).
 
-Sample:
+👉 Sample:
 
-```ps1
+```sh
 ./cadmus-tool thes-import c:/users/dfusi/desktop/thesauri/*.json cadmus-itinera -d
 ```
 
@@ -491,22 +475,24 @@ You can add a header row or not, and use whatever name you want, as columns get 
 
 ### Run Mongo Command
 
-🎯 Run Mongo a script targeting the specified database. This is an experimental feature. Note that not all the commands are supported.
+🎯 Run Mongo a script targeting the specified database.
 
-```ps1
+⚠️ This is an experimental feature. Note that not all the commands are supported.
+
+```sh
 ./cadmus-tool run-mongo <DatabaseName> [-s <Script>] [-f <ScriptFilePath>]
 ```
 
 - `-s`: the script to run.
 - `-f`: the file with the script to run.
 
-Sample:
+👉 Sample:
 
-```ps1
+```sh
 ./cadmus-tool run-mongo cadmus-vela -s "db.getCollection(flags).updateOne({ _id: 4 },{ $set:{isAdmin: true }})"
 ```
 
-👉 Supported commands:
+Supported commands:
 
 1. Collection Operations:
    - data manipulation: `find`, `findOne`, `insertOne`, `insertMany`, `updateOne`, `updateMany`, `replaceOne`, `deleteOne`, `deleteMany`.
@@ -519,157 +505,3 @@ Sample:
 4. Collection Access Methods:
    - `db.collection` - directly access a collection with dot notation.
    - `db.getCollection("name")` - access a collection by name.
-
-## History
-
-### 10.0.2
-
-- 2025-03-26:
-  - ➕ added `run-mongo` command.
-  - updated packages.
-
-### 10.0.1
-
-- 2025-03-15: updated packages.
-
-### 10.0.0
-
-- 2025-02-01:
-  - ⚠️ upgraded to NET 9.
-  - removed legacy MySql support.
-- 2024-07-26: updated packages.
-
-### 9.0.5
-
-- 2024-04-16: updated packages.
-
-### 9.0.4
-
-- 2024-02-11:
-  - updated packages.
-  - handle inner exception in CLI commands.
-
-### 9.0.3
-
-- 2024-01-31: updated packages.
-
-### 9.0.2
-
-- 2024-01-31: catch errors in commands.
-
-### 9.0.1
-
-- 2024-01-31: updated packages.
-
-### 9.0.0
-
-- 2023-11-21: ⚠️ upgraded to NET 8.
-
-### 8.0.10
-
-- 2023-10-06: added `create-db` command to CLI to create index or graph databases.
-
-### 8.0.9
-
-- 2023-10-05: updated packages (new graph DB schema).
-
-### 8.0.8
-
-- 2023-09-25: updated packages.
-
-### 8.0.6
-
-- 2023-08-30:
-  - minor aesthetic changes.
-  - trying to fix GitHub action.
-
-### 8.0.4
-
-- 2023-08-09:
-  - fix to triples import in command.
-  - updated packages.
-
-### 8.0.3
-
-- 2023-08-03: updated packages.
-
-### 8.0.2
-
-- 2023-07-26: updated packages.
-
-### 8.0.1
-
-- 2023-07-17: updated packages.
-- 2023-07-11: use `AddMappingByName` in mappings import.
-
-### 8.0.0
-
-- 2023-06-20: added Thesaurus import command.
-- 2023-06-16: included EF-based PgSql/MySql components to update to [RDBMS refactoring](https://myrmex.github.io/overview/cadmus/dev/history/b-rdbms/).
-- 2023-05-29: updated packages.
-
-### 7.0.0
-
-- 2023-05-27: updated packages (breaking changes for `AssertedCompositeId`).
-
-### 6.1.2
-
-- 2023-05-16:
-  - updated packages.
-  - removed legacy code dependencies.
-  - updated GitHub actions in script.
-- 2023-05-15:
-  - updated packages.
-  - more information in graph one command explanation.
-
-### 6.1.1
-
-- 2023-05-15: added hydration to triples import command.
-- 2023-05-13: updated packages.
-- 2023-05-12: updated packages.
-- 2023-04-28: updated packages.
-- 2023-04-26: added `item-eid` to metadata in graph commands.
-
-### 6.1.0
-
-- 2023-04-10: refactored CLI infrastructure to use [Spectre.Console](https://spectreconsole.net).
-
-### 6.0.1
-
-- 2023-04-10:
-  - updated packages and action.
-  - added build script.
-
-### 6.0.0
-
-- 2023-02-05: migrated to new components factory. This is a breaking change for backend components, please see [this page](https://myrmex.github.io/overview/cadmus/dev/history/#2023-02-01---backend-infrastructure-upgrade). Anyway, in the end you just have to update your libraries and a single namespace reference. Benefits include:
-  - more streamlined component instantiation.
-  - more functionality in components factory, including DI.
-  - dropped third party dependencies.
-  - adopted standard MS technologies for DI.
-
-### 5.1.0
-
-- 2023-01-10: refactored CLI infrastructure.
-
-### 5.0.0
-
-- 2022-11-10: upgraded to NET 7.
-- 2022-11-04: updated packages (nullability enabled in Cadmus core).
-- 2022-10-14:
-  - `PluginFactoryProvider`: allow custom directory.
-  - enable nullability.
-- 2022-10-12: moved `Cadmus.Cli.Core` from Cadmus core solution to this solution.
-- 2022-10-10: updated packages and injection for new `IRepositoryProvider`. This makes CLI-specific providers for repository and seeders factory obsolete.
-
-### 2.1.2
-
-- 2022-10-10: updated packages.
-
-### 2.1.1
-
-- 2022-09-09: updated packages.
-
-### 2.1.0
-
-- 2022-08-14: updated packages, refactored graph related commands, added get object command (for preview).

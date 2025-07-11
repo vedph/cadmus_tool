@@ -42,7 +42,7 @@ internal sealed class GraphDerefMappingsCommand :
                 JsonSerializer.Deserialize<NodeMappingDocument>(json, options)
                 ?? throw new InvalidFormatException("Invalid JSON mappings document");
 
-            List<NodeMapping> mappings = doc.GetMappings().ToList();
+            List<NodeMapping> mappings = [.. doc.GetMappings()];
             using StreamWriter writer = new(settings.OutputPath!, false,
                 Encoding.UTF8);
             writer.Write(JsonSerializer.Serialize(mappings, options));
