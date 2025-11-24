@@ -11,6 +11,7 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
@@ -25,7 +26,7 @@ internal sealed class SeedDatabaseCommand :
     }
 
     public override Task<int> ExecuteAsync(CommandContext context,
-        SeedDatabaseCommandSettings settings)
+        SeedDatabaseCommandSettings settings, CancellationToken cancel)
     {
         AnsiConsole.MarkupLine("[red underline]SEED DATABASE[/]");
         AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");

@@ -13,7 +13,7 @@ internal sealed class GraphUpdateClassesCommand :
     AsyncCommand<UpdateGraphClassesCommandSettings>
 {
     public async override Task<int> ExecuteAsync(CommandContext context,
-        UpdateGraphClassesCommandSettings settings)
+        UpdateGraphClassesCommandSettings settings, CancellationToken cancel)
     {
         AnsiConsole.MarkupLine("[red underline]UPDATE GRAPH CLASS NODES[/]");
 

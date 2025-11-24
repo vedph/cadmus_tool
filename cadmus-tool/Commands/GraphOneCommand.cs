@@ -9,6 +9,7 @@ using Spectre.Console.Cli;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
@@ -16,7 +17,7 @@ namespace Cadmus.Cli.Commands;
 internal sealed class GraphOneCommand : AsyncCommand<GraphOneCommandSettings>
 {
     public override Task<int> ExecuteAsync(CommandContext context,
-        GraphOneCommandSettings settings)
+        GraphOneCommandSettings settings, CancellationToken cancel)
     {
         AnsiConsole.MarkupLine("[red underline]MAP ITEM/PART TO GRAPH[/]");
         AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");

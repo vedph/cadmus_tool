@@ -5,6 +5,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
@@ -20,7 +21,7 @@ internal sealed class BuildIndexSqlCommand :
     }
 
     public override Task<int> ExecuteAsync(CommandContext context,
-        BuildIndexSqlCommandSettings settings)
+        BuildIndexSqlCommandSettings settings, CancellationToken cancel)
     {
         AnsiConsole.MarkupLine("[green underline]BUILD INDEX SQL[/]");
 

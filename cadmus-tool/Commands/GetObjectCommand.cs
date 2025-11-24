@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -28,7 +29,7 @@ internal sealed class GetObjectCommand : AsyncCommand<GetObjectCommandSettings>
     }
 
     public override Task<int> ExecuteAsync(CommandContext context,
-        GetObjectCommandSettings settings)
+        GetObjectCommandSettings settings, CancellationToken cancel)
     {
         AnsiConsole.MarkupLine("[green underline]GET OBJECT[/]");
 

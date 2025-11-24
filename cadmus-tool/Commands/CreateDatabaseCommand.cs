@@ -6,6 +6,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
@@ -22,7 +23,7 @@ internal sealed class CreateDatabaseCommand :
     }
 
     public override Task<int> ExecuteAsync(CommandContext context,
-       CreateDatabaseCommandSettings settings)
+       CreateDatabaseCommandSettings settings, CancellationToken cancel)
     {
         AnsiConsole.MarkupLine("[red underline]CREATE DATABASE[/]");
         AnsiConsole.MarkupLine($"Database role: [cyan]{settings.DatabaseRole}[/]");

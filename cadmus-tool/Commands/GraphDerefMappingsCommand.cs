@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
@@ -17,7 +18,7 @@ internal sealed class GraphDerefMappingsCommand :
     AsyncCommand<GraphDerefMappingsCommandSettings>
 {
     public override Task<int> ExecuteAsync(CommandContext context,
-        GraphDerefMappingsCommandSettings settings)
+        GraphDerefMappingsCommandSettings settings, CancellationToken cancel)
     {
         AnsiConsole.MarkupLine("[green underline]DEREFERENCE MAPPINGS DOCUMENT[/]");
         AnsiConsole.MarkupLine($"Input: [cyan]{settings.InputPath}[/]");

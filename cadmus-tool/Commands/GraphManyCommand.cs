@@ -9,6 +9,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
@@ -16,7 +17,7 @@ namespace Cadmus.Cli.Commands;
 internal sealed class GraphManyCommand : AsyncCommand<GraphManyCommandSettings>
 {
     public override Task<int> ExecuteAsync(CommandContext context,
-        GraphManyCommandSettings settings)
+        GraphManyCommandSettings settings, CancellationToken cancel)
     {
         AnsiConsole.MarkupLine("[red underline]MAP ITEMS TO GRAPH[/]");
 

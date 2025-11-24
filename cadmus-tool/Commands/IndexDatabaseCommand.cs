@@ -25,7 +25,7 @@ internal sealed class IndexDatabaseCommand :
     }
 
     public async override Task<int> ExecuteAsync(CommandContext context,
-        IndexDatabaseCommandSettings settings)
+        IndexDatabaseCommandSettings settings, CancellationToken cancel)
     {
         AnsiConsole.MarkupLine("[red underline]INDEX DATABASE[/]");
         AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");

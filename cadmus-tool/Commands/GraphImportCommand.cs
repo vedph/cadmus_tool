@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
@@ -132,7 +133,7 @@ internal sealed class GraphImportCommand : AsyncCommand<GraphImportCommandSettin
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context,
-        GraphImportCommandSettings settings)
+        GraphImportCommandSettings settings, CancellationToken cancel)
     {
         AnsiConsole.MarkupLine("[red underline]IMPORT INTO GRAPH[/]");
         AnsiConsole.MarkupLine($"Source: [cyan]{settings.SourcePath}[/]");

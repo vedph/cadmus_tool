@@ -10,6 +10,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
@@ -30,7 +31,8 @@ public sealed class ThesaurusImportCommand :
     }
 
     public override Task<int> ExecuteAsync(
-        CommandContext context, ThesaurusImportCommandSettings settings)
+        CommandContext context, ThesaurusImportCommandSettings settings,
+        CancellationToken cancel)
     {
         AnsiConsole.MarkupLine("[red underline]IMPORT THESAURI[/]");
         AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");

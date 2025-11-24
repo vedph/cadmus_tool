@@ -5,6 +5,7 @@ using Spectre.Console.Cli;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cadmus.Cli.Commands;
@@ -73,7 +74,7 @@ internal sealed class RunMongoScriptCommand :
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context,
-        RunMongoScriptCommandSettings settings)
+        RunMongoScriptCommandSettings settings, CancellationToken cancel)
     {
         AnsiConsole.MarkupLine("[red underline]RUN MONGO SCRIPT[/]");
         AnsiConsole.MarkupLine($"Database: [cyan]{settings.DatabaseName}[/]");
