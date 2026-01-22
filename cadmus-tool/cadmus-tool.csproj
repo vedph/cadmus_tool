@@ -12,9 +12,9 @@
 		<Copyright>by Daniele Fusi</Copyright>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-		<Version>11.0.0</Version>
-		<FileVersion>11.0.0</FileVersion>
-		<AssemblyVersion>11.0.0</AssemblyVersion>
+		<Version>11.0.1</Version>
+		<FileVersion>11.0.1</FileVersion>
+		<AssemblyVersion>11.0.1</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -37,37 +37,37 @@
 
 	<ItemGroup>
 		<PackageReference Include="Bogus" Version="35.6.5" />
-		<PackageReference Include="Cadmus.Core" Version="10.0.0" />
-		<PackageReference Include="Cadmus.General.Parts" Version="8.0.0" />
-		<PackageReference Include="Cadmus.Graph" Version="10.0.0" />
-		<PackageReference Include="Cadmus.Graph.Ef.PgSql" Version="10.0.0" />
-		<PackageReference Include="Cadmus.Graph.Extras" Version="10.0.0" />
-		<PackageReference Include="Cadmus.Import" Version="7.0.0" />
-		<PackageReference Include="Cadmus.Import.Excel" Version="7.0.0" />
-		<PackageReference Include="Cadmus.Index" Version="10.0.0" />
-		<PackageReference Include="Cadmus.Index.Ef.PgSql" Version="10.0.0" />
-		<PackageReference Include="Cadmus.Index.PgSql" Version="10.0.0" />
-		<PackageReference Include="Cadmus.Index.Sql" Version="10.0.0" />
-		<PackageReference Include="Cadmus.Mongo" Version="10.0.0" />
-		<PackageReference Include="Cadmus.Philology.Parts" Version="12.0.0" />
-		<PackageReference Include="Cadmus.Seed" Version="10.0.0" />
-		<PackageReference Include="Cadmus.Seed.General.Parts" Version="8.0.0" />
-		<PackageReference Include="Cadmus.Seed.Philology.Parts" Version="12.0.0" />
+		<PackageReference Include="Cadmus.Core" Version="10.0.1" />
+		<PackageReference Include="Cadmus.General.Parts" Version="8.0.1" />
+		<PackageReference Include="Cadmus.Graph" Version="10.0.1" />
+		<PackageReference Include="Cadmus.Graph.Ef.PgSql" Version="10.0.1" />
+		<PackageReference Include="Cadmus.Graph.Extras" Version="10.0.1" />
+		<PackageReference Include="Cadmus.Import" Version="7.0.1" />
+		<PackageReference Include="Cadmus.Import.Excel" Version="7.0.2" />
+		<PackageReference Include="Cadmus.Index" Version="10.0.1" />
+		<PackageReference Include="Cadmus.Index.Ef.PgSql" Version="10.0.1" />
+		<PackageReference Include="Cadmus.Index.PgSql" Version="10.0.1" />
+		<PackageReference Include="Cadmus.Index.Sql" Version="10.0.1" />
+		<PackageReference Include="Cadmus.Mongo" Version="10.0.1" />
+		<PackageReference Include="Cadmus.Philology.Parts" Version="12.0.1" />
+		<PackageReference Include="Cadmus.Seed" Version="10.0.1" />
+		<PackageReference Include="Cadmus.Seed.General.Parts" Version="8.0.1" />
+		<PackageReference Include="Cadmus.Seed.Philology.Parts" Version="12.0.1" />
 		<PackageReference Include="Fusi.Microsoft.Extensions.Configuration.InMemoryJson" Version="5.0.0" />
 		<PackageReference Include="Fusi.Text" Version="6.0.0" />
 		<PackageReference Include="Fusi.Tools" Version="8.0.0" />
 		<PackageReference Include="Fusi.Tools.Configuration" Version="8.0.0" />
 		<PackageReference Include="McMaster.NETCore.Plugins" Version="2.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.2" />
 		<PackageReference Include="Serilog" Version="4.3.0" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
 		<PackageReference Include="Spectre.Console" Version="0.54.0" />
-		<PackageReference Include="Spectre.Console.Cli" Version="0.53.0" />
+		<PackageReference Include="Spectre.Console.Cli" Version="0.53.1" />
 	</ItemGroup>
 
 	<ItemGroup>
