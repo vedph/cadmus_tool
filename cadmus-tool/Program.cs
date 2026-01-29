@@ -89,6 +89,9 @@ public static class Program
                 config.AddCommand<SeedDatabaseCommand>("seed")
                     .WithDescription("Seed the database with mock items.");
 
+                config.AddCommand<SeedUsersCommand>("seed-users")
+                    .WithDescription("Seed user accounts into the auth database.");
+
                 config.AddCommand<ThesaurusImportCommand>("thes-import")
                     .WithDescription("Import thesauri into the database.");
 
