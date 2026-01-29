@@ -9,6 +9,7 @@
     - [Get Object Command](#get-object-command)
     - [Index Database Command](#index-database-command)
     - [Seed Database Command](#seed-database-command)
+    - [Seed Users Command](#seed-users-command)
     - [Graph Dereference Mappings](#graph-dereference-mappings)
     - [Graph Import Command](#graph-import-command)
     - [Graph One Command](#graph-one-command)
@@ -165,6 +166,45 @@ This requires a plugin with providers for the repository factory and the parts s
 
 ```sh
 ./cadmus-tool seed cadmus-itinera ./plugins/Cadmus.Itinera.Services/seed-profile.json -g repository-provider.itinera -s seeder-factory-provider.itinera -c 10 -d
+```
+
+### Seed Users Command
+
+🎯 Seed user accounts into a Cadmus auth database from a JSON file.
+
+```sh
+./cadmus-tool seed-users <JsonFilePath> <DatabaseName> [-d]
+```
+
+- `-d`: dry run, i.e. create the items and parts, but do not create the database nor store anything into it. This is used to test for seeder issues before actually running the command.
+
+👉 Sample:
+
+```sh
+./cadmus-tool seed-users c:/users/dfusi/desktop/users.json cadmus-gve-auth
+```
+
+The seed file is like this:
+
+```json
+[
+  {
+    "UserName": "alpha",
+    "Password": "ThePasswordHere",
+    "Email": "alpha@somewhere.com",
+    "Roles": ["admin", "editor", "operator", "visitor"],
+    "FirstName": "Andrew",
+    "LastName": "Alpha"
+  },
+  {
+    "UserName": "beta",
+    "Password": "ThePasswordHere",
+    "Email": "beta@somewhereelse.com",
+    "Roles": ["editor", "operator", "visitor"],
+    "FirstName": "Betty",
+    "LastName": "Beta"
+  }
+]
 ```
 
 ### Graph Dereference Mappings
