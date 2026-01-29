@@ -176,7 +176,7 @@ This requires a plugin with providers for the repository factory and the parts s
 ./cadmus-tool seed-users <JsonFilePath> <DatabaseName> [-d]
 ```
 
-- `-d`: dry run, i.e. create the items and parts, but do not create the database nor store anything into it. This is used to test for seeder issues before actually running the command.
+- `-d`: dry run. This is used to test for seeder issues before actually running the command.
 
 👉 Sample:
 
