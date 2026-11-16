@@ -1,5 +1,7 @@
 # Cadmus Tool
 
+⚠️⚠️⚠️ **THIS IS OBSOLETE CODE. SEE <https://github.com/vedph/cadmus-core>** ⚠️⚠️⚠️
+
 - [Cadmus Tool](#cadmus-tool)
   - [Plugin Architecture](#plugin-architecture)
   - [Setup](#setup)
